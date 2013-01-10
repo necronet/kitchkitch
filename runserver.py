@@ -3,17 +3,24 @@ import sys
 import getopt
 import sqlite3
 import kitch_db 
-from flask import Flask, g
+from flask import Flask, g, render_template
 from contextlib import closing
 from users.views import app as user
 from menus.views import  app as menu
 from flask import _app_ctx_stack
 
-app = Flask(__name__)
+class KitchFlask(Flask):
+	pass
+
+app = KitchFlask(__name__)
 app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
 
+@app.route('/',methods=['GET','POST'])
+def index():
+	print 'index'
+	return render_template('docs/index.html')
 
 if __name__=='__main__':
 	try:

@@ -20,7 +20,7 @@ def init_db():
         db.commit()
 
 def close_database_connection(exception):
-	con = getattr(app_ctx_stack, 'kitch_db',None)
+	con = getattr(_app_ctx_stack, 'kitch_db',None)
 	if con is not None:
 		con.close()
 
