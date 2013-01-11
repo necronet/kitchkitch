@@ -8,7 +8,7 @@ from contextlib import closing
 from users.views import app as user
 from menus.views import  app as menu
 from flask import _app_ctx_stack, request
-from flask.ext.login import LoginManager
+from flask.ext.login import LoginManager,UserMixin
 
 #class KitchFlask(Flask):
 #	def make_response(self, rv):
@@ -19,7 +19,15 @@ app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
 
-loginManager = LoginManager()
+login_manager = LoginManager()
+login_manager.setup_app(app)
+
+class User(UserMixin):
+	pass 
+
+@login_manager.user_loader
+def load_user(userid):
+	return User.get(userid)
 
 @app.route('/',methods=['GET','POST'])
 def index():
