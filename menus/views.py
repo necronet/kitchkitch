@@ -22,6 +22,10 @@ def list():
 
 @app.route('/menus/',methods=['POST'])
 def update():
+    
+    if request.json:
+        print 'comes with a json body'
+
     if not session.get('logged_in'):
         abort(401)
     g.db.execute('insert into menus(title) values(?) ', [request.form['title']])
