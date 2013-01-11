@@ -7,19 +7,21 @@ from flask import Flask, g, render_template
 from contextlib import closing
 from users.views import app as user
 from menus.views import  app as menu
-from flask import _app_ctx_stack
+from flask import _app_ctx_stack, request
 
-class KitchFlask(Flask):
-	pass
+#class KitchFlask(Flask):
+#	def make_response(self, rv):
+#		return Flask.make_response(self,rv)
+		
 
-app = KitchFlask(__name__)
+app = Flask(__name__)
 app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
 
 @app.route('/',methods=['GET','POST'])
 def index():
-	print 'index'
+	
 	return render_template('docs/index.html')
 
 if __name__=='__main__':
