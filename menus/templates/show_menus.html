@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-  {% if session.logged_in %}
+  {% if current_user.is_active %}
     <form action="{{ url_for('menus.update') }}" method=post class=add-entry>
       <dl>
         <dt>Title:

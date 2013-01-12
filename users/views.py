@@ -1,6 +1,6 @@
 from flask import request, session, flash, render_template, current_app, redirect, url_for
 from flask import Blueprint
-from flask.ext.login import login_user,UserMixin
+from flask.ext.login import login_user,UserMixin, login_required, logout_user
 
 app = Blueprint('user',__name__,template_folder='templates')
 
@@ -22,7 +22,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/logout/')
+@login_required
 def logout():
-    session.pop('logged_in', None)
-    flash('You were logged out')
+    logout_user()
     return redirect(url_for('menus.list'))

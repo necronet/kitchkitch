@@ -1,6 +1,7 @@
 from flask import Flask, request, session, redirect, url_for, abort, render_template, flash
 from flask import Blueprint,jsonify, make_response, Response
 from kitch_db import db
+import json
 from flask.ext.login import login_required
 
 app = Blueprint('menus',__name__,template_folder='templates')
@@ -21,17 +22,20 @@ def list():
     
 
 @app.route('/menus/',methods=['POST'])
-@login_required
+#@login_required
 def update():
     
-    if request.json:
-        print 'comes with a json body'
+    print request.json
 
-    g.db.execute('insert into menus(title) values(?) ', [request.form['title']])
-    g.db.commit()
-    flash('New entry was succesfully posted')
+    data = request.json
+    print data['title']
+    #db.execute('insert into menus(title) values(?) ', data)
+    #db.commit()
 
-    return redirect(url_for('menus.list'))
+    #created
+    response = Response (status=201)
+
+    return response
 
 @app.route('/menus/<string:id>',methods=['DELETE'])
 @login_required

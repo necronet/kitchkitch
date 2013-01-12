@@ -4,7 +4,7 @@
 <div class=page>
   <h1>Kitch API</h1>
   <div class=metanav>
-  {% if not session.logged_in %}
+  {% if not current_user.is_authenticated() %}
     <a href="{{ url_for('user.login') }}">log in</a>
   {% else %}
     <a href="{{ url_for('user.logout') }}">log out</a>
