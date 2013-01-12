@@ -23,19 +23,25 @@ def list():
 
 @app.route('/menus/',methods=['POST'])
 #@login_required
-def update():
+def post():
     
-    print request.json
+    for json_object in request.json['items']:
+        db.execute('insert into menus(title) values(?) ', [json_object['title']])
+        response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'location':request.url})
 
-    data = request.json
-    print data['title']
-    #db.execute('insert into menus(title) values(?) ', data)
-    #db.commit()
-
-    #created
-    response = Response (status=201)
+    db.commit()
 
     return response
+
+@app.route('/menus/',methods=['PUT'])
+def put():
+    for json_object in request.json['items']:
+        if json_object.has_key('id'):
+            db.execute('update menus set title=? where id=?',  [json_object['title'],json_object['id']])
+            
+    db.commit()
+
+    return make_response(jsonify({'message':'Succesfully updated'}))
 
 @app.route('/menus/<string:id>',methods=['DELETE'])
 @login_required
