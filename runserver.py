@@ -22,15 +22,23 @@ login_manager.login_view = "user.login"
 
 @app.before_request
 def validate_request():
-	print 'json ahora is %s' % request.data
-	if request.method == 'POST':
+	if request.method == 'POST' or request.method=='PUT':
+		
 		#In case no body is sent in body for post
-		if not request.json :
+		if not (request.json and request.json.has_key('items') ) or not isinstance(request.json['items'], (list,tuple)):
 			return abort(400)
+
 
 @app.errorhandler(400)
 def bad_request_handler(error):
-    return jsonify({'message':'Data was not properly sent.'}),400
+
+	reason='Unknown'
+	if not request.json:
+		reason='Empty body is not allowed please submit the proper data'
+	elif not request.json.has_key('items'):
+		reason='Body content should include items array.'
+
+	return jsonify({'message':'Error has occurred, reason %s' % reason} ), 400
 
 @login_manager.user_loader
 def load_user(userid):
@@ -43,6 +51,4 @@ def index():
 	return render_template('docs/index.html')
 
 if __name__=='__main__':
-
-
 	app.run(debug=True)
