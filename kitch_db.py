@@ -1,5 +1,6 @@
 import sqlite3
 from flask import _app_ctx_stack
+from contextlib import closing
 from werkzeug.local import LocalProxy
 
 def init_app(app):
@@ -12,12 +13,6 @@ def get_db():
 		con = sqlite3.connect(ctx.app.config['DATABASE'])
 		ctx.kitch_db=con
 	return con
-
-def init_db():
-    with closing(get_db()) as db:
-        with app.open_resource('schema.sql') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
 
 def close_database_connection(exception):
 	con = getattr(_app_ctx_stack, 'kitch_db',None)
