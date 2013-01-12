@@ -1,17 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if current_user.is_active %}
-    <form action="{{ url_for('menus.update') }}" method=post class=add-entry>
+    <form method=post class=add-entry>
       <dl>
         <dt>Title:
         <dd><input type=text size=30 name=title>
-        <dd><input type=submit value=Share>
+
+        <dd><input type=submit value=Add>
       </dl>
     </form>
   {% endif %}
   <ul class=entries>
   {% for menu in menus %}
-    <li><h2>{{ menu.title }}</h2></li>
+      <div>
+        <span class="data">{{ menu.title }}</span>
+        <span><a href="#">Delete</a></span>
+      </div>
   {% else %}
     <li><em>Unbelievable.  No entries here so far</em>
   {% endfor %}
