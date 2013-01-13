@@ -5,6 +5,7 @@ from menus.views import  app as menu
 from flask import request
 from flask.ext.login import LoginManager
 
+#In case we need a custom flask class
 #class KitchFlask(Flask):
 #	def make_response(self, rv):
 #		return Flask.make_response(self,rv)
@@ -20,7 +21,8 @@ login_manager.login_view = "user.login"
 
 @app.before_request
 def validate_request():
-	if request.method == 'POST' or request.method=='PUT':
+
+	if request.mimetype=='application/json' and (request.method == 'POST' or request.method=='PUT' ):
 		
 		#In case no body is sent in body for post
 		if not (request.json and request.json.has_key('items') ) or not isinstance(request.json['items'], (list,tuple)):
@@ -49,4 +51,4 @@ def index():
 	return render_template('docs/index.html')
 
 if __name__=='__main__':
-	app.run(debug=True)
+	app.run(debug=app.config['DEBUG'])
