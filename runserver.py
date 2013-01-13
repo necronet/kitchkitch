@@ -1,10 +1,8 @@
 # all the imports
-import sqlite3
-import kitch_db 
-from flask import Flask, g, render_template, abort, Response,jsonify
+from flask import Flask, render_template, abort,jsonify
 from users.views import app as user, User
 from menus.views import  app as menu
-from flask import _app_ctx_stack, request
+from flask import request
 from flask.ext.login import LoginManager
 
 #class KitchFlask(Flask):

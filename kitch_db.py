@@ -1,6 +1,5 @@
 import sqlite3
 from flask import _app_ctx_stack
-from contextlib import closing
 from werkzeug.local import LocalProxy
 
 def init_app(app):
