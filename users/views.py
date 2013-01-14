@@ -1,4 +1,4 @@
-from flask import request, session, flash, render_template, current_app, redirect, url_for
+from flask import request, flash, render_template, redirect, url_for
 from flask import Blueprint
 from flask.ext.login import login_user,UserMixin, login_required, logout_user
 from kitch_db import db
@@ -12,9 +12,8 @@ class User(UserMixin):
 def login():
     
     if request.method == 'POST':
-        user=validate_user(request.form['username'],request.form['password'] )
+        user=validate_user()
         if(user):
-            
             login_user(user)
             flash('You were logged in')
             return redirect(request.args.get("next") or url_for("index"))
@@ -28,7 +27,14 @@ def logout():
     return redirect(url_for('menus.list'))
 
 
-def validate_user(username, password):
-    record=db.execute('select * from users where username=? and password=?',[username,password]).fetchdone()
-    print record
+def validate_user():
+
+    if request.json:
+        (username,password)=request.json['username'],request.json['password'] 
+    else:
+        (username,password)=request.form['username'],request.form['password'] 
+
+
+    record=db.execute('select * from users where username=? and password=?',[username,password]).fetchone()
+    return record
     
