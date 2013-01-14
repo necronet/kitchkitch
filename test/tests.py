@@ -3,7 +3,7 @@ import unittest
 import os,sys
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,parentdir) 
-from runserver import app
+from runserver import app, request
 
 class BaseTest(unittest.TestCase):
 
@@ -30,9 +30,17 @@ class GeneralTest(BaseTest):
 
 class UsersTest(BaseTest):
 	def test_login_wrong_pasword(self):
-		rv=self.c.post('/login/',data=json.dumps({"username":"admin","password":"wonrg_password_goes"}),content_type='application/json')
-		print rv.data
-		assert rv is not None
+		with app.test_client() as client:
+			rv=client.post('/login/',data=json.dumps({"username":"admin","password":"wonrg_password_goes"}),content_type='application/json')
+		
+			assert rv.headers['Location'] == request.url
+			assert '401' in rv.status 
+
+	def test_login_right_password(self):
+		with app.test_client() as client:
+			rv=client.post('/login/',data=json.dumps({"username":"admin","password":"admin"}),content_type='application/json')
+			
+			assert '200' in rv.status
 
 if __name__ == '__main__':
     unittest.main()

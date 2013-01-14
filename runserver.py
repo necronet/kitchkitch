@@ -1,9 +1,10 @@
 # all the imports
 from flask import Flask, render_template, abort,jsonify
-from users.views import app as user, User
+from users.views import app as user,create_user_from_record
 from menus.views import  app as menu
 from flask import request
 from flask.ext.login import LoginManager
+from kitch_db import db
 
 #In case we need a custom flask class
 #class KitchFlask(Flask):
@@ -46,10 +47,15 @@ def bad_request_handler(error):
 	return jsonify({'message':'Error has occurred, reason %s' % reason} ), 400
 
 @login_manager.user_loader
-def load_user(userid):
-	user = User()
-	user.id=100
-	return user
+def load_user(uid):
+	
+	record=db.execute('select * from users where uid=?',[uid]).fetchone()
+	if record is not None:
+	    return create_user_from_record(record)
+
+	return None
+
+
 
 @app.route('/',methods=['GET','POST'])
 def index():
