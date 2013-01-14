@@ -21,9 +21,12 @@ login_manager.login_view = "user.login"
 
 @app.before_request
 def validate_request():
+	#ignore items validation if login or logout
+
+	if request.endpoint == 'user.login':
+		return None
 
 	if request.mimetype=='application/json' and (request.method == 'POST' or request.method=='PUT' ):
-		
 		#In case no body is sent in body for post
 		if not (request.json and request.json.has_key('items') ) or not isinstance(request.json['items'], (list,tuple)):
 			return abort(400)
@@ -36,7 +39,9 @@ def bad_request_handler(error):
 	if not request.json:
 		reason='Empty body is not allowed please submit the proper data'
 	elif not request.json.has_key('items'):
-		reason='Body content should include items array.'
+		reason='Body content should include items array. For call %s' % request.url
+	elif not isinstance(request.json['items'], (list,tuple)):
+		reason='Items must be a json array. Enclose with brackets items:[{}]'
 
 	return jsonify({'message':'Error has occurred, reason %s' % reason} ), 400
 
