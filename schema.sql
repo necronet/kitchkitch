@@ -1,5 +1,6 @@
 drop table if exists users;
-create table users( user_id string primary key, 
+create table users( 
+uid string primary key, 
 username string not null, 
 password string not null,
 active int default 0);
