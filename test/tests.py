@@ -31,23 +31,30 @@ class GeneralTest(BaseTest):
 class UsersTest(BaseTest):
 	def test_login_wrong_pasword(self):
 		with app.test_client() as client:
-			rv=client.post('/login/',data=json.dumps({"username":"admin","password":"wonrg_password_goes"}),content_type='application/json')
+			rv=login(client,"admin","wrongpassword")
 			
 			assert rv.headers['Location'] == request.url
 			assert '401' in rv.status 
 
 	def test_login_right_password(self):
 		with app.test_client() as client:
-			rv=client.post('/login/',data=json.dumps({"username":"admin","password":"admin"}),content_type='application/json')
-			print rv.data
+			rv=login(client,"admin","admin")
 			assert '200' in rv.status
 
 
 class MenuTest(BaseTest):
 	def test_list_menus(self):
+		with app.test_client() as client:
+			rv=login(client,"admin","admin")
+		
+		
 		rv=self.c.get('/menus/',headers=[('Accept','application/json')])			
 		
 		assert '200' in rv.status
+
+def login(client, username, password):
+	rv=client.post('/login/',data=json.dumps({"username":username,"password":password}),content_type='application/json')
+	return rv
 
 if __name__ == '__main__':
     unittest.main()
