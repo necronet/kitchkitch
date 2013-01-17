@@ -1,10 +1,10 @@
 # all the imports
 from flask import Flask, render_template, abort,jsonify
-from users.views import app as user,create_user_from_record
+from users.views import app as user, User
 from menus.views import  app as menu
 from flask import request
 from flask.ext.login import LoginManager
-from kitch_db import db
+
 
 #In case we need a custom flask class
 #class KitchFlask(Flask):
@@ -17,7 +17,7 @@ app.register_blueprint(menu)
 app.register_blueprint(user)
 
 login_manager = LoginManager()
-login_manager.setup_app(app)
+login_manager.init_app(app)
 login_manager.login_view = "user.login"
 
 @app.before_request
@@ -48,13 +48,7 @@ def bad_request_handler(error):
 
 @login_manager.user_loader
 def load_user(uid):
-	
-	record=db.execute('select * from users where uid=?',[uid]).fetchone()
-	if record is not None:
-	    return create_user_from_record(record)
-
-	return None
-
+	return User.get(uid)
 
 
 @app.route('/',methods=['GET','POST'])

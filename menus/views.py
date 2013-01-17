@@ -4,8 +4,8 @@ from flask.ext.login import login_required
 
 app = Blueprint('menus',__name__,template_folder='templates')
 
-
 @app.route('/menus/',methods=['GET'])
+@login_required
 def list():
     
     json_mime = request.accept_mimetypes.best_match(['application/json','text/html'])
@@ -25,7 +25,7 @@ def post():
     
     for json_object in request.json['items']:
         db.execute('insert into menus(title) values(?) ', [json_object['title']])
-        response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'location':request.url})
+        response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
 
     db.commit()
 

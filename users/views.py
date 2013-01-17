@@ -1,6 +1,7 @@
 from flask import request, flash, render_template, redirect, url_for,Blueprint,make_response,jsonify
 from flask.ext.login import login_user,UserMixin, login_required, logout_user
 from kitch_db import db
+import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
 
@@ -14,9 +15,14 @@ class User(UserMixin):
     def is_active(self):
         return self.active
 
-
+    @staticmethod
+    def get(uid):
+        record=db.execute('select * from users where uid=?',[uid]).fetchone()
+        if record is not None:
+            return create_user_from_record(record)
 
 def create_user_from_record(record):
+    
     user =User(record[0],record[1],record[2],record[3])
     return user
 
@@ -28,7 +34,8 @@ def login():
         if(user):
             login_user(user)
             if request.json:
-                return make_response(jsonify({'message':'Logged successfully'}))
+                token=generate_token(user)
+                return make_response(jsonify({'message':'Logged successfully','token':token}))
             else:
                 flash('You were logged in')
                 return redirect(request.args.get("next") or url_for("index"))
@@ -43,6 +50,11 @@ def logout():
     logout_user()
     return redirect(url_for('menus.list'))
 
+def generate_token(user):
+    token =str(uuid.uuid1())
+    db.execute('insert into tokens(uid,token) values(?,?) ',[user.id, token])
+    db.commit()
+    return token
 
 def validate_user():
 

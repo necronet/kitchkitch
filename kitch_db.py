@@ -2,6 +2,7 @@ import sqlite3
 from flask import _app_ctx_stack
 from werkzeug.local import LocalProxy
 
+
 def init_app(app):
 	app.teardown_appcontext(close_database_connection)
 
