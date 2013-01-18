@@ -16,10 +16,19 @@ class User(UserMixin):
         return self.active
 
     @staticmethod
-    def get(uid):
-        record=db.execute('select * from users where uid=?',[uid]).fetchone()
-        if record is not None:
-            return create_user_from_record(record)
+    def get(uid=None, token=None):
+        
+        if uid is not None :
+            record=db.execute('select * from users where uid=?',[uid]).fetchone()
+            if record is not None:
+                return create_user_from_record(record)
+        elif token is not None :
+
+            record=db.execute('select * from tokens where token=?',[token]).fetchone()
+            if record is not None:
+                    
+                return User.get(record[0])        
+
 
 def create_user_from_record(record):
     

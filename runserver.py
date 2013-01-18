@@ -3,7 +3,7 @@ from flask import Flask, render_template, abort,jsonify
 from users.views import app as user, User
 from menus.views import  app as menu
 from flask import request
-from flask.ext.login import LoginManager
+from flask.ext.login import LoginManager, current_user
 
 
 #In case we need a custom flask class
@@ -26,6 +26,10 @@ def validate_request():
 
 	if request.endpoint == 'user.login':
 		return None
+
+	if request.headers.has_key('Authorization'):
+		current_user = User.get(token=request.headers['Authorization'])	
+			
 
 	if request.mimetype=='application/json' and (request.method == 'POST' or request.method=='PUT' ):
 		#In case no body is sent in body for post
