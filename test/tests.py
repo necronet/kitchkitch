@@ -47,8 +47,9 @@ class MenuTest(BaseTest):
 		with app.test_client() as client:
 			rv=login(client,"admin","admin")
 		
-		
-		rv=self.c.get('/menus/',headers=[('Accept','application/json')])			
+		response = json.loads(rv.data)
+		token=response['token']
+		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',token)])
 		
 		assert '200' in rv.status
 
