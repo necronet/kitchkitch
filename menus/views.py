@@ -67,14 +67,15 @@ class MenuItemsService(MethodView):
             return jsonify(items=menus_items)
         
     def post(self):
-
-        if request.args.get('menus_uid') is None:
+        menus_uid=request.args.get('menus_uid')
+        if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
 
         for json_object in request.json['items']:
             uid =str(uuid.uuid1())
-            db.execute('insert into items(uid,title,description,price) values(?,?,?,?) ', [uid,json_object['title'],json_object['description'],json_object['price']])
 
+            db.execute('insert into items(uid,title,description,price) values(?,?,?,?) ', [uid,json_object['title'],json_object['description'],json_object['price']])
+            db.execute('insert into menus_items(menus_uid,items_uid) values(?,?) ', [menus_uid,uid])
 
             response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
 
