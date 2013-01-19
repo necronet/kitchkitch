@@ -1,3 +1,10 @@
+/*
+This script will create the schema and defaults values of kitch API.
+Considere to add
+
+Fee free to edit this script as you like
+*/
+
 drop table if exists users;
 create table users( 
 uid string primary key, 
@@ -20,4 +27,20 @@ create table menus (
  uid string primary key,
  title string not null,
  active int default 1
+);
+
+drop table if exists items;
+create table items (
+ uid string primary key,
+ title string not null,
+ description string not null,
+ price real not null,
+ active int default 1
+);
+
+drop table if exists menus_items;
+create table menus_items (
+ menus_uid string,
+ items_uid string,
+ primary key(menus_uid,items_uid)
 );
