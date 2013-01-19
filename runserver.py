@@ -2,8 +2,8 @@
 from flask import Flask, render_template, abort,jsonify
 from users.views import app as user, User
 from menus.views import  app as menu
-from flask import request
-from flask.ext.login import LoginManager, current_user
+from flask import request, session
+from flask.ext.login import LoginManager
 
 
 #In case we need a custom flask class
@@ -27,14 +27,14 @@ def validate_request():
 	if request.endpoint == 'user.login':
 		return None
 
-	if request.headers.has_key('Authorization'):
-		current_user = User.get(token=request.headers['Authorization'])	
-			
+	#if request.headers.has_key('Authorization'):
+
 
 	if request.mimetype=='application/json' and (request.method == 'POST' or request.method=='PUT' ):
 		#In case no body is sent in body for post
 		if not (request.json and request.json.has_key('items') ) or not isinstance(request.json['items'], (list,tuple)):
 			return abort(400)
+
 
 
 @app.errorhandler(400)
@@ -52,7 +52,11 @@ def bad_request_handler(error):
 
 @login_manager.user_loader
 def load_user(uid):
-	return User.get(uid)
+
+	if session.get("token_based"):
+		return User.get(token=uid)
+	else:
+		return User.get(uid)
 
 
 @app.route('/',methods=['GET','POST'])
