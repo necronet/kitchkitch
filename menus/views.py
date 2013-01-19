@@ -2,7 +2,7 @@ import uuid
 from flask import request, render_template,Blueprint,jsonify, make_response, Response
 from flask.views import MethodView
 from kitch_db import db
-from flask.ext.login import login_required
+
 
 class MenuService(MethodView):
     
@@ -47,7 +47,7 @@ class MenuService(MethodView):
 
         rowcount = db.execute('delete from menus where uid=?', (menu_id,)).rowcount
         db.commit()
-        print rowcount
+        
         if rowcount == 0:
             return Response(status= 200)
         

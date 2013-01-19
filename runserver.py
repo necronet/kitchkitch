@@ -29,6 +29,9 @@ def validate_request():
 
 	#if request.headers.has_key('Authorization'):
 
+	#Validate mime type to always be json
+	if request.mimetype!='application/json' and request.method != 'GET':
+		abort(415)
 
 	if request.mimetype=='application/json' and (request.method == 'POST' or request.method=='PUT' ):
 		#In case no body is sent in body for post
