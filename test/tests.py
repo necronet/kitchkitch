@@ -5,9 +5,6 @@ parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,parentdir) 
 from runserver import app, request
 
-
-
-
 class BaseTest(unittest.TestCase):
 
 	def setUp(self):
@@ -110,14 +107,14 @@ class MenuTest(BaseTest):
 class MenuItemService(BaseTest):
 	def test_list_menu_items(self):
 		rv=self.c.get('/menuItems/',headers=[('Accept','application/json')])		
-		print rv.data
+		
 		assert rv.status_code==200
 
-	def test_post_menus(self):
+	def test_post_menus_missing_menu_uid(self):
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
 		rv=self.c.post('/menuItems/',data=json.dumps(menu_items),content_type='application/json')
-
-		assert rv.status_code == 201
+		
+		assert rv.status_code == 400
 
 
 
