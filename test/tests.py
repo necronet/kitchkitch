@@ -17,15 +17,15 @@ class GeneralTest(BaseTest):
 
 	def test_empty_data_post(self):
 		rv = self.c.post('/menus/',data=json.dumps({}),content_type='application/json')
-		assert '400' in rv.status
+		assert rv.status_code == 400
 
 	def test_wrong_data_post(self):
 		rv = self.c.post('/menus/', data=json.dumps({"randonm":"items","goes":"here"}),content_type='application/json')
-		assert '400' in rv.status
+		assert rv.status_code == 400
 
 	def test_random_resource(self):
 		rv = self.c.post('/random_non_existing_resource/')
-		assert '404' in rv.status
+		assert rv.status_code == 404
 
 
 class UsersTest(BaseTest):
@@ -34,24 +34,62 @@ class UsersTest(BaseTest):
 			rv=login(client,"admin","wrongpassword")
 			
 			assert rv.headers['Location'] == request.url
-			assert '401' in rv.status 
+			assert rv.status_code == 401
 
 	def test_login_right_password(self):
 		with app.test_client() as client:
 			rv=login(client,"admin","admin")
-			assert '200' in rv.status
+			assert rv.status_code == 200
 
 
 class MenuTest(BaseTest):
-	def test_list_menus(self):
+
+	def setUp(self):
+		super(MenuTest,self).setUp()
 		with app.test_client() as client:
 			rv=login(client,"admin","admin")
 		
 		response = json.loads(rv.data)
-		token=response['token']
-		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',token)])
+		self.token=response['token']
+
+	def test_list_menus(self):
 		
-		assert '200' in rv.status
+		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
+		assert rv.status_code == 200
+
+	def test_post_menus(self):
+		rv=self.c.post('/menus/',data=json.dumps({"items":[{"title":"Menu #1"}]}),content_type='application/json')
+		assert rv.status_code == 201
+
+	def test_put_menus(self):
+		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
+		
+		assert rv.status_code == 200
+		items=json.loads(rv.data)
+		assert len(items) > 0
+
+		new_items=[]
+		for data in items['items']:
+		  new_items.append({'uid':data['uid'],'title':data['title']+' Modified'})
+		
+		items['items']=new_items
+		rv=self.c.put('/menus/',data=json.dumps(items),content_type='application/json')
+		assert rv.status_code == 200
+
+	def test_delete_menus(self):
+		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
+		
+		assert rv.status_code == 200
+		items=json.loads(rv.data)
+
+		for data in items['items']:
+			rv=self.c.delete('/menus/%s' % data['uid'],content_type='application/json')
+		
+		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
+		assert rv.status_code == 200
+		items=json.loads(rv.data)
+		
+		assert len(items['items']) == 0
 
 def login(client, username, password):
 	rv=client.post('/login/',data=json.dumps({"username":username,"password":password}),content_type='application/json')
