@@ -64,11 +64,11 @@ class MenuTest(BaseTest):
 		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
 		assert rv.status_code == 200
 
-	def test_post_menus(self):
+	def test_post(self):
 		rv=self.c.post('/menus/',data=json.dumps({"items":[{"title":"Menu #1"}]}),content_type='application/json')
 		assert rv.status_code == 201
 
-	def test_put_menus(self):
+	def test_put(self):
 		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
 		
 		assert rv.status_code == 200
@@ -113,8 +113,17 @@ class MenuItemService(BaseTest):
 	def test_post_menus_missing_menu_uid(self):
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
 		rv=self.c.post('/menuItems/',data=json.dumps(menu_items),content_type='application/json')
-		
 		assert rv.status_code == 400
+
+	def test_post(self):
+		rv=self.c.get('/menus/',headers=[('Accept','application/json')])
+		uid=json.loads(rv.data)['items'][0]['uid']
+		
+		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
+		rv=self.c.post('/menuItems/?menus_uid=%s'%uid,data=json.dumps(menu_items),content_type='application/json')
+
+		
+		assert rv.status_code == 201
 
 
 
