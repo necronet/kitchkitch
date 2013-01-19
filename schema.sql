@@ -14,8 +14,9 @@ token string not null,
 active int default 1,
 primary key(uid,token));
 
+
 drop table if exists menus;
 create table menus (
-  id integer primary key autoincrement,
+  uid string primary key,
   title string not null
 );
