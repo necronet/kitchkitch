@@ -24,8 +24,12 @@ class GeneralTest(BaseTest):
 		assert rv.status_code == 400
 
 	def test_random_resource(self):
-		rv = self.c.post('/random_non_existing_resource/')
+		rv = self.c.post('/random_non_existing_resource/', data=json.dumps({'items':[{"randonm":"items","goes":"here"}]}),content_type='application/json')
 		assert rv.status_code == 404
+
+	def test_wrong_mime(self):
+		rv = self.c.post('/menus/')
+		assert rv.status_code == 415
 
 
 class UsersTest(BaseTest):
