@@ -5,10 +5,16 @@ parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,parentdir) 
 from runserver import app, request
 
+
+
+
 class BaseTest(unittest.TestCase):
 
 	def setUp(self):
 		self.c= app.test_client()
+
+		app.config['TESTING'] = True
+		
 
 	def tearDown(self):
 		pass
