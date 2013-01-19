@@ -85,6 +85,12 @@ class MenuTest(BaseTest):
 		items['items']=new_items
 		rv=self.c.put('/menus/',data=json.dumps(items),content_type='application/json')
 		assert rv.status_code == 200
+	
+	def test_list_menus_filters(self):
+		rv=self.c.get('/menus/?title=Menu #1,Menu #2',headers=[('Accept','application/json'),('Authorization',self.token)])
+		
+		assert rv.status_code == 200
+		
 
 	def test_delete_menus(self):
 		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
@@ -100,6 +106,20 @@ class MenuTest(BaseTest):
 		items=json.loads(rv.data)
 		
 		assert len(items['items']) == 0
+
+class MenuItemService(BaseTest):
+	def test_list_menu_items(self):
+		rv=self.c.get('/menuItems/',headers=[('Accept','application/json')])		
+		print rv.data
+		assert rv.status_code==200
+
+	def test_post_menus(self):
+		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
+		rv=self.c.post('/menuItems/',data=json.dumps(menu_items),content_type='application/json')
+
+		assert rv.status_code == 201
+
+
 
 def login(client, username, password):
 	rv=client.post('/login/',data=json.dumps({"username":username,"password":password}),content_type='application/json')
