@@ -1,5 +1,6 @@
 import uuid
 from flask import request, render_template,Blueprint,jsonify, make_response, Response
+from utils.exceptions import abort
 from flask.views import MethodView
 from kitch_db import db
 
@@ -66,9 +67,15 @@ class MenuItemsService(MethodView):
             return jsonify(items=menus_items)
         
     def post(self):
+
+        if request.args.get('menus_uid') is None:
+            abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
+
         for json_object in request.json['items']:
             uid =str(uuid.uuid1())
             db.execute('insert into items(uid,title,description,price) values(?,?,?,?) ', [uid,json_object['title'],json_object['description'],json_object['price']])
+
+
             response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
 
         db.commit()
@@ -101,6 +108,8 @@ def register_api(view, endpoint, url, pk, pk_type='string'):
     app.add_url_rule(url, view_func=view_func, methods=['POST','PUT',])
     app.add_url_rule('%s<%s:%s>' %(url,pk_type,pk), view_func=view_func,
                      methods=['GET', 'DELETE'])
+
+
 
 register_api(MenuService, 'menuService','/menus/','menu_uid')
 register_api(MenuItemsService, 'menuItemService','/menuItems/','item_uid')

@@ -1,5 +1,6 @@
 # all the imports
-from flask import Flask, render_template, abort,jsonify
+from flask import Flask, render_template, jsonify
+from utils.exceptions import abort
 from users.views import app as user, User
 from menus.views import  app as menu
 from flask import request, session
@@ -36,14 +37,11 @@ def validate_request():
 	if request.mimetype=='application/json' and (request.method == 'POST' or request.method=='PUT' ):
 		#In case no body is sent in body for post
 		if not (request.json and request.json.has_key('items') ) or not isinstance(request.json['items'], (list,tuple)):
-			return abort(400)
+			return bad_request_response()
 
 
-
-@app.errorhandler(400)
-def bad_request_handler(error):
-
-	reason='Unknown'
+def bad_request_response():
+	
 	if not request.json:
 		reason='Empty body is not allowed please submit the proper data'
 	elif not request.json.has_key('items'):
@@ -51,7 +49,7 @@ def bad_request_handler(error):
 	elif not isinstance(request.json['items'], (list,tuple)):
 		reason='Items must be a json array. Enclose with brackets items:[{}]'
 
-	return jsonify({'message':'Error has occurred, reason %s' % reason} ), 400
+	return abort(400,'Error has occurred, reason %s' % reason )
 
 @login_manager.user_loader
 def load_user(uid):
