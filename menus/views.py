@@ -1,19 +1,18 @@
 import uuid
-from utils.entities import KitchObject
+from utils.entities import KitchObject, BaseService
 from flask import request, render_template,Blueprint,jsonify, make_response, Response
 from utils.exceptions import abort
-from flask.views import MethodView
 from kitch_db import db
 
 
-class MenuService(MethodView):
+class MenuService(BaseService):
     
     #@login_required
     def get(self, menu_uid):
-        
+        super(MenuService, self).get(menu_uid)
         json_mime = request.accept_mimetypes.best_match(['application/json','text/html'])
         
-        cur = db.execute('select uid,title from menus where active=1')
+        cur = db.execute('select uid,title from menus where active=1 limit %d offset %d' % (self.limit, self.offset) )
         menus = [dict(uid=row[0],title=row[1]) for row in cur.fetchall()]
 
         if json_mime=='application/json':
@@ -58,16 +57,17 @@ class MenuService(MethodView):
         response = { 'message':'Delete succesfully'}
         return make_response(jsonify(response), 202)
 
-class MenuItemsService(MethodView):
+class MenuItemsService(BaseService):
     def get(self, item_uid):
+        super(MenuItemsService, self).get(item_uid)
         menus_uid=request.args.get('menus_uid')
         
         json_mime = request.accept_mimetypes.best_match(['application/json'])
         
         if menus_uid is None:
-            cur = db.execute('select uid,title,description,price from items where active=1 ')
+            cur = db.execute('select uid,title,description,price from items where active=1 limit %d offset %d' % (self.limit, self.offset))
         else:
-            cur = db.execute('select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=?',(menus_uid,))
+            cur = db.execute('select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=? limit ? offset ?' ,[menus_uid,self.limit, self.offset,])
         menus_items = [dict(uid=row[0],title=row[1],description=row[2],price=row[3]) for row in cur.fetchall()]
         
         if json_mime=='application/json':
