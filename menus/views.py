@@ -1,4 +1,5 @@
 import uuid
+from utils.entities import KitchObject
 from flask import request, render_template,Blueprint,jsonify, make_response, Response
 from utils.exceptions import abort
 from flask.views import MethodView
@@ -23,10 +24,11 @@ class MenuService(MethodView):
     
     #@login_required
     def post(self):
-
+        
         for json_object in request.json['items']:
+            menu= KitchObject(json_object)
             uid =str(uuid.uuid1())
-            db.execute('insert into menus(uid,title) values(?,?) ', [uid,json_object['title']])
+            db.execute('insert into menus(uid,title) values(?,?) ', [uid,menu.title])
             response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
 
         db.commit()
@@ -36,8 +38,9 @@ class MenuService(MethodView):
     
     def put(self):
         for json_object in request.json['items']:
+            menu= KitchObject(json_object)
             if json_object.has_key('uid'):
-                db.execute('update menus set title=? where uid=?',  [json_object['title'],json_object['uid']])
+                db.execute('update menus set title=? where uid=?',  [menu.title,menu.uid])
                 
         db.commit()
 
@@ -76,9 +79,10 @@ class MenuItemsService(MethodView):
             abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
 
         for json_object in request.json['items']:
+            menu_items= KitchObject(json_object)
             uid =str(uuid.uuid1())
 
-            db.execute('insert into items(uid,title,description,price) values(?,?,?,?) ', [uid,json_object['title'],json_object['description'],json_object['price']])
+            db.execute('insert into items(uid,title,description,price) values(?,?,?,?) ', [uid,menu_items.title,menu_items.description,menu_items.price])
             db.execute('insert into menus_items(menus_uid,items_uid) values(?,?) ', [menus_uid,uid])
 
             response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
@@ -88,21 +92,29 @@ class MenuItemsService(MethodView):
         return response
 
     def put(self):
-        for json_object in request.json['items']:
-            if json_object.has_key('uid'):
-                db.execute('update items set title=?, description=?, price=? where uid=?',  [json_object['title'],json_object['description'],json_object['price'],json_object['uid']])
-            if json_object.has_key('menus_uid'):
-                db.execute('update menus_items set menus_uid=? where items_uid=?',  [json_object['menus_uid'],json_object['uid']])
+
+        menus_uid=request.args.get('menus_uid')
+
+        if menus_uid is None:
+            abort(400, 'Missing menus_uid parameter. Not allowed to update items without a menu to be referenced')
+
+        for json_object in request.json['items']:            
+
+            menu_items= KitchObject(json_object)
+            db.execute('update items set title=?, description=?, price=? where uid=?',  [menu_items.title,menu_items.description,menu_items.price,menu_items.uid])
+            db.execute('update menus_items set menus_uid=? where items_uid=?',  [menus_uid,menu_items.uid])
                 
         db.commit()
 
         return make_response(jsonify({'message':'Succesfully updated'}))
-    def delete(self,items_uid):
+    def delete(self,item_uid):
+
         menus_uid=request.args.get('menus_uid')
+
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
         
-        rowcount = db.execute('update menus_items set active=0 where menus_uid=? and items_uid', (menus_uid,items_uid)).rowcount
+        rowcount = db.execute('update menus_items set active=0 where menus_uid=? and items_uid=?', (menus_uid,item_uid)).rowcount
         
         db.commit()
         
