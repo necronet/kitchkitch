@@ -36,8 +36,8 @@ class MenuService(MethodView):
     
     def put(self):
         for json_object in request.json['items']:
-            if json_object.has_key('id'):
-                db.execute('update menus set title=? where id=?',  [json_object['title'],json_object['id']])
+            if json_object.has_key('uid'):
+                db.execute('update menus set title=? where uid=?',  [json_object['title'],json_object['uid']])
                 
         db.commit()
 
@@ -57,10 +57,14 @@ class MenuService(MethodView):
 
 class MenuItemsService(MethodView):
     def get(self, item_uid):
-
+        menus_uid=request.args.get('menus_uid')
+        
         json_mime = request.accept_mimetypes.best_match(['application/json'])
         
-        cur = db.execute('select uid,title,description,price from items where active=1')
+        if menus_uid is None:
+            cur = db.execute('select uid,title,description,price from items where active=1 ')
+        else:
+            cur = db.execute('select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=?',(menus_uid,))
         menus_items = [dict(uid=row[0],title=row[1],description=row[2],price=row[3]) for row in cur.fetchall()]
         
         if json_mime=='application/json':
@@ -84,9 +88,29 @@ class MenuItemsService(MethodView):
         return response
 
     def put(self):
-        return 'Success'
-    def delete(self,item_uid):
-        return 'Success'
+        for json_object in request.json['items']:
+            if json_object.has_key('uid'):
+                db.execute('update items set title=?, description=?, price=? where uid=?',  [json_object['title'],json_object['description'],json_object['price'],json_object['uid']])
+            if json_object.has_key('menus_uid'):
+                db.execute('update menus_items set menus_uid=? where items_uid=?',  [json_object['menus_uid'],json_object['uid']])
+                
+        db.commit()
+
+        return make_response(jsonify({'message':'Succesfully updated'}))
+    def delete(self,items_uid):
+        menus_uid=request.args.get('menus_uid')
+        if menus_uid is None:
+            abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
+        
+        rowcount = db.execute('update menus_items set active=0 where menus_uid=? and items_uid', (menus_uid,items_uid)).rowcount
+        
+        db.commit()
+        
+        if rowcount == 0:
+            return Response(status= 200)
+        
+        response = { 'message':'Delete succesfully'}
+        return make_response(jsonify(response), 202)
 
 
 
