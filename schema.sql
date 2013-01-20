@@ -42,6 +42,6 @@ drop table if exists menus_items;
 create table menus_items (
  menus_uid string,
  items_uid string,
- active int,
+ active int default 1,
  primary key(menus_uid,items_uid)
 );
