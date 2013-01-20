@@ -1,10 +1,10 @@
 import unittest
 from base import GeneralTest
-import tests_users
-import tests_menus
+import users_suite
+import menus_suite
 
 if __name__=='__main__':
-	runTests=[GeneralTest,tests_users.UsersTest,tests_menus.MenuTest]
+	runTests=[GeneralTest,users_suite.UsersTest,menus_suite.MenuTest,menus_suite.MenuItemTest]
 
 	for runTest in runTests:
 		suite = unittest.TestLoader().loadTestsFromTestCase(runTest)
