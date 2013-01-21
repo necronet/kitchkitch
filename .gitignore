@@ -1,3 +1,4 @@
+.ropeproject
 docs/_build
 *.db
 .DS_Store
