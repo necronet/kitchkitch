@@ -1,7 +1,6 @@
-.. module:: kitch.menus.views
-
-Object
+Menu Module
 ------------------
 
-.. autoclass:: MenuService
-   :members:
+.. automodule:: kitch.utils.entities
+	:members:
+	:undoc-members:
