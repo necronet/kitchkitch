@@ -4,7 +4,7 @@ from base import BaseTest, login
 class MenuTest(BaseTest):
 
 	def setUp(self):
-		super(MenuTest,self).setUp()
+		super(MenuTest,self).setUp('/menus/')
 		rv=login(self.c,"admin","admin")
 		
 		response = json.loads(rv.data)
@@ -57,6 +57,14 @@ class MenuTest(BaseTest):
 		assert len(items['items']) == 0
 
 class MenuItemTest(BaseTest):
+
+	def setUp(self):
+		super(MenuItemTest,self).setUp('/menuItems/')
+		rv=login(self.c,"admin","admin")
+		
+		response = json.loads(rv.data)
+		self.token=response['token']
+
 	def test_list_menu_items(self):
 		rv=self.c.get('/menuItems/',headers=[('Accept','application/json')])		
 		

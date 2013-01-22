@@ -1,5 +1,5 @@
 # all the imports
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template
 from utils.exceptions import abort
 from users.views import app as user, User
 from menus.views import  app as menu

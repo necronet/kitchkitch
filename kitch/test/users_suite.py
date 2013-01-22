@@ -1,6 +1,9 @@
 from base import BaseTest, login
 
 class UsersTest(BaseTest):
+
+	
+
 	def test_login_wrong_pasword(self):
 		
 		rv=login(self.c,"admin","wrongpassword")

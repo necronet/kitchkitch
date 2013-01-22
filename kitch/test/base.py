@@ -12,9 +12,9 @@ def login(client, username, password):
 
 class BaseTest(unittest.TestCase):
 
-	def setUp(self):
+	def setUp(self, url=None):
 		self.c= app.test_client()
-
+		self.url = url
 		app.config['TESTING'] = True
 		
 
@@ -22,6 +22,10 @@ class BaseTest(unittest.TestCase):
 		pass
 
 class GeneralTest(BaseTest):
+
+	def setUp(self):
+		super(GeneralTest,self).setUp('/menus/')
+		
 
 	def test_empty_data_post(self):
 		rv = self.c.post('/menus/',data=json.dumps({}),content_type='application/json')
