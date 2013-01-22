@@ -78,6 +78,7 @@ class MenuItemsService(BaseService):
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
 
+        
         for json_object in request.json['items']:
             menu_items= KitchObject(json_object)
             uid =str(uuid.uuid1())
@@ -85,7 +86,8 @@ class MenuItemsService(BaseService):
             db.execute('insert into items(uid,title,description,price) values(?,?,?,?) ', [uid,menu_items.title,menu_items.description,menu_items.price])
             db.execute('insert into menus_items(menus_uid,items_uid) values(?,?) ', [menus_uid,uid])
 
-            response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
+        
+        response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
 
         db.commit()
 

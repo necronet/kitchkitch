@@ -12,16 +12,16 @@ class MenuTest(BaseTest):
 
 	def test_list_menus(self):
 		
-		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
+		rv=self.get('/menus/')		
 		assert rv.status_code == 200
 
 	def test_post(self):
-		rv=self.c.post('/menus/',data=json.dumps({"items":[{"title":"Menu #1"}]}),content_type='application/json')
+		rv=self.post(data=json.dumps({"items":[{"title":"Menu #1"}]}))
 		assert rv.status_code == 201
 
 	def test_put(self):
-		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
-		
+		rv=self.get('/menus/')
+
 		assert rv.status_code == 200
 		items=json.loads(rv.data)
 		assert len(items) > 0
@@ -35,13 +35,13 @@ class MenuTest(BaseTest):
 		assert rv.status_code == 200
 	
 	def test_list_menus_filters(self):
-		rv=self.c.get('/menus/?title=Menu #1,Menu #2',headers=[('Accept','application/json'),('Authorization',self.token)])
+		rv=self.get(title='Menu #1,Menu #2')
 		
 		assert rv.status_code == 200
 		
 
 	def test_delete_menus(self):
-		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
+		rv=self.get()
 		
 		assert rv.status_code == 200
 		items=json.loads(rv.data)
@@ -50,7 +50,7 @@ class MenuTest(BaseTest):
 			rv=self.c.delete('/menus/%s' % data['uid'],content_type='application/json')
 			assert rv.status_code==202
 		
-		rv=self.c.get('/menus/',headers=[('Accept','application/json'),('Authorization',self.token)])
+		rv=self.get()
 		assert rv.status_code == 200
 		items=json.loads(rv.data)
 		
@@ -66,7 +66,7 @@ class MenuItemTest(BaseTest):
 		self.token=response['token']
 
 	def test_list_menu_items(self):
-		rv=self.c.get('/menuItems/',headers=[('Accept','application/json')])		
+		rv=self.get()		
 		
 		assert rv.status_code==200
 
@@ -76,20 +76,21 @@ class MenuItemTest(BaseTest):
 		assert rv.status_code == 400
 
 	def test_post(self):
-		rv=self.c.get('/menus/',headers=[('Accept','application/json')])
+		rv=self.get(url='/menus/')
 		
 		uid=json.loads(rv.data)['items'][0]['uid']		
 		
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
-
-		rv=self.c.post('/menuItems/?menus_uid=%s'%uid,data=json.dumps(menu_items),content_type='application/json')
-		assert rv.status_code == 201
+		rv=self.post(data=json.dumps(menu_items),menus_uid=uid)
+		assert rv.status_code == 201	
+		
+		
 
 	def test_put(self):
-		rv=self.c.get('/menus/',headers=[('Accept','application/json')])
+		rv=self.get(url='/menus/')
 		menus_uid=json.loads(rv.data)['items'][0]['uid']
 		
-		rv=self.c.get('/menuItems/?menus_uid=%s' % menus_uid,headers=[('Accept','application/json')])
+		rv=self.get(url='/menuItems/',menus_uid=menus_uid)
 		
 		menu_item=json.loads(rv.data)['items'][0]
 		update_data = {'items':[{'uid':menu_item['uid'],'title':menu_item['title'],'description':menu_item['description'],'price':menu_item['price']}]}
@@ -98,23 +99,21 @@ class MenuItemTest(BaseTest):
 		assert rv.status_code == 200
 
 	def test_delete_items(self):
-		rv=self.c.get('/menus/',headers=[('Accept','application/json')])
+		rv=self.get(url='/menus/')
 		assert rv.status_code == 200
 		items=json.loads(rv.data)['items']
 		menus_uid=items[0]['uid']
 		
-		rv=self.c.get('/menuItems/?menus_uid=%s'% menus_uid ,headers=[('Accept','application/json')])
+		rv=self.get(menus_uid=menus_uid)
 
 		for data in json.loads(rv.data)['items']:
 
 			rv=self.c.delete('/menuItems/%s?menus_uid=%s' % (data['uid'],menus_uid),content_type='application/json')
 			assert rv.status_code == 202
 		
-		rv=self.c.get('/menuItems/?menus_uid=%s'%menus_uid,headers=[('Accept','application/json')])
+		rv=self.get(menus_uid=menus_uid)
 
 		assert rv.status_code == 200
 		items=json.loads(rv.data)
 		
 		assert len(items['items']) == 0
-
-		#rv=self.c.delete('/menus/%s' % data['uid'],content_type='application/json')

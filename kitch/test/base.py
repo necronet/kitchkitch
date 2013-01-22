@@ -29,8 +29,11 @@ class BaseTest(unittest.TestCase):
 		
 		return '%s?%s' % (self.url if url is None else url ,params)
 	
-	def post(self,url=None,data=json.dumps({}),content_type='application/json'):
-		return self.c.post(self.build_url(url=url),data=data,content_type=content_type)
+	def post(self,url=None,data=json.dumps({}),content_type='application/json',**kwargs):
+		return self.c.post(self.build_url(url=url,**kwargs),data=data,content_type=content_type)
+
+	def get(self, url=None, headers=[('Accept','application/json')],**kwargs):
+		return self.c.get(self.build_url(url=url,**kwargs),headers=headers)
 
 class GeneralTest(BaseTest):
 
@@ -50,5 +53,5 @@ class GeneralTest(BaseTest):
 		assert rv.status_code == 404
 
 	def test_wrong_mime(self):
-		rv = self.post('/menus/',content_type='text/html')
+		rv = self.post(content_type='text/html')
 		assert rv.status_code == 415

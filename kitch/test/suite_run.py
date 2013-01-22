@@ -8,4 +8,4 @@ if __name__=='__main__':
 
 	for runTest in runTests:
 		suite = unittest.TestLoader().loadTestsFromTestCase(runTest)
-		unittest.TextTestRunner(verbosity=2).run(suite)
+		unittest.TextTestRunner(verbosity=1).run(suite)
