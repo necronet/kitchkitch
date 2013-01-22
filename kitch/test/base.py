@@ -20,6 +20,14 @@ class BaseTest(unittest.TestCase):
 
 	def tearDown(self):
 		pass
+	
+	def build_url(self, url=None,**kwargs):
+		params=''	
+		for name, value in kwargs.items():
+			params += '%s=%s&' % (name, value)
+			
+		
+		return '%s?%s' % (self.url if url is None else url ,params)
 
 class GeneralTest(BaseTest):
 
@@ -28,15 +36,15 @@ class GeneralTest(BaseTest):
 		
 
 	def test_empty_data_post(self):
-		rv = self.c.post('/menus/',data=json.dumps({}),content_type='application/json')
+		rv = self.c.post(self.build_url(),data=json.dumps({}),content_type='application/json')
 		assert rv.status_code == 400
 
 	def test_wrong_data_post(self):
-		rv = self.c.post('/menus/', data=json.dumps({"randonm":"items","goes":"here"}),content_type='application/json')
+		rv = self.c.post(self.build_url(), data=json.dumps({"randonm":"items","goes":"here"}),content_type='application/json')
 		assert rv.status_code == 400
 
 	def test_random_resource(self):
-		rv = self.c.post('/random_non_existing_resource/', data=json.dumps({'items':[{"randonm":"items","goes":"here"}]}),content_type='application/json')
+		rv = self.c.post(self.build_url(url='/random_non_existing_resource/'), data=json.dumps({'items':[{"randonm":"items","goes":"here"}]}),content_type='application/json')
 		assert rv.status_code == 404
 
 	def test_wrong_mime(self):
