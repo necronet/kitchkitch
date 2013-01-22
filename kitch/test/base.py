@@ -28,6 +28,9 @@ class BaseTest(unittest.TestCase):
 			
 		
 		return '%s?%s' % (self.url if url is None else url ,params)
+	
+	def post():
+		return self.c.post(self.build_url(),data=json.dumps({}),content_type='application/json')
 
 class GeneralTest(BaseTest):
 
@@ -36,7 +39,7 @@ class GeneralTest(BaseTest):
 		
 
 	def test_empty_data_post(self):
-		rv = self.c.post(self.build_url(),data=json.dumps({}),content_type='application/json')
+		rv = self.post()
 		assert rv.status_code == 400
 
 	def test_wrong_data_post(self):
