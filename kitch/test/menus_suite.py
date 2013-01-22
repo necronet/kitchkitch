@@ -1,26 +1,17 @@
 import json
-from base import BaseTest, login
+from base import BaseTest
 
 class MenuTest(BaseTest):
 
 	def setUp(self):
-		super(MenuTest,self).setUp('/menus/')
-		rv=login(self.c,"admin","admin")
-		
-		response = json.loads(rv.data)
-		self.token=response['token']
-
-	def test_list_menus(self):
-		
-		rv=self.get('/menus/')		
-		assert rv.status_code == 200
+		super(MenuTest,self).setUp('/menus/')			
 
 	def test_post(self):
 		rv=self.post(data=json.dumps({"items":[{"title":"Menu #1"}]}))
 		assert rv.status_code == 201
 
 	def test_put(self):
-		rv=self.get('/menus/')
+		rv=self.get()
 
 		assert rv.status_code == 200
 		items=json.loads(rv.data)
@@ -59,16 +50,7 @@ class MenuTest(BaseTest):
 class MenuItemTest(BaseTest):
 
 	def setUp(self):
-		super(MenuItemTest,self).setUp('/menuItems/')
-		rv=login(self.c,"admin","admin")
-		
-		response = json.loads(rv.data)
-		self.token=response['token']
-
-	def test_list_menu_items(self):
-		rv=self.get()		
-		
-		assert rv.status_code==200
+		super(MenuItemTest,self).setUp('/menuItems/')			
 
 	def test_post_menus_missing_menu_uid(self):
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}

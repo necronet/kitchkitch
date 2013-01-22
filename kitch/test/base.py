@@ -5,22 +5,23 @@ parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,parentdir) 
 from runserver import app
 
-
-def login(client, username, password):
-	rv=client.post('/login/',data=json.dumps({"username":username,"password":password}),content_type='application/json')
-	return rv
-
 class BaseTest(unittest.TestCase):
 
 	def setUp(self, url=None):
 		self.c= app.test_client()
 		self.url = url
 		app.config['TESTING'] = True
-		
 
 	def tearDown(self):
-		pass
+		pass	 
+
+	#Ignore testing for usersTest
 	
+	def test_get(self):
+		
+		rv=self.get()
+		assert rv.status_code == 200
+
 	def build_url(self, url=None,**kwargs):
 		params=''	
 		for name, value in kwargs.items():
