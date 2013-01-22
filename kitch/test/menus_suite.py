@@ -4,11 +4,14 @@ from base import BaseTest
 class MenuTest(BaseTest):
 
 	def setUp(self):
-		super(MenuTest,self).setUp('/menus/')			
+		super(MenuTest,self).setUp('/menus/')	
 
 	def test_post(self):
 		rv=self.post(data=json.dumps({"items":[{"title":"Menu #1"}]}))
 		assert rv.status_code == 201
+
+	def test_get_item(self):
+		self.check_item(json.dumps({"items":[{"title":"Menu #1"}]}),('uid','title'))
 
 	def test_put(self):
 		rv=self.get()
@@ -27,7 +30,6 @@ class MenuTest(BaseTest):
 	
 	def test_list_menus_filters(self):
 		rv=self.get(title='Menu #1,Menu #2')
-		
 		assert rv.status_code == 200
 		
 
@@ -57,6 +59,13 @@ class MenuItemTest(BaseTest):
 		rv=self.c.post('/menuItems/',data=json.dumps(menu_items),content_type='application/json')
 		assert rv.status_code == 400
 
+	def test_get_item(self):
+		rv=self.get(url='/menus/')
+		uid=json.loads(rv.data)['items'][0]['uid']
+		
+		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
+		self.check_item(json.dumps(menu_items),('uid','title'),menus_uid=uid)
+
 	def test_post(self):
 		rv=self.get(url='/menus/')
 		
@@ -65,8 +74,6 @@ class MenuItemTest(BaseTest):
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
 		rv=self.post(data=json.dumps(menu_items),menus_uid=uid)
 		assert rv.status_code == 201	
-		
-		
 
 	def test_put(self):
 		rv=self.get(url='/menus/')

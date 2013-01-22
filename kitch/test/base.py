@@ -18,23 +18,32 @@ class BaseTest(unittest.TestCase):
 	#Ignore testing for usersTest
 	
 	def test_get(self):
-		
 		rv=self.get()
 		assert rv.status_code == 200
 
-	def build_url(self, url=None,**kwargs):
+	def check_item(self,data,keys,**kwargs):
+		rv=self.post(data=data,**kwargs)
+		assert rv.status_code == 201
+		rv=self.get()
+		uid=json.loads(rv.data)['items'][0]['uid']
+		rv=self.get(uid=uid)
+		assert rv.status_code == 200
+		#Check all properties are i response
+		for i in keys: assert i in json.loads(rv.data) 
+
+	def build_url(self, uid='',url=None,**kwargs):
 		params=''	
 		for name, value in kwargs.items():
 			params += '%s=%s&' % (name, value)
 			
 		
-		return '%s?%s' % (self.url if url is None else url ,params)
+		return '%s%s?%s' % (self.url if url is None else url ,uid,params)
 	
 	def post(self,url=None,data=json.dumps({}),content_type='application/json',**kwargs):
 		return self.c.post(self.build_url(url=url,**kwargs),data=data,content_type=content_type)
 
-	def get(self, url=None, headers=[('Accept','application/json')],**kwargs):
-		return self.c.get(self.build_url(url=url,**kwargs),headers=headers)
+	def get(self,uid='', url=None, headers=[('Accept','application/json')],**kwargs):
+		return self.c.get(self.build_url(url=url,uid=uid,**kwargs),headers=headers)
 
 class GeneralTest(BaseTest):
 
