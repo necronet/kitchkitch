@@ -12,13 +12,22 @@ class MenuService(BaseService):
         super(MenuService, self).get(menu_uid)
         json_mime = request.accept_mimetypes.best_match(['application/json','text/html'])
         
-        cur = db.execute('select uid,title from menus where active=1 limit %d offset %d' % (self.limit, self.offset) )
-        menus = [dict(uid=row[0],title=row[1]) for row in cur.fetchall()]
+        if menu_uid is None:
+            cur = db.execute('select uid,title from menus where active=1 limit ? offset ?' ,(self.limit, self.offset) )
+            items = [dict(uid=row[0],title=row[1]) for row in cur.fetchall()]
+
+            response=jsonify(items=items)
+        else:
+            cur = db.execute('select uid,title from menus where uid=? and active=1 limit ? offset ?' , (menu_uid,self.limit, self.offset) )
+            result=cur.fetchone()
+            item = dict(uid=result[0],title=result[1])
+            response=jsonify(item)
+            
 
         if json_mime=='application/json':
-            return jsonify(items=menus)
+            return response
         elif json_mime=='text/html':
-            return render_template('show_menus.html', menus=menus)
+            return render_template('show_menus.html', menus=items)
 
     
     #@login_required
@@ -63,6 +72,12 @@ class MenuItemsService(BaseService):
         menus_uid=request.args.get('menus_uid')
         
         json_mime = request.accept_mimetypes.best_match(['application/json'])
+
+        if item_uid is not None:
+            cur = db.execute('select uid,title,description,price from items where uid=? and active=1 limit ? offset ?',(item_uid,self.limit, self.offset))
+            result=cur.fetchone()
+            item = dict(uid=result[0],title=result[1],description=result[2],price=result[3])
+            return jsonify(item)
         
         if menus_uid is None:
             cur = db.execute('select uid,title,description,price from items where active=1 limit %d offset %d' % (self.limit, self.offset))
@@ -78,7 +93,7 @@ class MenuItemsService(BaseService):
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
 
-        
+
         for json_object in request.json['items']:
             menu_items= KitchObject(json_object)
             uid =str(uuid.uuid1())
