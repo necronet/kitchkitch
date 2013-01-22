@@ -29,27 +29,26 @@ class BaseTest(unittest.TestCase):
 		
 		return '%s?%s' % (self.url if url is None else url ,params)
 	
-	def post():
-		return self.c.post(self.build_url(),data=json.dumps({}),content_type='application/json')
+	def post(self,url=None,data=json.dumps({}),content_type='application/json'):
+		return self.c.post(self.build_url(url=url),data=data,content_type=content_type)
 
 class GeneralTest(BaseTest):
 
 	def setUp(self):
 		super(GeneralTest,self).setUp('/menus/')
-		
 
 	def test_empty_data_post(self):
 		rv = self.post()
 		assert rv.status_code == 400
 
 	def test_wrong_data_post(self):
-		rv = self.c.post(self.build_url(), data=json.dumps({"randonm":"items","goes":"here"}),content_type='application/json')
+		rv = self.post(data=json.dumps({"randonm":"items","goes":"here"}))
 		assert rv.status_code == 400
 
 	def test_random_resource(self):
-		rv = self.c.post(self.build_url(url='/random_non_existing_resource/'), data=json.dumps({'items':[{"randonm":"items","goes":"here"}]}),content_type='application/json')
+		rv = self.post(url='/imaginary_resource/',data=json.dumps({'items':[{}]}))
 		assert rv.status_code == 404
 
 	def test_wrong_mime(self):
-		rv = self.c.post('/menus/')
+		rv = self.post('/menus/',content_type='text/html')
 		assert rv.status_code == 415
