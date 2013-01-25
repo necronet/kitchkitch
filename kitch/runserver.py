@@ -3,7 +3,7 @@ from flask import Flask, render_template
 from utils.exceptions import abort
 from users.views import app as user, User
 from menus.views import  app as menu
-from flask import request, session
+from flask import request
 from flask.ext.login import LoginManager
 
 
@@ -26,9 +26,7 @@ def validate_request():
 	#ignore items validation if login or logout
 	if request.endpoint == 'user.login':
 		return None
-
 	#if request.headers.has_key('Authorization'):
-
 	#Validate mime type to always be json
 	if request.mimetype!='application/json' and request.method != 'GET':
 		abort(415)
@@ -53,7 +51,6 @@ def bad_request_response():
 @login_manager.user_loader
 def load_user(uid):
 	return User.get(uid)
-
 
 @app.route('/',methods=['GET','POST'])
 def index():
