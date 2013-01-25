@@ -36,7 +36,7 @@ def validate_request():
 	if request.method in ('POST','PUT'):
 		#In case no body is sent in body for post
 		if not (request.json and request.json.has_key('items') ) or not isinstance(request.json['items'], (list,tuple)):
-			return bad_request_response()
+			bad_request_response()
 
 
 def bad_request_response():
