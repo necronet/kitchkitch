@@ -24,7 +24,6 @@ login_manager.login_view = "user.login"
 @app.before_request
 def validate_request():
 	#ignore items validation if login or logout
-
 	if request.endpoint == 'user.login':
 		return None
 
@@ -53,11 +52,7 @@ def bad_request_response():
 
 @login_manager.user_loader
 def load_user(uid):
-
-	if session.get("token_based"):
-		return User.get(token=uid)
-	else:
-		return User.get(uid)
+	return User.get(uid)
 
 
 @app.route('/',methods=['GET','POST'])

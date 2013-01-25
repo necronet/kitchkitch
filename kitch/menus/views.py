@@ -141,11 +141,7 @@ class MenuItemsService(BaseService):
         response = { 'message':'Delete succesfully'}
         return make_response(jsonify(response), 202)
 
-
-
 app = Blueprint('menus',__name__,template_folder='templates')
-
-
 
 '''
 Register a MethodView class to hold the standard pattern
