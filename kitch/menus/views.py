@@ -3,11 +3,12 @@ from utils.entities import KitchObject, BaseService
 from flask import request, render_template,Blueprint,jsonify, make_response, Response
 from utils.exceptions import abort
 from kitch_db import db
+from flask.ext.login import login_required
 
 
 class MenuService(BaseService):
     
-    #@login_required
+    @login_required
     def get(self, menu_uid):
         super(MenuService, self).get(menu_uid)
         json_mime = request.accept_mimetypes.best_match(['application/json','text/html'])
