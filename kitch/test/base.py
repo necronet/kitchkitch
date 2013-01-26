@@ -3,6 +3,7 @@ import json
 import os,sys
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,parentdir) 
+from flask.sessions import SecureCookieSession
 from runserver import app
 
 def login(client, username, password):
@@ -10,14 +11,27 @@ def login(client, username, password):
 	return rv
 
 class BaseTest(unittest.TestCase):
+	_auth_token=None
 
-	def setUp(self, url=None):
+	def setUp(self, url=None,auth=False):
 		self.c= app.test_client()
 		self.url = url
+		if auth:
+			rv = login(self.c,"admin","admin")
+			self.auth_token=json.loads(rv.data)['token']
+
 		app.config['TESTING'] = True
 
 	def tearDown(self):
 		pass	 
+
+	@property
+	def auth_token(self):
+		return self._auth_token
+
+	@auth_token.setter
+	def auth_token(self,value):
+		self._auth_token=value
 
 	#Ignore testing for usersTest
 	
@@ -46,13 +60,26 @@ class BaseTest(unittest.TestCase):
 	def post(self,url=None,data=json.dumps({}),content_type='application/json',**kwargs):
 		return self.c.post(self.build_url(url=url,**kwargs),data=data,content_type=content_type)
 
-	def get(self,uid='', url=None, headers=[('Accept','application/json')],**kwargs):
+	def get(self,uid='', url=None, authorize=True, headers=[('Accept','application/json')],**kwargs):
+		
+		if self.auth_token is not None and authorize:
+			headers.append(('Authorization',self.auth_token))
+
 		return self.c.get(self.build_url(url=url,uid=uid,**kwargs),headers=headers)
 
 class GeneralTest(BaseTest):
 
 	def setUp(self):
-		super(GeneralTest,self).setUp('/menus/')
+		super(GeneralTest,self).setUp('/menus/',auth=True)
+
+	def test_unauthorize(self):
+		with self.c.session_transaction() as session:
+			session['_id']=None
+			session['user_id']=None
+
+		rv = self.get(authorize=False, headers=[('Accept','application/json')])
+		
+		assert rv.status_code == 401
 
 	def test_empty_data_post(self):
 		rv = self.post()
