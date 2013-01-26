@@ -31,9 +31,8 @@ class MenuService(BaseService):
             return render_template('show_menus.html', menus=items)
 
     
-    #@login_required
+    @login_required
     def post(self):
-        
         for json_object in request.json['items']:
             menu= KitchObject(json_object)
             uid =str(uuid.uuid1())
@@ -55,7 +54,7 @@ class MenuService(BaseService):
 
         return make_response(jsonify({'message':'Succesfully updated'}))
 
-
+    @login_required
     def delete(self, menu_uid):
 
         rowcount = db.execute('update menus set active=0 where uid=?', (menu_uid,)).rowcount
