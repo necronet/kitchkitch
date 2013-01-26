@@ -12,16 +12,10 @@ class CustomLoginManager(LoginManager):
 		if request.headers.has_key('Authorization'):
 			ctx = _request_ctx_stack.top
 			ctx.user = User.get(token=request.headers['Authorization'])
-			return
-		super(CustomLoginManager,self).reload_user()
+		else:	
+			super(CustomLoginManager,self).reload_user()
 	
 
-
-#In case we need a custom flask class
-#class KitchFlask(Flask):
-#	def make_response(self, rv):
-#		return Flask.make_response(self,rv)
-		
 app = Flask(__name__)
 app.config.from_object('default_settings')
 app.register_blueprint(menu)
@@ -34,10 +28,8 @@ login_manager.login_view = "user.login"
 @app.before_request
 def validate_request():
 
-	#ignore items validation if login or logout
 	if request.endpoint == 'user.login':
 		return None
-	#if request.headers.has_key('Authorization'):
 	#Validate mime type to always be json
 	if request.mimetype!='application/json' and request.method != 'GET':
 		abort(415)
@@ -65,6 +57,7 @@ def load_user(uid):
 
 @login_manager.unauthorized_handler
 def unauthorized_call():
+
 	return abort(401,'Unauthorized call please provide the proper credentials' )
 
 @app.route('/',methods=['GET','POST'])
