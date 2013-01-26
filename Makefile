@@ -1,4 +1,7 @@
-.PHONY: clean docs test
+.PHONY: clean docs test run
+
+run:
+	python kitch/runserver.py
 
 clean:
 	find . -name '*.pyc' -exec rm -f {} +
