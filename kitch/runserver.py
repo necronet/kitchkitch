@@ -3,8 +3,18 @@ from flask import Flask, render_template
 from utils.exceptions import abort
 from users.views import app as user, User
 from menus.views import  app as menu
-from flask import request
+from flask import request, _request_ctx_stack
 from flask.ext.login import LoginManager
+
+
+class CustomLoginManager(LoginManager):
+	def reload_user(self):
+		if request.headers.has_key('Authorization'):
+			ctx = _request_ctx_stack.top
+			ctx.user = User.get(token=request.headers['Authorization'])
+			return
+		super(CustomLoginManager,self).reload_user()
+	
 
 
 #In case we need a custom flask class
@@ -17,7 +27,7 @@ app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
 
-login_manager = LoginManager()
+login_manager = CustomLoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "user.login"
 
