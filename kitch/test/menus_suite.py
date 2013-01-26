@@ -4,7 +4,7 @@ from base import BaseTest
 class MenuTest(BaseTest):
 
 	def setUp(self):
-		super(MenuTest,self).setUp('/menus/')	
+		super(MenuTest,self).setUp('/menus/',auth=True)
 
 	def test_post(self):
 		rv=self.post(data=json.dumps({"items":[{"title":"Menu #1"}]}))
