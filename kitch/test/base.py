@@ -68,6 +68,9 @@ class BaseTest(unittest.TestCase):
 	def delete(self, uid,url=None,headers=None, content_type='application/json', **kwargs):
 		return self.c.delete(self.build_url(url=url,uid=uid,**kwargs), content_type=content_type,headers=self.config_headers(headers))
 
+	def put(self,url=None,data=json.dumps({}),content_type='application/json',headers=None,**kwargs):
+		return self.c.put(self.build_url(url=url,**kwargs),data=data,content_type=content_type, headers=self.config_headers(headers))
+
 	'''
 		Allows to clear the authorization session currently in the test_client() objects
 		by simply removing the _id and user_id from session_transaction object.

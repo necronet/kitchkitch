@@ -43,7 +43,7 @@ class MenuService(BaseService):
 
         return response
 
-    
+    @login_required
     def put(self):
         for json_object in request.json['items']:
             menu= KitchObject(json_object)

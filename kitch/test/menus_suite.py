@@ -25,7 +25,7 @@ class MenuTest(BaseTest):
 		  new_items.append({'uid':data['uid'],'title':data['title']+' Modified'})
 		
 		items['items']=new_items
-		rv=self.c.put('/menus/',data=json.dumps(items),content_type='application/json')
+		rv=self.put(data=json.dumps(items))
 		assert rv.status_code == 200
 	
 	def test_list_menus_filters(self):
@@ -41,7 +41,7 @@ class MenuTest(BaseTest):
 
 		for data in items['items']:
 			rv=self.delete(data['uid'])
-			
+
 			assert rv.status_code==202
 		
 		rv=self.get()
@@ -53,7 +53,7 @@ class MenuTest(BaseTest):
 class MenuItemTest(BaseTest):
 
 	def setUp(self):
-		super(MenuItemTest,self).setUp('/menuItems/')			
+		super(MenuItemTest,self).setUp('/menuItems/',auth=True)			
 
 	def test_post_menus_missing_menu_uid(self):
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
