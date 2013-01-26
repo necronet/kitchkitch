@@ -33,6 +33,7 @@ login_manager.login_view = "user.login"
 
 @app.before_request
 def validate_request():
+
 	#ignore items validation if login or logout
 	if request.endpoint == 'user.login':
 		return None
@@ -61,6 +62,10 @@ def bad_request_response():
 @login_manager.user_loader
 def load_user(uid):
 	return User.get(uid)
+
+@login_manager.unauthorized_handler
+def unauthorized_call():
+	return abort(401,'Unauthorized call please provide the proper credentials' )
 
 @app.route('/',methods=['GET','POST'])
 def index():
