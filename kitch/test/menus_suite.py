@@ -40,7 +40,8 @@ class MenuTest(BaseTest):
 		items=json.loads(rv.data)
 
 		for data in items['items']:
-			rv=self.c.delete('/menus/%s' % data['uid'],content_type='application/json')
+			rv=self.delete(data['uid'])
+			
 			assert rv.status_code==202
 		
 		rv=self.get()

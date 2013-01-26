@@ -3,7 +3,6 @@ import json
 import os,sys
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,parentdir) 
-from flask.sessions import SecureCookieSession
 from runserver import app
 
 def login(client, username, password):
@@ -16,10 +15,11 @@ class BaseTest(unittest.TestCase):
 	def setUp(self, url=None,auth=False):
 		self.c= app.test_client()
 		self.url = url
-		if auth:
+		if auth and self.auth_token is None:
 			rv = login(self.c,"admin","admin")
 			self.auth_token=json.loads(rv.data)['token']
-
+			
+		self.clear_auth()
 		app.config['TESTING'] = True
 
 	def tearDown(self):
@@ -30,12 +30,13 @@ class BaseTest(unittest.TestCase):
 		return self._auth_token
 
 	@auth_token.setter
-	def auth_token(self,value):
+	def auth_token(self,value): 
 		self._auth_token=value
 
 	#Ignore testing for usersTest
 	
 	def test_get(self):
+		
 		rv=self.get()
 		assert rv.status_code == 200
 
@@ -57,15 +58,34 @@ class BaseTest(unittest.TestCase):
 		
 		return '%s%s?%s' % (self.url if url is None else url ,uid,params)
 	
-	def post(self,url=None,data=json.dumps({}),content_type='application/json',**kwargs):
-		return self.c.post(self.build_url(url=url,**kwargs),data=data,content_type=content_type)
+	def post(self,url=None,data=json.dumps({}),content_type='application/json',headers=None,**kwargs):
+		return self.c.post(self.build_url(url=url,**kwargs),data=data,content_type=content_type, headers=self.config_headers(headers))
 
-	def get(self,uid='', url=None, authorize=True, headers=[('Accept','application/json')],**kwargs):
-		
-		if self.auth_token is not None and authorize:
+	def get(self,uid='', url=None, authorize=True, headers=None,**kwargs):
+		headers = self.config_headers(headers) if authorize else headers
+		return self.c.get(self.build_url(url=url,uid=uid,**kwargs),headers=headers)
+
+	def delete(self, uid,url=None,headers=None, content_type='application/json', **kwargs):
+		return self.c.delete(self.build_url(url=url,uid=uid,**kwargs), content_type=content_type,headers=self.config_headers(headers))
+
+	'''
+		Allows to clear the authorization session currently in the test_client() objects
+		by simply removing the _id and user_id from session_transaction object.
+	'''
+
+	def config_headers(self, headers):
+		if headers is None:
+			headers=[('Accept','application/json')]
+		if self.auth_token is not None:
 			headers.append(('Authorization',self.auth_token))
 
-		return self.c.get(self.build_url(url=url,uid=uid,**kwargs),headers=headers)
+		return headers
+
+	def clear_auth(self):
+		with self.c.session_transaction() as session:
+			session['_id']=None
+			session['user_id']=None
+
 
 class GeneralTest(BaseTest):
 
@@ -73,10 +93,6 @@ class GeneralTest(BaseTest):
 		super(GeneralTest,self).setUp('/menus/',auth=True)
 
 	def test_unauthorize(self):
-		with self.c.session_transaction() as session:
-			session['_id']=None
-			session['user_id']=None
-
 		rv = self.get(authorize=False, headers=[('Accept','application/json')])
 		
 		assert rv.status_code == 401
