@@ -5,7 +5,11 @@ from utils.exceptions import abort
 from kitch_db import db
 from flask.ext.login import login_required
 
-
+'''
+    Represent menus with associated their dishes as a collection of items. It consist on standars
+    REST calls GET for listing, POST for creating, PUT for modifying and DELETE to mark as remove.
+    
+'''
 class MenuService(BaseService):
     
     @login_required
@@ -24,7 +28,6 @@ class MenuService(BaseService):
             
             item = dict(uid=result.uid,title=result.title)
             response=jsonify(item)
-            
 
         if json_mime=='application/json':
             return response
