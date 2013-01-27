@@ -39,7 +39,7 @@ class MenuService(BaseService):
             uid =str(uuid.uuid1())
             db.execute('insert into menus(uid,title) values(%s,%s) ', uid,menu.title)
             response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
-
+            db.commit()
         
 
         return response
@@ -50,6 +50,7 @@ class MenuService(BaseService):
             menu= KitchObject(json_object)
             if json_object.has_key('uid'):
                 db.execute('update menus set title=%s where uid=%s',  menu.title,menu.uid)
+                db.commit()
 
         return make_response(jsonify({'message':'Succesfully updated'}))
 
@@ -57,7 +58,7 @@ class MenuService(BaseService):
     def delete(self, menu_uid):
 
         rowcount = db.execute_rowcount('update menus set active=0 where uid=%s', menu_uid)
-        
+        db.commit()
         if rowcount == 0:
             return Response(status= 200)
         
@@ -98,7 +99,7 @@ class MenuItemsService(BaseService):
 
             db.execute('insert into items(uid,title,description,price) values(%s,%s,%s,%s) ', uid,menu_items.title,menu_items.description,menu_items.price)
             db.execute('insert into menus_items(menus_uid,items_uid) values(%s,%s) ', menus_uid,uid)
-
+            db.commit()
         
         response=make_response(jsonify({'message':'Inserted succesfully'}),201,{'Location':request.url})
 
@@ -118,6 +119,7 @@ class MenuItemsService(BaseService):
             menu_items= KitchObject(json_object)
             db.execute("update items set title=%s, description=%s, price=%s where uid=%s",  menu_items.title,menu_items.description,menu_items.price,menu_items.uid)
             db.execute("update menus_items set menus_uid=%s where items_uid=%s",menus_uid,menu_items.uid)
+            db.commit()
 
         return make_response(jsonify({'message':'Succesfully updated'}))
     def delete(self,item_uid):
@@ -128,7 +130,7 @@ class MenuItemsService(BaseService):
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
         
         rowcount = db.execute_rowcount('update menus_items set active=0 where menus_uid=%s and items_uid=%s', menus_uid,item_uid)
-        
+        db.commit()
         
         
         if rowcount == 0:
