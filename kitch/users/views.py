@@ -19,20 +19,18 @@ class User(UserMixin):
     def get(uid=None, token=None):
         
         if uid is not None :
-            record=db.execute('select * from users where uid=?',[uid]).fetchone()
-            if record is not None:
-                return create_user_from_record(record)
+            record=db.get("select * from users where uid=%s",uid,)
+            return create_user_from_record(record)
         elif token is not None :
+            record=db.get("select * from tokens where token=%s and active=1",token,)
 
-            record=db.execute('select * from tokens where token=?',[token]).fetchone()
             if record is not None:
-                    
-                return User.get(record[0])        
+                return User.get(record.uid)        
 
 
 def create_user_from_record(record):
     
-    user =User(record[0],record[1],record[2],record[3])
+    user =User(record.uid,record.username,record.password,record.active)
     return user
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -61,8 +59,8 @@ def logout():
 
 def generate_token(user):
     token =str(uuid.uuid1())
-    db.execute('insert into tokens(uid,token) values(?,?) ',[user.id, token])
-    db.commit()
+    db.execute("insert into tokens(uid,token) values(%s,%s)",user.id, token,)
+    
     return token
 
 def validate_user():
@@ -72,7 +70,7 @@ def validate_user():
     else:
         (username,password)=request.form['username'],request.form['password'] 
 
-    record=db.execute('select * from users where username=? and password=?',[username,password]).fetchone()
+    record=db.get("select * from users where username=%s and password=%s",username,password,)
     
     if record is not None:
         return create_user_from_record(record)
