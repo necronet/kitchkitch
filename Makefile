@@ -1,6 +1,6 @@
 .PHONY: clean docs test run
 
-run:
+run:clean
 	python kitch/runserver.py
 
 clean:
