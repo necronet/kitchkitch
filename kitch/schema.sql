@@ -1,12 +1,14 @@
 /*
 * 	Users and privileges configuration
 */
+
 GRANT USAGE ON *.* TO 'kitch'@'localhost';
 DROP USER 'kitch'@'localhost';
 FLUSH PRIVILEGES;
 
 create user 'kitch'@'localhost' identified by 'kitch';
 grant select, insert, update on kitch.* to 'kitch'@'localhost';
+grant select, insert, update on kitch_test.* to 'kitch'@'localhost';
 
 flush privileges;
 
