@@ -8,10 +8,13 @@ from flask.ext.login import LoginManager
 
 
 class CustomLoginManager(LoginManager):
+
 	def reload_user(self):
+
 		if request.headers.has_key('Authorization'):
 			ctx = _request_ctx_stack.top
 			ctx.user = User.get(token=request.headers['Authorization'])
+
 		else:	
 			super(CustomLoginManager,self).reload_user()
 	
@@ -53,6 +56,7 @@ def bad_request_response():
 
 @login_manager.user_loader
 def load_user(uid):
+
 	return User.get(uid)
 
 @login_manager.unauthorized_handler
@@ -64,11 +68,13 @@ def index():
 	return render_template('docs/index.html')
 
 if __name__=='__main__':
-	
-	import logging
-	file_handler = logging.FileHandler('kitch.log')
-	file_handler.setLevel(logging.DEBUG)
-	file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d] [%(funcName)s() from %(module)s]'))
-	app.logger.addHandler(file_handler)
-
+	if app.debug:
+		import logging
+		from logging.handlers import RotatingFileHandler
+		file_handler = RotatingFileHandler('kitch.log','a', 1 * 1024 * 1024, 10)
+		file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d] [%(funcName)s() from %(module)s]'))
+		file_handler.setLevel(logging.INFO)
+		app.logger.setLevel(logging.INFO)
+		app.logger.addHandler(file_handler)
+		app.logger.info('kitch app starting up....')
 	app.run(debug=app.config['DEBUG'])
