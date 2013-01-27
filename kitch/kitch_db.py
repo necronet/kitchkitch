@@ -1,4 +1,4 @@
-import sqlite3
+from torndb import Connection
 from flask import _app_ctx_stack
 from werkzeug.local import LocalProxy
 
@@ -10,7 +10,12 @@ def get_db():
 	ctx = _app_ctx_stack.top
 	con = getattr(ctx,'kitch_db', None)
 	if con is None:
-		con = sqlite3.connect(ctx.app.config['DATABASE'])
+		
+		con = Connection(ctx.app.config['DB_HOST'],
+                      ctx.app.config['DB_NAME'],
+                      ctx.app.config['DB_USER'],
+                      ctx.app.config['DB_PASSWD'])
+
 		ctx.kitch_db=con
 	return con
 
