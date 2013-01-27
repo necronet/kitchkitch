@@ -1,3 +1,5 @@
 flask
 Flask-Login
 sphinx
+MySQL-python
+torndb
