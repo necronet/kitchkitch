@@ -5,6 +5,7 @@ import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
 
+
 class User(UserMixin):
     def __init__(self,uid, username, password,active):
         self.id=uid
@@ -60,7 +61,7 @@ def logout():
 def generate_token(user):
     token =str(uuid.uuid1())
     db.execute("insert into tokens(uid,token) values(%s,%s)",user.id, token,)
-    
+    db.commit()
     return token
 
 def validate_user():
