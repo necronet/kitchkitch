@@ -57,7 +57,6 @@ def load_user(uid):
 
 @login_manager.unauthorized_handler
 def unauthorized_call():
-
 	return abort(401,'Unauthorized call please provide the proper credentials' )
 
 @app.route('/',methods=['GET','POST'])
@@ -65,4 +64,11 @@ def index():
 	return render_template('docs/index.html')
 
 if __name__=='__main__':
+	
+	import logging
+	file_handler = logging.FileHandler('kitch.log')
+	file_handler.setLevel(logging.DEBUG)
+	file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d] [%(funcName)s() from %(module)s]'))
+	app.logger.addHandler(file_handler)
+
 	app.run(debug=app.config['DEBUG'])
