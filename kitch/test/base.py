@@ -97,7 +97,11 @@ class GeneralTest(BaseTest):
 
 	def test_unauthorize(self):
 		rv = self.get(authorize=False, headers=[('Accept','application/json')])
-		
+		assert rv.status_code == 401
+
+	def test_wrong_authorization(self):
+		self.auth_token='wrongtoken';
+		rv = self.get()
 		assert rv.status_code == 401
 
 	def test_empty_data_post(self):

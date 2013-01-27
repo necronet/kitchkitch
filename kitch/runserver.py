@@ -14,6 +14,7 @@ class CustomLoginManager(LoginManager):
 		if request.headers.has_key('Authorization'):
 			ctx = _request_ctx_stack.top
 			ctx.user = User.get(token=request.headers['Authorization'])
+			ctx.user = ctx.user if ctx.user is not None else self.anonymous_user()
 
 		else:	
 			super(CustomLoginManager,self).reload_user()
