@@ -12,8 +12,8 @@ class KitchObject(object):
 
 class BaseService(MethodView):
     def get(self,id):
-        self.offset= self.get_parameter('offset')
-        self.limit= self.get_parameter('limit',50)
+        self.offset= int(self.get_parameter('offset'))
+        self.limit= int(self.get_parameter('limit',50))
         
 
     def get_parameter(self, param_name, default_value=0):
