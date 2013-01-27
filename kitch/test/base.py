@@ -15,12 +15,13 @@ class BaseTest(unittest.TestCase):
 	def setUp(self, url=None,auth=False):
 		self.c= app.test_client()
 		self.url = url
+		app.config['TESTING'] = True
 		if auth and self.auth_token is None:
 			rv = login(self.c,"admin","admin")
 			self.auth_token=json.loads(rv.data)['token']
 			
 		self.clear_auth()
-		app.config['TESTING'] = True
+		
 
 	def tearDown(self):
 		pass	 
@@ -38,6 +39,7 @@ class BaseTest(unittest.TestCase):
 	def test_get(self):
 		
 		rv=self.get()
+
 		assert rv.status_code == 200
 
 	def check_item(self,data,keys,**kwargs):
