@@ -1,6 +1,6 @@
 import uuid
 from utils.entities import KitchObject, BaseService
-from flask import request, render_template,Blueprint,jsonify, make_response, Response
+from flask import request, render_template,Blueprint,jsonify, make_response, Response, url_for
 from utils.exceptions import abort
 from kitch_db import db
 from flask.ext.login import login_required
@@ -13,19 +13,20 @@ from flask.ext.login import login_required
 class MenuService(BaseService):
     
     @login_required
-    def get(self, menu_uid):
-        super(MenuService, self).get(menu_uid)
+    def get(self, uid):
+        super(MenuService, self).get(uid)
         json_mime = request.accept_mimetypes.best_match(['application/json','text/html'])
         
-        if menu_uid is None:
+        if uid is None:
 
             rows = db.query("select uid,title from menus where active=1 limit %s offset %s" ,self.limit, self.offset )
 
+            #print url_for('menuItemService',_method='POST')
             items = [dict(href='%s%s'%(request.url,row.uid),uid=row.uid,title=row.title) for row in rows]
 
             response=jsonify(items=items)
         else:
-            result = db.get("select uid,title from menus where uid=%s and active=1 limit %s offset %s" ,menu_uid,self.limit, self.offset) 
+            result = db.get("select uid,title from menus where uid=%s and active=1 limit %s offset %s" ,uid,self.limit, self.offset) 
             
             item = dict(href='%s%s'%(request.url,result.uid),uid=result.uid,title=result.title)
             response=jsonify(item)
@@ -60,9 +61,9 @@ class MenuService(BaseService):
         return make_response(jsonify({'message':'Succesfully updated'}))
 
     @login_required
-    def delete(self, menu_uid):
+    def delete(self, uid):
 
-        rowcount = db.execute_rowcount('update menus set active=0 where uid=%s', menu_uid)
+        rowcount = db.execute_rowcount('update menus set active=0 where uid=%s', uid)
         db.commit()
         if rowcount == 0:
             return Response(status= 200)
@@ -71,14 +72,14 @@ class MenuService(BaseService):
         return make_response(jsonify(response), 202)
 
 class MenuItemsService(BaseService):
-    def get(self, item_uid):
-        super(MenuItemsService, self).get(item_uid)
+    def get(self, uid):
+        super(MenuItemsService, self).get(uid)
         menus_uid=request.args.get('menus_uid')
         
         json_mime = request.accept_mimetypes.best_match(['application/json'])
 
-        if item_uid is not None:
-            result = db.get('select uid,title,description,price from items where uid=%s and active=1 limit %s offset %s',item_uid,self.limit, self.offset)
+        if uid is not None:
+            result = db.get('select uid,title,description,price from items where uid=%s and active=1 limit %s offset %s',uid,self.limit, self.offset)
 
             item = dict(href='%s%s'%(request.url,result.uid), uid=result.uid,title=result.title,description=result.description,price=str(result.price))
             return jsonify(item)
@@ -127,14 +128,14 @@ class MenuItemsService(BaseService):
             db.commit()
 
         return make_response(jsonify({'message':'Succesfully updated'}))
-    def delete(self,item_uid):
+    def delete(self,uid):
 
         menus_uid=request.args.get('menus_uid')
 
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
         
-        rowcount = db.execute_rowcount('update menus_items set active=0 where menus_uid=%s and items_uid=%s', menus_uid,item_uid)
+        rowcount = db.execute_rowcount('update menus_items set active=0 where menus_uid=%s and items_uid=%s', menus_uid,uid)
         db.commit()
         
         
@@ -164,7 +165,7 @@ def register_api(view, endpoint, url, pk, pk_type='string'):
 
 
 
-register_api(MenuService, 'menuService','/menus/','menu_uid')
-register_api(MenuItemsService, 'menuItemService','/menuItems/','item_uid')
+register_api(MenuService, 'menuService','/menus/','uid')
+register_api(MenuItemsService, 'menuItemService','/menuItems/','uid')
 
 
