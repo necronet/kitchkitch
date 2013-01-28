@@ -27,7 +27,7 @@ class MenuService(BaseService):
         else:
             result = db.get("select uid,title from menus where uid=%s and active=1 limit %s offset %s" ,menu_uid,self.limit, self.offset) 
             
-            item = dict(href='%s/%s'%(request.url,result.uid),uid=result.uid,title=result.title)
+            item = dict(href='%s%s'%(request.url,result.uid),uid=result.uid,title=result.title)
             response=jsonify(item)
 
         if json_mime=='application/json':
@@ -80,14 +80,14 @@ class MenuItemsService(BaseService):
         if item_uid is not None:
             result = db.get('select uid,title,description,price from items where uid=%s and active=1 limit %s offset %s',item_uid,self.limit, self.offset)
 
-            item = dict(uid=result.uid,title=result.title,description=result.description,price=str(result.price))
+            item = dict(href='%s%s'%(request.url,result.uid), uid=result.uid,title=result.title,description=result.description,price=str(result.price))
             return jsonify(item)
         
         if menus_uid is None:
             result = db.query("select uid,title,description,price from items where active=1 limit %s offset %s", self.limit, self.offset)
         else:
             result = db.query("select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s limit %s offset %s" ,menus_uid,self.limit, self.offset)
-        menus_items = [dict(uid=row.uid,title=row.title,description=row.description,price=str(row.price)) for row in result]
+        menus_items = [dict(href='%s%s'%(request.url,row.uid),uid=row.uid,title=row.title,description=row.description,price=str(row.price)) for row in result]
         
         if json_mime=='application/json':
             return jsonify(items=menus_items)
