@@ -35,12 +35,23 @@ class BaseTest(unittest.TestCase):
 		self._auth_token=value
 
 	#Ignore testing for usersTest
-	
-	def test_get(self):
-		
-		rv=self.get()
+	'''
+		Insert a record 
+		Then it tries to retrieve a list of those records
+		checking:
+			- response 200 OK
+			- at least there is one item in the list
+			- href is present in each item
 
+	'''
+	def test_get(self):
+		self.test_post()
+		rv=self.get()
 		assert rv.status_code == 200
+		response_data=json.loads(rv.data)['items']
+		assert len(response_data) > 0
+		for item in response_data:
+			assert item['href'] is not None
 
 	def check_item(self,data,keys,**kwargs):
 		rv=self.post(data=data,**kwargs)
