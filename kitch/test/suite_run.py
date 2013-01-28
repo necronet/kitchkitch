@@ -20,5 +20,5 @@ if __name__=='__main__':
 	for key,test in tests_suite.items():
 		if 'all' in run_test or key in run_test:
 			suite = unittest.TestLoader().loadTestsFromTestCase(test)
-			unittest.TextTestRunner(verbosity=1).run(suite)
+			unittest.TextTestRunner(verbosity=2).run(suite)
 	
