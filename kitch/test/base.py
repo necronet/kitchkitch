@@ -53,9 +53,20 @@ class BaseTest(unittest.TestCase):
 		for item in response_data:
 			assert item['href'] is not None
 
+
+	'''
+		Basic method to check that get request with a uid 
+		is correct. 
+
+		- Ensure that an item is created, by doing a test_post 
+		- Does  GET request an append uid to it. i.e (http://localhost/menu?uid=XXXXX)
+		- Assert that the response contains the keys list.
+
+		Note: will always append 'href' to keys list.
+	'''
 	def check_item(self,data,keys,**kwargs):
-		rv=self.post(data=data,**kwargs)
-		assert rv.status_code == 201
+		keys.append('href')
+		self.test_post()
 		rv=self.get()
 		uid=json.loads(rv.data)['items'][0]['uid']
 		rv=self.get(uid=uid)
@@ -107,6 +118,10 @@ class GeneralTest(BaseTest):
 
 	def setUp(self):
 		super(GeneralTest,self).setUp('/menus/',auth=True)
+
+	@unittest.skip('Not valid for general testing')
+	def test_get(self):
+		pass
 
 	def test_unauthorize(self):
 		rv = self.get(authorize=False, headers=[('Accept','application/json')])

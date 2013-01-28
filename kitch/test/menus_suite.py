@@ -11,7 +11,7 @@ class MenuTest(BaseTest):
 		assert rv.status_code == 201
 
 	def test_get_item(self):
-		self.check_item(json.dumps({"items":[{"title":"Menu #1"}]}),('uid','title'))
+		self.check_item(json.dumps({"items":[{"title":"Menu #1"}]}),['uid','title'])
 
 	def test_put(self):
 		rv=self.get()
