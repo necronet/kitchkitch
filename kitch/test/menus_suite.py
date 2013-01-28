@@ -65,7 +65,7 @@ class MenuItemTest(BaseTest):
 		uid=json.loads(rv.data)['items'][0]['uid']
 		
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
-		self.check_item(json.dumps(menu_items),('uid','title'),menus_uid=uid)
+		self.check_item(json.dumps(menu_items),['uid','title'],menus_uid=uid)
 
 	def test_post(self):
 		rv=self.get(url='/menus/')
