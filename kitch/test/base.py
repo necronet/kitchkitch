@@ -53,7 +53,7 @@ class BaseTest(unittest.TestCase):
 		for item in response_data:
 			assert item['href'] is not None
 
-
+		return response_data
 	'''
 		Basic method to check that get request with a uid 
 		is correct. 
@@ -72,7 +72,11 @@ class BaseTest(unittest.TestCase):
 		rv=self.get(uid=uid)
 		assert rv.status_code == 200
 		#Check all properties are i response
-		for i in keys: assert i in json.loads(rv.data) 
+		
+		response_object=json.loads(rv.data) 
+		for i in keys: assert i in response_object
+
+		return response_object
 
 	def build_url(self, uid='',url=None,**kwargs):
 		params=''	
