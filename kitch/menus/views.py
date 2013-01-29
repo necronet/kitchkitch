@@ -6,33 +6,49 @@ from kitch_db import db
 from flask.ext.login import login_required
 
 '''
-    Represent menus with associated their dishes as a collection of items. It consist on standars
-    REST calls GET for listing, POST for creating, PUT for modifying and DELETE to mark as remove.
-
+Represent menus with associated their dishes as a collection of items. It consist on standars
+REST calls GET for listing, POST for creating, PUT for modifying and DELETE to mark as remove.
 '''
 class MenuService(BaseService):
     
     @login_required
     def get(self, uid):
         super(MenuService, self).get(uid)
+
         json_mime = request.accept_mimetypes.best_match(['application/json','text/html'])
-        
+        menu_items=[]
         if uid is None:
 
             rows = db.query("select uid,title from menus where active=1 limit %s offset %s" ,self.limit, self.offset )
             items=[]
+
             for row in rows:
-                menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_method='GET',_external=True),row.uid,))
-                items.append( dict(href='%s%s'%(request.url,row.uid),uid=row.uid,title=row.title,items=menu_items) )
+
+                if self.expand is not None:
+                    for argument in self.expand_arguments():
+                        if argument == 'items':
+                            menu_items = self.fetch_items(row.uid)
+
+                if not menu_items:
+                    menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_method='GET',_external=True),row.uid,))
+
+                items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,title=row.title,items=menu_items) )
 
             response=jsonify(items=items)
         else:
 
-            result = db.get("select uid,title from menus where uid=%s and active=1 limit %s offset %s" ,uid,self.limit, self.offset) 
+            result = db.get("select uid,title from menus where uid=%s and active=1 limit %s offset %s" ,uid,self.limit, self.offset)
 
-            items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_method='GET',_external=True),result.uid,) )
+            if self.expand is not None:
+                for argument in self.expand_arguments():
 
-            item = dict(href="%s" % (request.url,),uid=result.uid,title=result.title, items=items)
+                    if argument == 'items':
+                        menu_items= self.fetch_items(uid)
+
+            if not menu_items:
+                menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_method='GET',_external=True),result.uid,) )
+
+            item = dict(href="%s" % (request.base_url,),uid=result.uid,title=result.title, items=menu_items)
 
             response=jsonify(item)
 
@@ -41,6 +57,12 @@ class MenuService(BaseService):
         elif json_mime=='text/html':
             return render_template('show_menus.html', menus=items)
 
+    def fetch_items(self,uid):
+        #print "select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s" % uid
+        result= db.query("select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s" ,uid)
+        menu_items= [dict(href='%s%s'%(url_for('.menuItemService',_method='GET',_external=True),item.uid),uid=item.uid,title=item.title,description=item.description,price=str(item.price)) for item in result]
+        #print uid
+        return menu_items
     
     @login_required
     def post(self):
@@ -86,14 +108,14 @@ class MenuItemsService(BaseService):
         if uid is not None:
             result = db.get('select uid,title,description,price from items where uid=%s and active=1 limit %s offset %s',uid,self.limit, self.offset)
 
-            item = dict(href='%s'%(request.url), uid=result.uid,title=result.title,description=result.description,price=str(result.price))
+            item = dict(href='%s%s'%(request.base_url,uid), uid=result.uid,title=result.title,description=result.description,price=str(result.price))
             return jsonify(item)
         
         if menus_uid is None:
             result = db.query("select uid,title,description,price from items where active=1 limit %s offset %s", self.limit, self.offset)
         else:
             result = db.query("select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s limit %s offset %s" ,menus_uid,self.limit, self.offset)
-        menus_items = [dict(href='%s%s'%(request.url,row.uid),uid=row.uid,title=row.title,description=row.description,price=str(row.price)) for row in result]
+        menus_items = [dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,title=row.title,description=row.description,price=str(row.price)) for row in result]
         
         if json_mime=='application/json':
             return jsonify(items=menus_items)
