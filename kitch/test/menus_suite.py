@@ -6,12 +6,18 @@ class MenuTest(BaseTest):
 	def setUp(self):
 		super(MenuTest,self).setUp('/menus/',auth=True)
 
+	def test_get(self):
+		response=super(MenuTest,self).test_get()
+		for row in response:
+			assert row.has_key('items')
+
 	def test_post(self):
 		rv=self.post(data=json.dumps({"items":[{"title":"Menu #1"}]}))
 		assert rv.status_code == 201
 
 	def test_get_item(self):
-		self.check_item(json.dumps({"items":[{"title":"Menu #1"}]}),['uid','title'])
+		response_object=self.check_item(json.dumps({"items":[{"title":"Menu #1"}]}),['uid','title'])
+		assert response_object.has_key('items')
 
 	def test_put(self):
 		rv=self.get()
@@ -53,7 +59,7 @@ class MenuTest(BaseTest):
 class MenuItemTest(BaseTest):
 
 	def setUp(self):
-		super(MenuItemTest,self).setUp('/menuItems/',auth=True)			
+		super(MenuItemTest,self).setUp('/menuItems/',auth=True)
 
 	def test_post_menus_missing_menu_uid(self):
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
@@ -65,7 +71,9 @@ class MenuItemTest(BaseTest):
 		uid=json.loads(rv.data)['items'][0]['uid']
 		
 		menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
-		self.check_item(json.dumps(menu_items),['uid','title'],menus_uid=uid)
+		response=self.check_item(json.dumps(menu_items),['uid','title'],menus_uid=uid)
+		assert response.has_key('href')
+
 
 	def test_post(self):
 		rv=self.get(url='/menus/')
