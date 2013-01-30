@@ -1,5 +1,6 @@
+jinja2
+werkzeug
 flask
 Flask-Login
 sphinx
 MySQL-python
-torndb
