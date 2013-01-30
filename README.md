@@ -1,22 +1,58 @@
-#LEEME
+
+#Desarrollo Kitch API 
 
 
-Bienvenido al API Kitch. La siguiente es la guia oficial para desarrolladores del API.
-
-##Informacion General
-
+<br/>
 **Kitch** es primariamente un API REST orientado a mejorar los servicios ordenes en restaurantes.
-
+- - -
 ##Requerimientos
 
+###- Python 2.7.x 
 
-Para el ambiente de desarrollo necesitaras
+####Linux o OSX 
 
-- [Python 2.7.x](http://python.org/download/)
-- [MySQL 5.x](http://www.mysql.com/downloads/mysql/)
+Si trabajas desde ambiente es muy probable que ya tengas instalado alguna version de python ejecuta:
+	
+		> python --version
+		
+Deberias obtener **"Python 2.7.1"	** o alguna similar.
+	
+####Windows
+
+Si trabajas con windows necesitaras descargar python desde el sitio oficial <http://python.org/download/>. Asegurate que sea python 2.7.x para la version de windows que se ajuste mejor a tu ambiente.
+
+Luego recuerda de configurar el PATH para que apunte a *C:\Python27*, este paso es necesario para tener el comando python en la consola de windows.
 
 
-##Pasos para instalacion
+### - MySQL 5.x
+<http://www.mysql.com/downloads/mysql/>
+
+Kitch utiliza primariamente MySQL para almacenar informacion. Asegurate de tener instalado MySQL en tu equipo y que puedas entrar con accedo root ó algun usuario que permita creacion de esquemas.
+
+### - Torndb
+Es un proyecto que encapsula parte de la sentencias MySQL-python y crea objetos dinamicos a partir de select-statement. Para hacer uso del proyecto debes descargarlo con [github](git@github.com:necronet/torndb.git) o simplemente descarga el [proyecto](https://github.com/necronet/torndb).
+
+Luego ejecuta dentro de la carpeta de torndb:
+	
+	python setup.py install
+
+`Nota es muy probable que durante el desarrollo se incorpore torndb para acoplarlo mejor a Kitch.`
+
+###Ademas…
+
+Tambien es necesario tener [**git**](http://git-scm.com/) para version de control, descargar las fuentes y hacer commits al repositorio. Para facilitar push al repositorio remoto, lee la guia oficial para [Generar llaves ssh de github](http://www.tldrlegal.com/)
+<br/>
+
+
+
+- - -
+
+##Desplegar aplicacion localmente
+
+Luego de instalar python y mysql, puedes obtener las fuentes del proyecto 
+
+	git clone git@github.com:necronet/kitchkitch.git
+
 
 ###Estructura del proyecto
 Es muy probable que si leas esto estes en el repositorio. El proyecto esta estructurado de la siguiente forma.
@@ -49,11 +85,14 @@ Dentro del proyecto tambien hay un archivo llamado requirements.txt que define l
 - [Flask-Login](http://packages.python.org/Flask-Login/)
 - [Sphinx](sphinx-doc.org)
 - [MySQL-python](http://pypi.python.org/pypi/MySQL-python)
-- [Torndb](http://torndb.readthedocs.org/en/latest/)
+- [Jinja2](http://jinja.pocoo.org/docs/)
+- [Werkzeug](http://werkzeug.pocoo.org/)
 
-Con pip puedes instalar todas las dependencias ejecutando:
+Con pip puedes instalar todas las dependencias ejecutando ([como instalar pip](#install-pip) ):
 
 	pip install -r requirements.txt
+
+[Torndb](https://github.com/necronet/torndb) no esta en el archivo de requirements.txt pero aun asi es una dependencia que hablamos en la seccion de requerimientos.
 
 ###Base de datos
 
@@ -73,6 +112,17 @@ Actualmente Kitch cuenta con dos esquemas de bases de datos
 		Cuando ejecutas la suite de pruebas habilita Testing en la configuracion de la app.
 			config['TESTING'] =True
 
+###Ejecutando la aplicacion
+
+Existen dos formas de comprobar que todo esta trabajando correctamente, la primera es correr la aplicacion con:
+
+	python runserver.py
+	
+La seguna para hacer una prueba mas a profundidad es utilizar el script de pruebas:
+
+	python test/suite_run.py
+
+En caso que alguna prueba falle, reportala a <joseayerdis@gmail.com> con los respectivos detalles. 
 
 ###Usando Make
 
@@ -86,3 +136,22 @@ docs: crear la documentacion usando sphinx.
 
 
 ##Problemas frecuentes
+
+###<a name="#install-pip">¿Como instalar pip?</a>
+
+Existen muchas formas de instalar pip. Si estas en linux o en OSX, intenta usar el comando.
+	
+	easy_install pip 
+	
+En caso de estar en **windows** necesitas seguir los siguientes pasos:
+
+- Descarga la version de [easy install](http://pypi.python.org/pypi/setuptools) para windows. 
+- Descarga [pip](http://pypi.python.org/pypi/pip#downloads)
+- Descomprimela el contenido de pip en la carpeta de C:\Python2.x\ (Recuerda solo el contenido )
+- Ejecuta en la la carpeta - C:\Python2x\ - el comando
+		
+		python setup.py install
+- Por ultimo agrega C:\Python2.x\Scripts a tu PATH de windows.
+
+Y disfruta de pip.!!!
+
