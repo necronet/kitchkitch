@@ -1,6 +1,6 @@
 import uuid
 from utils.entities import KitchObject, BaseService
-from flask import request, Blueprint,jsonify, make_response, Response, url_for
+from flask import request, Blueprint,url_for
 from utils.exceptions import abort
 from kitch_db import db
 from flask.ext.login import login_required
@@ -13,7 +13,7 @@ class MenuService(BaseService):
     
     @login_required
     def get(self, uid):
-        super(MenuService, self).get(uid)
+        super(MenuService, self).get(uid,'show_menu.html')
 
         menu_items=[]
         if uid is None:
@@ -46,14 +46,8 @@ class MenuService(BaseService):
 
             items = dict(href="%s" % (request.base_url,),uid=result.uid,title=result.title, items=menu_items)
 
-
         return self.get_response(items)
-
-        """ if json_mime=='application/json':
-            return response
-        elif json_mime=='text/html':
-            return render_template('show_menus.html', menus=items)
-        """
+       
 
     def fetch_items(self,uid):
         #print "select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s" % uid
