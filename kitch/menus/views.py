@@ -8,6 +8,8 @@ from flask.ext.login import login_required
 '''
 Represent menus with associated their dishes as a collection of items. It consist on standars
 REST calls GET for listing, POST for creating, PUT for modifying and DELETE to mark as remove.
+
+
 '''
 class MenuService(BaseService):
     
@@ -15,6 +17,7 @@ class MenuService(BaseService):
     def get(self, uid):
         super(MenuService, self).get(uid,'show_menu.html')
 
+        
         menu_items=[]
         if uid is None:
 
@@ -50,10 +53,8 @@ class MenuService(BaseService):
        
 
     def fetch_items(self,uid):
-        #print "select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s" % uid
         result= db.query("select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s" ,uid)
         menu_items= [dict(href='%s%s'%(url_for('.menuItemService',_method='GET',_external=True),item.uid),uid=item.uid,title=item.title,description=item.description,price=str(item.price)) for item in result]
-        #print uid
         return menu_items
     
     @login_required
@@ -61,9 +62,7 @@ class MenuService(BaseService):
         for json_object in request.json['items']:
             menu= KitchObject(json_object)
             uid =str(uuid.uuid1())
-            #TODO: add location to each item
             db.execute('insert into menus(uid,title) values(%s,%s) ', uid,menu.title)
-            
             db.commit()
         
         return self.post_response()
