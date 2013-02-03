@@ -1,7 +1,7 @@
 from flask import request, flash, render_template, redirect, url_for,Blueprint,make_response,jsonify
 from flask.ext.login import login_user,UserMixin, login_required, logout_user
 from kitch_db import db
-from utils.entities import BaseService
+from utils.entities import BaseService, register_api
 import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
@@ -42,7 +42,7 @@ class UserService(BaseService):
 
 class LoginService(BaseService):
     def get(self):
-        return render_template('login.html')
+        return make_response(None,501)
 
     def post(self):
         user=validate_user()
@@ -93,25 +93,6 @@ def create_user_from_record(record):
     user =User(record.uid,record.username,record.password,record.active)
     return user
 
-
-
-'''
-Register a MethodView class to hold the standard pattern
-
-GET: /url/
-GET, DELETE: /url/[id]
-PUT,POST: /url/
-
-'''
-def register_api(view, endpoint, url, pk, pk_type='string'):
-    view_func = view.as_view(endpoint)
-    app.add_url_rule(url, defaults={pk: None},
-        view_func=view_func, methods=['GET',])
-    app.add_url_rule(url, view_func=view_func, methods=['POST','PUT',])
-    app.add_url_rule('%s<%s:%s>' %(url,pk_type,pk), view_func=view_func,
-        methods=['GET', 'DELETE'])
-
-
-register_api(LoginService, 'loginService','/login/','uid')
+register_api(app,LoginService, 'loginService','/login/','uid')
 
 

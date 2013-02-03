@@ -1,17 +1,17 @@
 import uuid
-from utils.entities import KitchObject, BaseService
+from utils.entities import KitchObject, BaseService, register_api
 from flask import request, Blueprint,url_for
 from utils.exceptions import abort
 from kitch_db import db
 from flask.ext.login import login_required
 
-'''
-Represent menus with associated their dishes as a collection of items. It consist on standars
-REST calls GET for listing, POST for creating, PUT for modifying and DELETE to mark as remove.
 
-
-'''
 class MenuService(BaseService):
+    """
+    Represent menus with associated their dishes as a collection of items.
+    It consist on standars REST calls GET for listing, POST for creating,
+    PUT for modifying and DELETE to mark as remove.
+    """
     
     @login_required
     def get(self, uid):
@@ -147,24 +147,7 @@ class MenuItemsService(BaseService):
 
 app = Blueprint('menus',__name__,template_folder='templates')
 
-'''
-Register a MethodView class to hold the standard pattern
-
-GET: /url/ 
-GET, DELETE: /url/[id] 
-PUT,POST: /url/
-
-'''
-def register_api(view, endpoint, url, pk, pk_type='string'):
-    view_func = view.as_view(endpoint)
-    app.add_url_rule(url, defaults={pk: None},
-                     view_func=view_func, methods=['GET',])
-    app.add_url_rule(url, view_func=view_func, methods=['POST','PUT',])
-    app.add_url_rule('%s<%s:%s>' %(url,pk_type,pk), view_func=view_func,
-                     methods=['GET', 'DELETE'])
-
-
-register_api(MenuService, 'menuService','/menus/','uid')
-register_api(MenuItemsService, 'menuItemService','/menuItems/','uid')
+register_api(app,MenuService, 'menuService','/menus/','uid')
+register_api(app,MenuItemsService, 'menuItemService','/menuItems/','uid')
 
 

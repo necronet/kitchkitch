@@ -92,5 +92,19 @@ class BaseService(MethodView):
 
         return expand_arguments
 
+def register_api(app,view, endpoint, url, pk, pk_type='string'):
+    """
+    Register a MethodView class to hold the standard pattern
+
+    GET: /url/
+    GET, DELETE: /url/[id]
+    PUT,POST: /url
+    """
+    view_func = view.as_view(endpoint)
+    app.add_url_rule(url, defaults={pk: None},
+        view_func=view_func, methods=['GET',])
+    app.add_url_rule(url, view_func=view_func, methods=['POST','PUT',])
+    app.add_url_rule('%s<%s:%s>' %(url,pk_type,pk), view_func=view_func,
+        methods=['GET', 'DELETE'])
 
 
