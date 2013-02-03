@@ -8,6 +8,23 @@ def to_json(datas):
 
 encoders={'application/json':to_json,'text/html':render_template}
 
+import hashlib
+import uuid
+import time
+
+"""
+Very importan encryption function that create a random salt with a timestamp
+then concatenate this to the message to be hash and finally iterate it in order
+to make it hard to rainbow the data.
+"""
+def encrypt_interaction(data,iterate=50000):
+    random_salt=str(uuid.uuid1())
+    t = int(round(time.time()))
+    for i in range(0,iterate):
+        data = hashlib.sha256(data+random_salt+str(t)).hexdigest()
+
+    return iterate,t,random_salt,data
+
 class KitchObject(object):
     def __init__(self, obj):        
         for k, v in obj.iteritems():
@@ -18,6 +35,14 @@ class KitchObject(object):
 
 
 class BaseService(MethodView):
+    """
+        Base inheritance class in the app. Oriented to standarize the behaviour between the
+        Resources.
+
+        Get and validate offset and limit in query string.
+        Handle expand parameter and return the list of expand entities.
+        Template.
+    """
     def get(self,id,template=None):
         self.offset= int(self.get_parameter('offset'))
         self.limit= int(self.get_parameter('limit',50))
