@@ -28,7 +28,17 @@ pincode	int default 6969,
 active int default 1,
 unique(username) );
 
-insert into users values('21232f297a57a5a743894a0e4a801fc3','admin','admin',6969,1);
+--Hold data regarding data to be use in the user encryption schemas
+drop table if exists meta_user;
+create table meta_user (
+  uid varchar(36) primary key,
+  iteraction int not null,
+  product varchar(36),
+  modified_on int not null
+)
+
+insert into users values('c4860202-6e59-11e2-b8ac-3c0754558970','admin','6bf7c9bbd792dbb2af69dddbacb23fa3748c2ff2200aaa5210ae4f2257a0cc32',50000,6969,1);
+insert into meta_user values('c4860202-6e59-11e2-b8ac-3c0754558970',50000,'98e8eb4f-6e59-11e2-b9a9-3c0754558970',1359934187)
 
 drop table if exists tokens;
 create table tokens( 
@@ -41,7 +51,7 @@ primary key(uid,token));
 drop table if exists menus;
 create table menus (
  uid varchar(36) primary key,
- title varchar(100) not null, #Menus title bigger than 100 character don't expect to see this
+ title varchar(100) not null, --Menus title bigger than 100 character don't expect to see this
  active int default 1
 );
 
