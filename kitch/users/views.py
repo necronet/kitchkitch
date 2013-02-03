@@ -61,9 +61,11 @@ class LoginService(BaseService):
         database or logout the user from the session
     """
     def delete(self,uid):
-        print 'data '+uid
         logout_user()
-        #TODO: still need to inactivate the token
+
+        db.execute_rowcount('update tokens set active=0 where token=%s', uid)
+        db.commit()
+
         return self.delete_response()
 
 def generate_token(user):

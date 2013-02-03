@@ -137,14 +137,12 @@ class MenuItemsService(BaseService):
     def delete(self,uid):
 
         menus_uid=request.args.get('menus_uid')
-
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
         
         db.execute_rowcount('update menus_items set active=0 where menus_uid=%s and items_uid=%s', menus_uid,uid)
         db.commit()
-        
-        
+
         return self.delete_response()
 
 app = Blueprint('menus',__name__,template_folder='templates')
