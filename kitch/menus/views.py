@@ -16,8 +16,6 @@ class MenuService(BaseService):
     @login_required
     def get(self, uid):
         super(MenuService, self).get(uid,'show_menu.html')
-
-        
         menu_items=[]
         if uid is None:
 

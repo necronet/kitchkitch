@@ -84,8 +84,6 @@ def validate_user():
 
     return create_user_from_record(record)
 
-
-
 def create_user_from_record(record):
 
     if record is None: return record

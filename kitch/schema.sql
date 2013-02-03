@@ -25,7 +25,8 @@ uid varchar(36) primary key,
 username varchar(50) not null, #Username bigger than 50? I don't think so
 password varchar(40) not null, #SHA1 base passwords
 pincode	int default 6969,
-active int default 1);
+active int default 1,
+unique(username) );
 
 insert into users values('21232f297a57a5a743894a0e4a801fc3','admin','admin',6969,1);
 
