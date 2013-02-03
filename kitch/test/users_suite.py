@@ -26,7 +26,7 @@ class UsersTest(unittest.TestCase):
         rv=login(self.c,"admin","admin")
         self.auth_token=json.loads(rv.data)['token']
         rv=self.c.delete('/login/%s'% self.auth_token,content_type='application/json',headers=self.config_headers([]))
-        print rv.data
+        assert rv.status_code == 202
 
 
     def config_headers(self, headers):
