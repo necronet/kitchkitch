@@ -64,7 +64,7 @@ class MenuItemTest(BaseTest):
 
     def test_post_menus_missing_menu_uid(self):
         menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
-        rv=self.c.post('/menuItems/',data=json.dumps(menu_items),content_type='application/json')
+        rv=self.post(json.dumps(menu_items))
         assert rv.status_code == 400
 
     def test_get_item(self):
@@ -116,7 +116,7 @@ class MenuItemTest(BaseTest):
         menu_item=json.loads(rv.data)['items'][0]
         update_data = {'items':[{'uid':menu_item['uid'],'title':menu_item['title'],'description':menu_item['description'],'price':menu_item['price']}]}
 
-        rv=self.c.put('/menuItems/?menus_uid=%s' % menus_uid ,data=json.dumps(update_data),content_type='application/json')
+        rv=self.put(data=json.dumps(update_data),menus_uid=menus_uid )
         assert rv.status_code == 200
 
     def test_delete_items(self):
@@ -129,7 +129,7 @@ class MenuItemTest(BaseTest):
 
         for data in json.loads(rv.data)['items']:
 
-            rv=self.c.delete('/menuItems/%s?menus_uid=%s' % (data['uid'],menus_uid),content_type='application/json')
+            rv=self.delete(data['uid'],menus_uid=menus_uid)
             assert rv.status_code == 202
 
         rv=self.get(menus_uid=menus_uid)
