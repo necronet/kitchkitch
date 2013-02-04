@@ -24,7 +24,7 @@ create table users(
 uid varchar(36) primary key, 
 username varchar(50) not null, #Username bigger than 50? I don't think so
 password varchar(64) not null, #SHA1 base passwords
-pincode	int default 6969,
+pincode	char(4) default '0000',#Default pincode for accesing
 active int default 1,
 unique(username) );
 
