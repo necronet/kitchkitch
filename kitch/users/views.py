@@ -7,11 +7,6 @@ import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
 
-"""
-    Most likely the only RPC-style method. In order to simplify this call, 
-    login/logout are specially created to keep this format.
-"""
-
 class User(UserMixin):
     """
         User represent a user in the system. It contains 
@@ -42,8 +37,8 @@ class UserService(BaseService):
     pass
 
 class LoginService(BaseService):
-    def get(self):
-        return make_response(None,501)
+    def get(self,uid):
+        return make_response(jsonify({}),501)
 
     def post(self):
         user=validate_user()

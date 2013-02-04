@@ -36,7 +36,9 @@ class UsersTest(unittest.TestCase):
         rv=login(self.c,"","")
         assert rv.status_code == 400
 
-
+    def test_get_login(self):
+        rv=self.c.get('/login/', content_type='application/json',headers=[('Accept','application/json')])
+        assert rv.status_code==501
 
     def config_headers(self, headers):
         if headers is None:
