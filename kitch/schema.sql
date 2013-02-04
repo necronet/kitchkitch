@@ -23,26 +23,26 @@ drop table if exists users;
 create table users( 
 uid varchar(36) primary key, 
 username varchar(50) not null, #Username bigger than 50? I don't think so
-password varchar(40) not null, #SHA1 base passwords
+password varchar(64) not null, #SHA1 base passwords
 pincode	int default 6969,
 active int default 1,
 unique(username) );
 
---Hold data regarding data to be use in the user encryption schemas
-drop table if exists meta_user;
-create table meta_user (
-  uid varchar(36) primary key,
+#Hold data regarding data to be use in the user encryption schemas
+drop table if exists meta_users;
+create table meta_users (
+  user_uid varchar(36) primary key,
   iteraction int not null,
   product varchar(36),
   modified_on int not null
-)
+);
 
-insert into users values('c4860202-6e59-11e2-b8ac-3c0754558970','admin','6bf7c9bbd792dbb2af69dddbacb23fa3748c2ff2200aaa5210ae4f2257a0cc32',50000,6969,1);
-insert into meta_user values('c4860202-6e59-11e2-b8ac-3c0754558970',50000,'98e8eb4f-6e59-11e2-b9a9-3c0754558970',1359934187)
+insert into users values('c4860202-6e59-11e2-b8ac-3c0754558970','admin','d82670cb1512cddcf3a5b0d0760f65cf5a67704951abb3d45180e87eb31e5e6f',6969,1);
+insert into meta_users values('c4860202-6e59-11e2-b8ac-3c0754558970',50000,'98e8eb4f-6e59-11e2-b9a9-3c0754558970',1359934187);
 
 drop table if exists tokens;
 create table tokens( 
-uid varchar(36) not null, 
+uid varchar(36) not null,
 token varchar(40) not null,
 active int default 1,
 primary key(uid,token));
@@ -51,7 +51,7 @@ primary key(uid,token));
 drop table if exists menus;
 create table menus (
  uid varchar(36) primary key,
- title varchar(100) not null, --Menus title bigger than 100 character don't expect to see this
+ title varchar(100) not null, #Menus title bigger than 100 character don't expect to see this
  active int default 1
 );
 
