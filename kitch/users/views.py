@@ -1,8 +1,9 @@
 from flask import request, redirect, url_for,Blueprint,make_response,jsonify
 from flask.ext.login import login_user,UserMixin, logout_user,login_required
 from kitch_db import db
-from utils.entities import BaseService, register_api,encrypt_with_interaction
+from utils.entities import BaseService, register_api,encrypt_with_interaction,KitchObject
 from utils.exceptions import abort
+import MySQLdb
 import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
@@ -49,6 +50,24 @@ class UserService(BaseService):
 
         
         return self.get_response(items)
+
+    """
+        Create new User, making a POST call to the User resource. 
+    """
+    @login_required
+    def post(self):       
+
+        user= KitchObject(request.json)
+        uid =str(uuid.uuid1())
+        try:
+            db.execute('insert into users(uid,username,password,pincode) values(%s,%s,%s,%s) ', uid,user.username,user.password,user.pincode)
+            db.commit()
+            return self.post_response()
+        except MySQLdb.IntegrityError as e:
+            abort(409, 'This username already exist.')
+
+        
+        
 
 class LoginService(BaseService):
     def get(self,uid):
