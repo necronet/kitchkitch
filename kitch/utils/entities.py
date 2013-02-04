@@ -17,13 +17,12 @@ Very importan encryption function that create a random salt with a timestamp
 then concatenate this to the message to be hash and finally iterate it in order
 to make it hard to rainbow the data.
 """
-def encrypt_interaction(data,iterate=50000):
-    random_salt=str(uuid.uuid1())
-    t = int(round(time.time()))
+def encrypt_with_interaction(data,random_salt=str(uuid.uuid1()),iterate=50000,t = int(round(time.time()))):
+
     for i in range(0,iterate):
         data = hashlib.sha256(data+random_salt+str(t)).hexdigest()
 
-    return iterate,t,random_salt,data
+    return data,iterate,t,random_salt
 
 class KitchObject(object):
     def __init__(self, obj):        
