@@ -1,7 +1,7 @@
 from flask import request, flash, render_template, redirect, url_for,Blueprint,make_response,jsonify
 from flask.ext.login import login_user,UserMixin, login_required, logout_user
 from kitch_db import db
-from utils.entities import BaseService, register_api
+from utils.entities import BaseService, register_api,encrypt_with_interaction
 import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
@@ -78,11 +78,18 @@ def validate_user():
     if request.json:
         (username,password)=request.json['username'],request.json['password'] 
     else:
-        (username,password)=request.form['username'],request.form['password'] 
+        (username,password)=request.form['username'],request.form['password']
 
-    record=db.get("select * from users where username=%s and password=%s",username,password,)
+    record_user=db.get("select * from users where username=%s",username,)
+    password_encrypt=record_user.password
 
-    return create_user_from_record(record)
+    record=db.get("select iteraction,product,modified_on from meta_users where user_uid=%s",record_user.uid,)
+
+    #Ignore iterate, salt, time will not be use this time we just need the encrypted password
+    password,_,_,_=encrypt_with_interaction(password,random_salt=record.product,iterate=record.iteraction,t=record.modified_on)
+
+    if  password==password_encrypt:
+        return create_user_from_record(record_user)
 
 def create_user_from_record(record):
 
