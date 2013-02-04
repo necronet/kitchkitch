@@ -22,6 +22,16 @@ class BaseTest(unittest.TestCase):
 
         self.clear_auth()
 
+    def test_with_no_auth(self):
+        if self.auth_token:
+            self.clear_auth()
+            self.auth_token=None
+            rv=self.get()
+            
+            assert rv.status_code==401
+            #self.post()
+            #self.delete()
+            #self.put()
 
     def tearDown(self):
         pass
@@ -34,8 +44,9 @@ class BaseTest(unittest.TestCase):
     def auth_token(self,value):
         self._auth_token=value
 
-    #Ignore testing for usersTest
-    '''
+       
+    def test_get(self, **kwargs):
+        """
         Insert a record
         Then it tries to retrieve a list of those records
         checking:
@@ -43,8 +54,7 @@ class BaseTest(unittest.TestCase):
             - at least there is one item in the list
             - href is present in each item
 
-    '''
-    def test_get(self, **kwargs):
+        """
         self.test_post()
         rv=self.get(**kwargs)
         assert rv.status_code == 200
@@ -55,7 +65,9 @@ class BaseTest(unittest.TestCase):
             assert item['href'] is not None
 
         return response_data
-    '''
+    
+    def check_item(self,data,keys,**kwargs):
+        """
         Basic method to check that get request with a uid
         is correct.
 
@@ -64,8 +76,7 @@ class BaseTest(unittest.TestCase):
         - Assert that the response contains the keys list.
 
         Note: will always append 'href' to keys list.
-    '''
-    def check_item(self,data,keys,**kwargs):
+        """
         keys.append('href')
         self.test_post()
         rv=self.get()
@@ -100,10 +111,7 @@ class BaseTest(unittest.TestCase):
     def put(self,url=None,data=json.dumps({}),content_type='application/json',headers=None,**kwargs):
         return self.c.put(self.build_url(url=url,**kwargs),data=data,content_type=content_type, headers=self.config_headers(headers))
 
-    '''
-        Allows to clear the authorization session currently in the test_client() objects
-        by simply removing the _id and user_id from session_transaction object.
-    '''
+    
 
     def config_headers(self, headers):
         if headers is None:
@@ -114,6 +122,10 @@ class BaseTest(unittest.TestCase):
         return headers
 
     def clear_auth(self):
+        """
+        Allows to clear the authorization session currently in the test_client() objects
+        by simply removing the _id and user_id from session_transaction object.
+        """
         with self.c.session_transaction() as session:
             session['_id']=None
             session['user_id']=None
