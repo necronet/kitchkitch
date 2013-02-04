@@ -82,6 +82,7 @@ class MenuService(BaseService):
         return self.delete_response()
 
 class MenuItemsService(BaseService):
+    @login_required
     def get(self, uid):
         super(MenuItemsService, self).get(uid)
         menus_uid=request.args.get('menus_uid')
@@ -100,7 +101,7 @@ class MenuItemsService(BaseService):
         
         return self.get_response(items)
         
-        
+    @login_required    
     def post(self):
         menus_uid=request.args.get('menus_uid')
         if menus_uid is None:
@@ -117,6 +118,7 @@ class MenuItemsService(BaseService):
         
         return self.post_response()
 
+    @login_required
     def put(self):
 
         menus_uid=request.args.get('menus_uid')
@@ -132,6 +134,7 @@ class MenuItemsService(BaseService):
             db.commit()
 
         return self.put_response()
+    @login_required
     def delete(self,uid):
 
         menus_uid=request.args.get('menus_uid')
