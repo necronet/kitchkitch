@@ -6,6 +6,7 @@ from runserver import app
 import unittest
 from base import login, BaseTest
 import json
+import random
 
 class UserTest(BaseTest):
 
@@ -20,6 +21,16 @@ class UserTest(BaseTest):
         for item in response_data:
             assert item['href'] is not None
 
+    def test_post(self):
+        #it is likely that this might failed 1 in 50 million that why such a big number
+        data=json.dumps({'username':'necronet%d' % random.randint(0,500000000),'password':'necronet','pincode':'0000'})
+        rv=self.post(data=data)        
+        assert rv.status_code == 201
+
+    def test_post_conflict(self):
+        data=json.dumps({'username':'admin','password':'something','pincode':'0000'})
+        rv=self.post(data=data)        
+        assert rv.status_code == 409
     
 
 class LoginTest(unittest.TestCase):
