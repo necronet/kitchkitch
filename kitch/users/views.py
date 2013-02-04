@@ -1,5 +1,5 @@
-from flask import request, flash, render_template, redirect, url_for,Blueprint,make_response,jsonify
-from flask.ext.login import login_user,UserMixin, login_required, logout_user
+from flask import request, redirect, url_for,Blueprint,make_response,jsonify
+from flask.ext.login import login_user,UserMixin, logout_user
 from kitch_db import db
 from utils.entities import BaseService, register_api,encrypt_with_interaction
 from utils.exceptions import abort
