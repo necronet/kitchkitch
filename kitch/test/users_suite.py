@@ -8,8 +8,19 @@ from base import login, BaseTest
 import json
 
 class UserTest(BaseTest):
+
+    def setUp(self):
+        super(UserTest,self).setUp('/user/',auth=True)
+
     def test_get(self):
-        pass
+        rv=self.get()        
+        assert rv.status_code == 200
+        response_data = json.loads(rv.data)['items']
+        assert len(response_data)        
+        for item in response_data:
+            assert item['href'] is not None
+
+    
 
 class LoginTest(unittest.TestCase):
 
