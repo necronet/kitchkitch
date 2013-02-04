@@ -6,7 +6,7 @@ import menus_suite
 
 if __name__=='__main__':
 
-	tests_suite={'general':GeneralTest,'user':users_suite.UsersTest,'menu':menus_suite.MenuTest,'menu_item':menus_suite.MenuItemTest}
+	tests_suite={'general':GeneralTest,'login':users_suite.LoginTest,'user':users_suite.UserTest,'menu':menus_suite.MenuTest,'menu_item':menus_suite.MenuItemTest}
 	parser = argparse.ArgumentParser(description="Script for testing volunteer services")
 	keys_args= ('|'.join(tests_suite.keys()))
 	parser.add_argument('-t', '--test',default='all',help='Test services [all|%s]. If no value is specify then it will run "all" tests' % keys_args)

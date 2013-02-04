@@ -34,7 +34,15 @@ class User(UserMixin):
                 return User.get(record.uid)
 
 class UserService(BaseService):
-    pass
+    def get(self,uid):
+        super(UserService, self).get(uid,'show_user.html')
+        items=[]
+        if uid is None:
+            rows = db.query("select uid,username,pincode from user where active=1 limit %s offset %s" ,self.limit, self.offset )
+            for row in rows:
+                items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,username=row.username,pincode=row.pincode) )
+
+        return self.get_response(items)
 
 class LoginService(BaseService):
     def get(self,uid):

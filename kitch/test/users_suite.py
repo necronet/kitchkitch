@@ -4,10 +4,14 @@ parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0,parentdir) 
 from runserver import app
 import unittest
-from base import login
+from base import login, BaseTest
 import json
 
-class UsersTest(unittest.TestCase):
+class UserTest(BaseTest):
+    def test_get(self):
+        pass
+
+class LoginTest(unittest.TestCase):
 
     def setUp(self):
         self.c= app.test_client()
