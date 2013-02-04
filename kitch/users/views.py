@@ -2,6 +2,7 @@ from flask import request, flash, render_template, redirect, url_for,Blueprint,m
 from flask.ext.login import login_user,UserMixin, login_required, logout_user
 from kitch_db import db
 from utils.entities import BaseService, register_api,encrypt_with_interaction
+from utils.exceptions import abort
 import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
@@ -79,6 +80,9 @@ def validate_user():
         (username,password)=request.json['username'],request.json['password'] 
     else:
         (username,password)=request.form['username'],request.form['password']
+
+    if not password or not username:
+        abort(400, 'Password or user cannot be empty')
 
     record_user=db.get("select * from users where username=%s",username,)
     password_encrypt=record_user.password

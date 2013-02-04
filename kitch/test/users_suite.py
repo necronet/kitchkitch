@@ -28,6 +28,15 @@ class UsersTest(unittest.TestCase):
         rv=self.c.delete('/login/%s'% self.auth_token,content_type='application/json',headers=self.config_headers([]))
         assert rv.status_code == 202
 
+    def test_empty_user_and_password(self):
+        rv=login(self.c,"","admin")
+        assert rv.status_code == 400
+        rv=login(self.c,"admin","")
+        assert rv.status_code == 400
+        rv=login(self.c,"","")
+        assert rv.status_code == 400
+
+
 
     def config_headers(self, headers):
         if headers is None:
