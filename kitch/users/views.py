@@ -1,5 +1,5 @@
 from flask import request, redirect, url_for,Blueprint,make_response,jsonify
-from flask.ext.login import login_user,UserMixin, logout_user
+from flask.ext.login import login_user,UserMixin, logout_user,login_required
 from kitch_db import db
 from utils.entities import BaseService, register_api,encrypt_with_interaction
 from utils.exceptions import abort
@@ -34,20 +34,29 @@ class User(UserMixin):
                 return User.get(record.uid)
 
 class UserService(BaseService):
+    """
+        Retrieve a User information, this can be useful for displaying in profile.
+        Note this method will retrieve your profile if no uid is passed.         
+    """
+    @login_required
     def get(self,uid):
         super(UserService, self).get(uid,'show_user.html')
         items=[]
         if uid is None:
-            rows = db.query("select uid,username,pincode from user where active=1 limit %s offset %s" ,self.limit, self.offset )
+            rows = db.query("select uid,username,pincode from users where active=1 limit %s offset %s" ,self.limit, self.offset )
             for row in rows:
                 items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,username=row.username,pincode=row.pincode) )
 
+        
         return self.get_response(items)
 
 class LoginService(BaseService):
     def get(self,uid):
         return make_response(jsonify({}),501)
 
+    """ To authenticate to the app, make a POST call to the Login with a JSON containing the username and password.
+        This method will return a Authentication token that you can use to make authenticated calls.
+    """
     def post(self):
         user=validate_user()
         if user:
@@ -61,8 +70,8 @@ class LoginService(BaseService):
         return make_response(jsonify({}),401,{'Location':request.url})
 
     """
-        Use this method to logout, it will remove(active=0) the Login from the
-        database or logout the user from the session
+        To logout make a DELETE call to Login resources, it will remove(active=0) the curernt Login and logout 
+        the user session.
     """
     def delete(self,uid):
         logout_user()
@@ -106,5 +115,6 @@ def create_user_from_record(record):
     return user
 
 register_api(app,LoginService, 'loginService','/login/','uid')
+register_api(app,UserService, 'userService','/user/','uid')
 
 
