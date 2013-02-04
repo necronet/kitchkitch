@@ -39,8 +39,18 @@ def validate_request():
         abort(415)
 
     if request.method in ('POST','PUT'):
-        #In case no body is sent in body for post
-        if not (request.json and request.json.has_key('items') ) or not isinstance(request.json['items'], (list,tuple)):
+        #in case there is no json data
+        
+        if not request.json:
+            bad_request_response()
+        #Case request does not provided items
+        elif request.endpoint == 'user.userService':
+            return None
+        elif not request.json.has_key('items'):
+            bad_request_response()
+        
+        #If instance is not a instance of list or tuples
+        elif not isinstance(request.json['items'], (list,tuple)):
             bad_request_response()
 
 
