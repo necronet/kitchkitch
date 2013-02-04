@@ -27,11 +27,9 @@ class BaseTest(unittest.TestCase):
             self.clear_auth()
             self.auth_token=None
             rv=self.get()
-            
             assert rv.status_code==401
-            #self.post()
-            #self.delete()
-            #self.put()
+            rv=self.post(data=json.dumps({'items':[]}))
+            assert rv.status_code==401
 
     def tearDown(self):
         pass
