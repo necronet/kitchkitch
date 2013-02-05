@@ -83,7 +83,6 @@ Dentro del proyecto tambien hay un archivo llamado requirements.txt que define l
 
 - [flask](flask.pocoo.org)
 - [Flask-Login](http://packages.python.org/Flask-Login/)
-- [Sphinx](sphinx-doc.org)
 - [MySQL-python](http://pypi.python.org/pypi/MySQL-python)
 - [Jinja2](http://jinja.pocoo.org/docs/)
 - [Werkzeug](http://werkzeug.pocoo.org/)
@@ -132,7 +131,7 @@ Dentro del proyecto hay un MakeFile para facilitar las tareas de pruebas con las
 - run: correr la aplicacion.
 - test: ejecutar la suite de pruebas.
 	si necesitas ejecutar una prueba especifica utiliza el parametro SUITE=nombre_prueba
-docs: crear la documentacion usando sphinx. 
+docs: crear la documentacion desde el markdown. 
 
 
 ##Problemas frecuentes
