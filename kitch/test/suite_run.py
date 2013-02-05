@@ -21,4 +21,3 @@ if __name__=='__main__':
 		if 'all' in run_test or key in run_test:
 			suite = unittest.TestLoader().loadTestsFromTestCase(test)
 			unittest.TextTestRunner(verbosity=2).run(suite)
-	
