@@ -79,6 +79,12 @@ class UserService(BaseService):
 
         return self.put_response()
 
+    @login_required
+    def delete(self, uid):
+        db.execute_rowcount('update users set active=0 where uid=%s', uid)
+        db.commit()
+        return self.delete_response()
+
         
 
 class LoginService(BaseService):
