@@ -21,11 +21,30 @@ class UserTest(BaseTest):
         for item in response_data:
             assert item['href'] is not None
 
+        return response_data
+    def test_get_item(self):
+        response_object=self.check_item({
+                                        'username':'necronet%d' % random.randint(0,500000000),
+                                        'password':'necronet',
+                                        'pincode':'0000'},['uid','username','pincode'])
+
     def test_post(self):
         #it is likely that this might failed 1 in 50 million that why such a big number
         data=json.dumps({'username':'necronet%d' % random.randint(0,500000000),'password':'necronet','pincode':'0000'})
         rv=self.post(data=data)        
         assert rv.status_code == 201
+
+    def test_put(self):
+        
+        items=self.test_get()
+        assert len(items) > 0
+
+        user=items[random.randint(1,len(items)-1)]
+
+        user['pincode']='8989'
+        user['password']='admin'
+        rv=self.put(data=json.dumps(user))
+        assert rv.status_code == 200
 
     def test_post_conflict(self):
         data=json.dumps({'username':'admin','password':'something','pincode':'0000'})
