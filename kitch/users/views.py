@@ -69,7 +69,16 @@ class UserService(BaseService):
         except MySQLdb.IntegrityError as e:
             abort(409, 'This username already exist.')
 
+    @login_required
+    def put(self):
         
+        user= KitchObject(request.json)
+        if user.uid:
+            db.execute('update users set pincode=%s, password=%s where uid=%s',  user.pincode,user.password, user.uid)
+            db.commit()
+
+        return self.put_response()
+
         
 
 class LoginService(BaseService):
