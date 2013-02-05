@@ -35,7 +35,6 @@ class UserTest(BaseTest):
         assert rv.status_code == 201
 
     def test_put(self):
-        
         items=self.test_get()
         assert len(items) > 0
 
@@ -45,6 +44,15 @@ class UserTest(BaseTest):
         user['password']='admin'
         rv=self.put(data=json.dumps(user))
         assert rv.status_code == 200
+
+    def test_delete_menus(self):
+        items=self.test_get()
+
+        for data in items:
+            if data['username'] == 'admin': continue
+            
+            rv=self.delete(data['uid'])
+            assert rv.status_code==202
 
     def test_post_conflict(self):
         data=json.dumps({'username':'admin','password':'something','pincode':'0000'})
