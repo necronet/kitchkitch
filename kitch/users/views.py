@@ -47,7 +47,10 @@ class UserService(BaseService):
             rows = db.query("select uid,username,pincode from users where active=1 limit %s offset %s" ,self.limit, self.offset )
             for row in rows:
                 items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,username=row.username,pincode=row.pincode) )
-
+        else:
+            row = db.get("select uid,username,pincode from users where active=1 and uid=%s" , uid )
+            
+            items=dict(href='%s'%(request.base_url,),uid=row.uid,username=row.username,pincode=row.pincode) 
         
         return self.get_response(items)
 
