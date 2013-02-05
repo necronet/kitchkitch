@@ -63,7 +63,11 @@ class UserService(BaseService):
         user= KitchObject(request.json)
         uid =str(uuid.uuid1())
         try:
-            db.execute('insert into users(uid,username,password,pincode) values(%s,%s,%s,%s) ', uid,user.username,user.password,user.pincode)
+            
+            password,iterate,t,random_salt=encrypt_with_interaction(user.password)
+            db.execute('insert into users(uid,username,password,pincode) values(%s,%s,%s,%s) ', uid,user.username,password,user.pincode)
+            db.execute('insert into meta_users(user_uid,iteraction,product,modified_on) values(%s,%s,%s,%s) ', uid,iterate,random_salt,t)
+
             db.commit()
             return self.post_response()
         except MySQLdb.IntegrityError as e:
@@ -74,7 +78,20 @@ class UserService(BaseService):
         
         user= KitchObject(request.json)
         if user.uid:
-            db.execute('update users set pincode=%s, password=%s where uid=%s',  user.pincode,user.password, user.uid)
+            
+            new_password,iterate,t,random_salt=encrypt_with_interaction(user.password)
+
+            row = db.get("select password from users where active=1 and uid=%s" , user.uid )
+            current_password = row['password']
+
+            if current_password != new_password:
+                pass #TODO: implement invalidate all tokens asociated with this user
+
+            
+            db.execute('update users set pincode=%s, password=%s where uid=%s',  user.pincode,new_password, user.uid)
+            
+            
+            db.execute('update meta_users set iteraction=%s, product=%s, modified_on=%s where user_uid=%s ', iterate,random_salt,t,user.uid)
             db.commit()
 
         return self.put_response()
