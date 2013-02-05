@@ -45,6 +45,10 @@ class UserTest(BaseTest):
         rv=self.put(data=json.dumps(user))
         assert rv.status_code == 200
 
+        #Check that the record changed can login with the new password
+        rv=login(self.c,user['username'],"admin")
+        assert rv.status_code == 200
+
     def test_delete_menus(self):
         items=self.test_get()
 
