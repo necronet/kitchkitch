@@ -11,13 +11,14 @@ app = Blueprint('user',__name__,template_folder='templates')
 class User(UserMixin):
     """
         User represent a user in the system. It contains 
-        Username, Password and active state.
+        Username, Password(hashed) and active state.
     """
     def __init__(self,uid, username, password,active):
         self.id=uid
         self.username=username
         self.password=password
         self.active=active
+
 
     def is_active(self):
         return self.active
@@ -37,7 +38,8 @@ class User(UserMixin):
 class UserService(BaseService):
     """
         Retrieve a User information, this can be useful for displaying in profile.
-        Note this method will retrieve your profile if no uid is passed.         
+        Note this method will retrieve your profile along with the profile 
+        that you are allow to see.
     """
     @login_required
     def get(self,uid):
@@ -55,7 +57,14 @@ class UserService(BaseService):
         return self.get_response(items)
 
     """
-        Create new User, making a POST call to the User resource. 
+        Create a new User in the system. The structure that need to be provided is the following:
+
+        {
+            username:username,
+            password:password,
+            pincode:pincode
+        }
+        Then the method will ensure to hashed the password properly
     """
     @login_required
     def post(self):       
@@ -73,20 +82,31 @@ class UserService(BaseService):
         except MySQLdb.IntegrityError as e:
             abort(409, 'This username already exist.')
 
+    '''
+    Update a user record. The method will ensure that to update the password if changed and re-hashed again.
+    Aditionally all tokens related to thes User will be inactivated if pasword changed.
+    '''
     @login_required
     def put(self):
         
         user= KitchObject(request.json)
         if user.uid:
-            
-            new_password,iterate,t,random_salt=encrypt_with_interaction(user.password)
 
+            record=db.get("select iteraction,product,modified_on from meta_users where user_uid=%s",user.uid,)
+
+            #Ignore iterate, salt, time will not be use this time we just need the encrypted password
+            new_password,_,_,_=encrypt_with_interaction(user.password,random_salt=record.product,iterate=record.iteraction,t=record.modified_on)
+            
             row = db.get("select password from users where active=1 and uid=%s" , user.uid )
             current_password = row['password']
+            
 
             if current_password != new_password:
-                pass #TODO: implement invalidate all tokens asociated with this user
-
+                #Create a new salted password
+                new_password,iterate,t,random_salt=encrypt_with_interaction(user.password)
+                #Now inactive all token related to the user so we can asked him to login again
+                db.execute('update tokens set active=0 where user_uid=%s',  user.uid)
+                print 'update tokens set active=0 where user_uid="%s"' % user.uid
             
             db.execute('update users set pincode=%s, password=%s where uid=%s',  user.pincode,new_password, user.uid)
             
