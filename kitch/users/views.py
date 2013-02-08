@@ -106,7 +106,7 @@ class UserService(BaseService):
                 new_password,iterate,t,random_salt=encrypt_with_interaction(user.password)
                 #Now inactive all token related to the user so we can asked him to login again
                 db.execute('update tokens set active=0 where user_uid=%s',  user.uid)
-                print 'update tokens set active=0 where user_uid="%s"' % user.uid
+                
             
             db.execute('update users set pincode=%s, password=%s where uid=%s',  user.pincode,new_password, user.uid)
             
