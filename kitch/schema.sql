@@ -6,6 +6,8 @@ GRANT USAGE ON *.* TO 'kitch'@'localhost';
 DROP USER 'kitch'@'localhost';
 FLUSH PRIVILEGES;
 
+#Users should only have permission to select, insert or update. 
+##To prevent deletion or alteration of any sort in the database.
 create user 'kitch'@'localhost' identified by 'kitch';
 grant select, insert, update on kitch.* to 'kitch'@'localhost';
 grant select, insert, update on kitch_test.* to 'kitch'@'localhost';
@@ -40,6 +42,9 @@ create table meta_users (
 insert into users values('c4860202-6e59-11e2-b8ac-3c0754558970','admin','d82670cb1512cddcf3a5b0d0760f65cf5a67704951abb3d45180e87eb31e5e6f',6969,1);
 insert into meta_users values('c4860202-6e59-11e2-b8ac-3c0754558970',50000,'98e8eb4f-6e59-11e2-b9a9-3c0754558970',1359934187);
 
+
+#Tokens are needed for validate the authenticity of a user, instead of passing username, password everytime.
+#the app should pass a validated token
 drop table if exists tokens;
 create table tokens( 
 user_uid varchar(36) not null,
@@ -47,6 +52,10 @@ token varchar(40) not null,
 active int default 1,
 primary key(user_uid,token));
 
+
+
+
+#Menus modules
 
 drop table if exists menus;
 create table menus (
