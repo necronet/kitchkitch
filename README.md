@@ -23,27 +23,15 @@ Si trabajas con windows necesitaras descargar python desde el sitio oficial <htt
 
 Luego recuerda de configurar el PATH para que apunte a *C:\Python27*, este paso es necesario para tener el comando python en la consola de windows.
 
-
 ### - MySQL 5.x
 <http://www.mysql.com/downloads/mysql/>
 
 Kitch utiliza primariamente MySQL para almacenar informacion. Asegurate de tener instalado MySQL en tu equipo y que puedas entrar con accedo root ó algun usuario que permita creacion de esquemas.
 
-### - Torndb
-Es un proyecto que encapsula parte de la sentencias MySQL-python y crea objetos dinamicos a partir de select-statement. Para hacer uso del proyecto debes descargarlo con [github](git@github.com:necronet/torndb.git) o simplemente descarga el [proyecto](https://github.com/necronet/torndb).
-
-Luego ejecuta dentro de la carpeta de torndb:
-	
-	python setup.py install
-
-`Nota es muy probable que durante el desarrollo se incorpore torndb para acoplarlo mejor a Kitch.`
-
 ###Ademas…
 
 Tambien es necesario tener [**git**](http://git-scm.com/) para version de control, descargar las fuentes y hacer commits al repositorio. Para facilitar push al repositorio remoto, lee la guia oficial para [Generar llaves ssh de github](http://www.tldrlegal.com/)
 <br/>
-
-
 
 - - -
 
@@ -90,8 +78,6 @@ Dentro del proyecto tambien hay un archivo llamado requirements.txt que define l
 Con pip puedes instalar todas las dependencias ejecutando ([como instalar pip](#install-pip) ):
 
 	pip install -r requirements.txt
-
-[Torndb](https://github.com/necronet/torndb) no esta en el archivo de requirements.txt pero aun asi es una dependencia que hablamos en la seccion de requerimientos.
 
 ###Base de datos
 
