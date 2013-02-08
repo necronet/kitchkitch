@@ -32,7 +32,7 @@ class User(UserMixin):
             record=db.get("select * from tokens where token=%s and active=1",token,)
 
             if record is not None:
-                return User.get(record.uid)
+                return User.get(record.user_uid)
 
 class UserService(BaseService):
     """
@@ -137,7 +137,7 @@ class LoginService(BaseService):
 
 def generate_token(user):
     token =str(uuid.uuid1())
-    db.execute("insert into tokens(uid,token) values(%s,%s)",user.id, token,)
+    db.execute("insert into tokens(user_uid,token) values(%s,%s)",user.id, token,)
     db.commit()
     return token
 

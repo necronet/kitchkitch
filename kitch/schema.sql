@@ -42,10 +42,10 @@ insert into meta_users values('c4860202-6e59-11e2-b8ac-3c0754558970',50000,'98e8
 
 drop table if exists tokens;
 create table tokens( 
-uid varchar(36) not null,
+user_uid varchar(36) not null,
 token varchar(40) not null,
 active int default 1,
-primary key(uid,token));
+primary key(user_uid,token));
 
 
 drop table if exists menus;
