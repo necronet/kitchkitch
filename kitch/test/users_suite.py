@@ -39,6 +39,9 @@ class UserTest(BaseTest):
         assert len(items) > 0
 
         user=items[random.randint(1,len(items)-1)]
+        
+        rv = login(self.c,user['username'],"necronet")
+        self.auth_token=json.loads(rv.data)['token']
 
         user['pincode']='8989'
         user['password']='admin'
