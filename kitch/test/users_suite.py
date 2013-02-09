@@ -167,6 +167,14 @@ class LoginTest(unittest.TestCase):
         rv=self.c.get('/login/', content_type='application/json',headers=[('Accept','application/json')])
         assert rv.status_code==501
 
+    def test_put_login(self):
+        """
+            Test modifyinh a login record, since this is an unimplementend resource, should return
+            501 not implemented.
+        """
+        rv=self.c.put('/login/', content_type='application/json',headers=[('Accept','application/json')])
+        assert rv.status_code==501
+
     def config_headers(self, headers):
         if headers is None:
             headers=[('Accept','application/json')]

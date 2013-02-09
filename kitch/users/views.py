@@ -128,6 +128,9 @@ class LoginService(BaseService):
     def get(self,uid):
         return make_response(jsonify({}),501)
 
+    def put(self):
+        return make_response(jsonify({}),501)
+
     """ To authenticate to the app, make a POST call to the Login with a JSON containing the username and password.
         This method will return a Authentication token that you can use to make authenticated calls.
     """
