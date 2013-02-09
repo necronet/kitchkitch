@@ -1,3 +1,4 @@
+from kitch_db import db
 from flask.views import MethodView
 from flask import request, jsonify, make_response, render_template
 
@@ -35,14 +36,19 @@ class KitchObject(object):
 
 class BaseService(MethodView):
     """
-        Base inheritance class in the app. Oriented to standarize the behaviour between the
+        Base class for services. Oriented to standarize the behaviour between the
         Resources.
+    """
+    schema_table=None
 
+    def get(self,id,template=None):
+        """
+        
         Get and validate offset and limit in query string.
         Handle expand parameter and return the list of expand entities.
         Template.
-    """
-    def get(self,id,template=None):
+
+        """
         self.offset= int(self.get_parameter('offset'))
         self.limit= int(self.get_parameter('limit',50))
         self.expand=request.args.get('expand')
@@ -90,6 +96,11 @@ class BaseService(MethodView):
             expand_arguments.append(attribute)
 
         return expand_arguments
+
+    def delete(self, uid):
+        db.execute_rowcount('update '+self.schema_table+' set active=0 where uid=%s', uid)
+        db.commit()
+        return self.delete_response()
 
 def register_api(app,view, endpoint, url, pk, pk_type='string'):
     """

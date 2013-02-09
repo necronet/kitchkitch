@@ -12,7 +12,8 @@ class MenuService(BaseService):
     It consist on standars REST calls GET for listing, POST for creating,
     PUT for modifying and DELETE to mark as remove.
     """
-    
+    schema_table='menus'
+
     @login_required
     def get(self, uid):
         super(MenuService, self).get(uid,'show_menu.html')
@@ -77,11 +78,11 @@ class MenuService(BaseService):
 
     @login_required
     def delete(self, uid):
-        db.execute_rowcount('update menus set active=0 where uid=%s', uid)
-        db.commit()
-        return self.delete_response()
+        return super(MenuService,self).delete(uid)
+        
 
 class MenuItemsService(BaseService):
+    schema_table='items'
     @login_required
     def get(self, uid):
         super(MenuItemsService, self).get(uid)
@@ -136,11 +137,11 @@ class MenuItemsService(BaseService):
         return self.put_response()
     @login_required
     def delete(self,uid):
-
+        
         menus_uid=request.args.get('menus_uid')
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
-        
+
         db.execute_rowcount('update menus_items set active=0 where menus_uid=%s and items_uid=%s', menus_uid,uid)
         db.commit()
 

@@ -52,11 +52,36 @@ token varchar(40) not null,
 active int default 1,
 primary key(user_uid,token));
 
+#Group will hold general membership to which users can be. This will be highly tied with the 
+#permission that a user amy have over a specific Resource and specific condition in which they
+#might be able to execute it.
+drop table if exists groups;
+create table groups( 
+uid varchar(36) not null primary key,
+name varchar(40) not null unique,
+active int default 1);
 
+#List of available permission might contain 
+drop table if exists permissions;
+create table permissions(
+uid varchar(36) not null primary key,
+name varchar(40) not null unique,
+active int default 1);
+
+#List of available resources in the system login, menus, menusItems, user, etc....
+drop table if exists resources;
+create table resources(
+uid varchar(36) not null primary key,
+name varchar(40) not null unique,
+active int default 1);
+
+insert into resources(uid,name) values('00160202-6e59-11e2-b8ac-3c0754558970','user');
+insert into resources(uid,name) values('00260202-6e59-11e2-b8ac-3c0754558970','login');
+insert into resources(uid,name) values('00360202-6e59-11e2-b8ac-3c0754558970','menus');
+insert into resources(uid,name) values('00460202-6e59-11e2-b8ac-3c0754558970','menuItems');
 
 
 #Menus modules
-
 drop table if exists menus;
 create table menus (
  uid varchar(36) primary key,
