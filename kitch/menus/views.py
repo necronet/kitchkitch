@@ -97,7 +97,10 @@ class MenuService(BaseService):
 
     @login_required
     def delete(self, uid):
-        return super(MenuService,self).delete(uid)
+        menu=Menu.query.filter_by(active=1, uid=uid).first()
+        menu.active=0
+        db2.session.commit()
+        return self.delete_response()
         
 
 class MenuItemsService(BaseService):
