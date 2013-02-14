@@ -13,7 +13,7 @@ class MenuTest(BaseTest):
 
 
     def test_post(self):
-        rv=self.post(data=json.dumps({"items":[{"title":"Menu #1"}]}))
+        rv=self.post(data=json.dumps({"title":"Menu #1"}))
         assert rv.status_code == 201
 
     def test_get_item(self):
@@ -27,13 +27,10 @@ class MenuTest(BaseTest):
         items=json.loads(rv.data)
         assert len(items) > 0
 
-        new_items=[]
+        
         for data in items['items']:
-            new_items.append({'uid':data['uid'],'title':data['title']+' Modified'})
-
-        items['items']=new_items
-        rv=self.put(data=json.dumps(items))
-        assert rv.status_code == 200
+            rv=self.put(data=json.dumps({'uid':data['uid'],'title':data['title']+' Modified'}))
+            assert rv.status_code == 200
 
     def test_list_menus_filters(self):
         rv=self.get(title='Menu #1,Menu #2')

@@ -5,7 +5,7 @@ from users.views import app as user, User
 from menus.views import  app as menu
 from flask import request, _request_ctx_stack
 from flask.ext.login import LoginManager
-
+from models import db
 
 class CustomLoginManager(LoginManager):
 
@@ -21,6 +21,8 @@ class CustomLoginManager(LoginManager):
 
 
 app = Flask(__name__)
+db.init_app(app)
+
 app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
@@ -44,7 +46,8 @@ def validate_request():
         if not request.json:
             bad_request_response()
         #Case request does not provided items
-        elif request.endpoint == 'user.userService':
+        elif request.endpoint in ('user.userService','menus.menuService') :
+
             return None
         elif not request.json.has_key('items'):
             bad_request_response()

@@ -10,3 +10,4 @@ DB_NAME_TEST='kitch_test'
 DB_USER='kitch'
 DB_PASSWD='kitch'
 AUTO_COMMIT=False
+SQLALCHEMY_DATABASE_URI='mysql://%s:%s@%s/%s' % (DB_USER, DB_PASSWD, DB_HOST, DB_NAME_TEST)

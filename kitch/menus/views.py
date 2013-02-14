@@ -3,7 +3,11 @@ from utils.entities import KitchObject, BaseService, register_api
 from flask import request, Blueprint,url_for
 from utils.exceptions import abort
 from kitch_db import db
+
 from flask.ext.login import login_required
+from models import Menu, db as db2
+
+
 
 
 class MenuService(BaseService):
@@ -19,10 +23,10 @@ class MenuService(BaseService):
         super(MenuService, self).get(uid,'show_menu.html')
         menu_items=[]
         if uid is None:
+            
+            rows = Menu.query.filter_by(active=1).limit(self.limit).offset(self.offset).all()
 
-            rows = db.query("select uid,title from menus where active=1 limit %s offset %s" ,self.limit, self.offset )
             items=[]
-
             for row in rows:
 
                 if self.expand is not None:
@@ -31,12 +35,13 @@ class MenuService(BaseService):
                             menu_items = self.fetch_items(row.uid)
 
                 if not menu_items:
-                    menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_method='GET',_external=True),row.uid,))
+                    menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_external=True),row.uid,))
 
                 items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,title=row.title,items=menu_items) )
+                
         else:
-            result = db.get("select uid,title from menus where uid=%s and active=1 limit %s offset %s" ,uid,self.limit, self.offset)
-
+            result = Menu.query.filter_by(active=1, uid=uid).limit(self.limit).offset(self.offset).first()
+            
             if self.expand is not None:
                 for argument in self.expand_arguments():
 
@@ -44,7 +49,7 @@ class MenuService(BaseService):
                         menu_items= self.fetch_items(uid)
 
             if not menu_items:
-                menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_method='GET',_external=True),result.uid,) )
+                menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_external=True),result.uid,) )
 
             items = dict(href="%s" % (request.base_url,),uid=result.uid,title=result.title, items=menu_items)
 
@@ -58,21 +63,35 @@ class MenuService(BaseService):
     
     @login_required
     def post(self):
-        for json_object in request.json['items']:
-            menu= KitchObject(json_object)
-            uid =str(uuid.uuid1())
-            db.execute('insert into menus(uid,title) values(%s,%s) ', uid,menu.title)
-            db.commit()
+        """
+            Post a single menu item and return 202 repsonse if successful
+            {title:'TITLEMENU'}
+        """
+
+        json = request.json
+        uid =str(uuid.uuid1())
+        try:
+            menu= Menu(uid,json['title'])
+        except KeyError as e:
+            abort(400, 'Bad request to Menu, please check the posted data %s' % e.message)
+        db2.session.add(menu)
+        db2.session.commit()
         
         return self.post_response()
 
     @login_required
     def put(self):
-        for json_object in request.json['items']:
-            menu= KitchObject(json_object)
-            if json_object.has_key('uid'):
-                db.execute('update menus set title=%s where uid=%s',  menu.title,menu.uid)
-                db.commit()
+        """
+            PUT a single menu item and return 200 repsonse if successful
+            {
+                uid:'unique_identifier',
+                title:'TITLEMENU'
+            }
+        """
+        json=request.json
+        menu=Menu.query.filter_by(active=1, uid=json['uid']).first()
+        menu.title=json['title']
+        db2.session.commit()
 
         return self.put_response()
 
@@ -145,9 +164,12 @@ class MenuItemsService(BaseService):
         db.execute_rowcount('update menus_items set active=0 where menus_uid=%s and items_uid=%s', menus_uid,uid)
         db.commit()
 
+
+
         return self.delete_response()
 
 app = Blueprint('menus',__name__,template_folder='templates')
+
 
 register_api(app,MenuService, 'menuService','/menus/','uid')
 register_api(app,MenuItemsService, 'menuItemService','/menuItems/','uid')
