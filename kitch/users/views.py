@@ -1,39 +1,25 @@
 from flask import request, redirect, url_for,Blueprint,make_response,jsonify
-from flask.ext.login import login_user,UserMixin, logout_user,login_required
+from flask.ext.login import login_user,logout_user,login_required
 from kitch_db import db
 from utils.entities import BaseService, register_api,encrypt_with_interaction,KitchObject
 from utils.exceptions import abort
+from models import User
 import MySQLdb
 import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
 
-class User(UserMixin):
-    """
-        User represent a user in the system. It contains 
-        Username, Password(hashed) and active state.
-    """
-    def __init__(self,uid, username, password,active):
-        self.id=uid
-        self.username=username
-        self.password=password
-        self.active=active
 
-
-    def is_active(self):
-        return self.active
-
-    @staticmethod
-    def get(uid=None, token=None):
+def get_user(uid=None, token=None):
         
-        if uid is not None :
-            record=db.get("select * from users where uid=%s",uid,)
-            return create_user_from_record(record)
-        elif token is not None :
-            record=db.get("select * from tokens where token=%s and active=1",token,)
+    if uid is not None :
+        record=db.get("select * from users where uid=%s",uid,)
+        return create_user_from_record(record)
+    elif token is not None :
+        record=db.get("select * from tokens where token=%s and active=1",token,)
 
-            if record is not None:
-                return User.get(record.user_uid)
+        if record is not None:
+            return get_user(record.user_uid)
 
 class UserService(BaseService):
     """
@@ -46,7 +32,8 @@ class UserService(BaseService):
         super(UserService, self).get(uid,'show_user.html')
         items=[]
         if uid is None:
-            rows = db.query("select uid,username,pincode from users where active=1 limit %s offset %s" ,self.limit, self.offset )
+
+            rows = User.query.filter_by(active=1).limit(self.limit).offset(self.offset).all()
             for row in rows:
                 items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,username=row.username,pincode=row.pincode) )
         else:
@@ -160,7 +147,7 @@ class LoginService(BaseService):
 
 def generate_token(user):
     token =str(uuid.uuid1())
-    db.execute("insert into tokens(user_uid,token) values(%s,%s)",user.id, token,)
+    db.execute("insert into tokens(user_uid,token) values(%s,%s)",user.uid, token,)
     db.commit()
     return token
 
