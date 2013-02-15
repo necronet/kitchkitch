@@ -1,4 +1,3 @@
-from kitch_db import db
 from flask.views import MethodView
 from flask import request, jsonify, make_response, render_template
 
@@ -98,8 +97,8 @@ class BaseService(MethodView):
         return expand_arguments
 
     def delete(self, uid):
-        db.execute_rowcount('update '+self.schema_table+' set active=0 where uid=%s', uid)
-        db.commit()
+        #db.execute_rowcount('update '+self.schema_table+' set active=0 where uid=%s', uid)
+        #db.commit()
         return self.delete_response()
 
 def register_api(app,view, endpoint, url, pk, pk_type='string'):
