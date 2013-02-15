@@ -2,4 +2,4 @@ jinja2
 werkzeug
 flask
 Flask-Login
-MySQL-python
+Flask-SQLAlchemy

@@ -7,7 +7,7 @@
 - - -
 ##Requerimientos
 
-###- Python 2.7.x 
+### - Python 2.7.x 
 
 ####Linux o OSX 
 
@@ -50,8 +50,6 @@ Es muy probable que si leas esto estes en el repositorio. El proyecto esta estru
 		docs
 		kitch
 		|____default_settings.py
-		|____kitch.db
-		|____kitch_db.py
 		|____menus
 		| |______init__.py
 		| |____templates
@@ -71,13 +69,15 @@ Dentro del proyecto tambien hay un archivo llamado requirements.txt que define l
 
 - [flask](flask.pocoo.org)
 - [Flask-Login](http://packages.python.org/Flask-Login/)
-- [MySQL-python](http://pypi.python.org/pypi/MySQL-python)
+- [Flask-SQLAlchemy](http://pythonhosted.org/Flask-SQLAlchemy/)
 - [Jinja2](http://jinja.pocoo.org/docs/)
 - [Werkzeug](http://werkzeug.pocoo.org/)
 
-Con pip puedes instalar todas las dependencias ejecutando ([como instalar pip](#install-pip) ):
+Con pip puedes instalar todas las dependencias ejecutando:
 
 	pip install -r requirements.txt
+
+Si necesitas saber [¿como instalar pip?](#install-pip)
 
 ###Base de datos
 
