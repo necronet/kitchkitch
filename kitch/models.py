@@ -74,6 +74,20 @@ class User(db.Model):
 	def is_authenticated(self):
 		return self.authenticated and self.active
 
+class MetaUser(db.Model):
+	__tablename__='meta_users'
+	user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
+	iteraction = db.Column(db.Integer(), nullable=False)
+	product = db.Column(db.String(36), nullable=False)
+	modified_on = db.Column(db.Integer(), nullable=False)
+
+	def __init__(self, user_uid, iteraction, product, modified_on):
+		self.user_uid = user_uid
+		self.iteraction = iteraction
+		self.product = product
+		self.modified_on = modified_on
+
+
 class Token(db.Model):
 	__tablename__='tokens'
 	user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
