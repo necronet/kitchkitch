@@ -1,7 +1,7 @@
 # all the imports
 from flask import Flask, render_template
 from utils.exceptions import abort
-from users.views import app as user, User
+from users.views import app as user, get_user
 from menus.views import  app as menu
 from flask import request, _request_ctx_stack
 from flask.ext.login import LoginManager
@@ -13,7 +13,7 @@ class CustomLoginManager(LoginManager):
 
         if request.headers.has_key('Authorization'):
             ctx = _request_ctx_stack.top
-            ctx.user = User.get(token=request.headers['Authorization'])
+            ctx.user = get_user(token=request.headers['Authorization'])
             ctx.user = ctx.user if ctx.user is not None else self.anonymous_user()
 
         else:
@@ -72,7 +72,7 @@ def bad_request_response():
 @login_manager.user_loader
 def load_user(uid):
 
-    return User.get(uid)
+    return get_user(uid)
 
 @login_manager.unauthorized_handler
 def unauthorized_call():
