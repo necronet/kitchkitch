@@ -1,7 +1,7 @@
 from flask import request, redirect, url_for,Blueprint,make_response,jsonify
 from flask.ext.login import login_user,logout_user,login_required
 from kitch_db import db
-from utils.entities import BaseService, register_api,encrypt_with_interaction,KitchObject
+from utils.entities import BaseService, register_api,encrypt_with_interaction
 from utils.exceptions import abort
 from models import User, MetaUser, Token, db as db2
 import sqlalchemy
@@ -124,8 +124,9 @@ class UserService(BaseService):
 
     @login_required
     def delete(self, uid):
-        db.execute_rowcount('update users set active=0 where uid=%s', uid)
-        db.commit()
+        user = User.query.filter_by( uid = uid).first()
+        user.active = 0
+        db2.session.commit()
         return self.delete_response()
 
         
