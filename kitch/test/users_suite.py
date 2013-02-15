@@ -44,15 +44,19 @@ class UserTest(BaseTest):
                                         'password':'necronet',
                                         'pincode':'0000'},['uid','username','pincode'])
 
-    def test_post(self):
+    def test_post(self,username=None):
         """
             Create a random user with password necronet and pincode '0000'
             Ensure that the response is 201.
         """
         #it is likely that this might failed 1 in 50 million that why such a big number
-        data=json.dumps({'username':'necronet%d' % random.randint(0,500000000),'password':'necronet','pincode':'0000'})
+        
+        if not username:
+            username='necronet%d' % random.randint(0,500000000)
+        data=json.dumps({'username':username,'password':'necronet','pincode':'0000'})
         rv=self.post(data=data)        
         assert rv.status_code == 201
+        
 
     def test_put(self):
         """
@@ -63,12 +67,20 @@ class UserTest(BaseTest):
             - Assert the response is 200 
             - that the usermay login with it's new credential
         """
-        items=self.test_get()
-        assert len(items) > 0
+        username='necronet%d' % random.randint(0,500000000)
+        self.test_post(username)
 
-        user=items[random.randint(1,len(items)-1)]
-        
-        rv = login(self.c,user['username'],"necronet")
+        items=self.test_get()
+        assert len(items) > 2
+
+        user = None
+        for user in items:
+            if user['username'] == username:
+                break
+
+
+        rv = login(self.c,username,"necronet")
+
         self.auth_token=json.loads(rv.data)['token']
 
         user['pincode']='8989'
