@@ -97,9 +97,12 @@ class Token(db.Model):
 	token = db.Column(db.String(40), primary_key=True)
 	active = db.Column(db.Integer, default=1)
 
-	def __init__(self, user_uid, token, active):
+	def __init__(self, user_uid, token, active=1):
 		self.user_uid = user_uid
 		self.token = token
 		self.active = active
+
+	def __repr__(self):
+		return "Token user_uid=%s, token=%s, active=%s" % (self.user_uid, self.token, self.active)
 
 
