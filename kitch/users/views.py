@@ -1,25 +1,21 @@
 from flask import request, redirect, url_for,Blueprint,make_response,jsonify
 from flask.ext.login import login_user,logout_user,login_required
-from kitch_db import db
 from utils.entities import BaseService, register_api,encrypt_with_interaction
 from utils.exceptions import abort
-from models import User, MetaUser, Token, db as db2
+from models import User, MetaUser, Token, db 
 import sqlalchemy
 import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
 
 
-def get_user(uid=None, token=None):
-        
+def get_user(uid=None, token=None):        
     if uid is not None :
-        record=db.get("select * from users where uid=%s",uid,)
-        return create_user_from_record(record)
+        return create_user_from_record( User.query.filter_by( uid = uid, active=1 ).first() )
     elif token is not None :
-        record=db.get("select * from tokens where token=%s and active=1",token,)
-
-        if record is not None:
-            return get_user(record.user_uid)
+        token = Token.query.filter_by( active = 1, token = token ).first()        
+        if token is not None:
+            return get_user(token.user_uid)
 
 class UserService(BaseService):
     """
@@ -62,9 +58,9 @@ class UserService(BaseService):
             password,iterate,t,random_salt=encrypt_with_interaction(json['password'])
             user = User(uid,json['username'],password,json['pincode'])
             meta_user = MetaUser(uid, iterate, random_salt,t)
-            db2.session.add(user)
-            db2.session.add(meta_user)
-            db2.session.commit()
+            db.session.add(user)
+            db.session.add(meta_user)
+            db.session.commit()
             return self.post_response()
         except sqlalchemy.exc.IntegrityError as e:
             abort(409, 'This username already exist. %s' % e.message)
@@ -105,20 +101,11 @@ class UserService(BaseService):
                 meta_user.product = random_salt
                 meta_user.modified_on = t
                 user.password = new_password
-                
-                #db.execute('update tokens set active=0 where user_uid=%s',  json['uid'])
-                
             
             user.pincode = json['pincode']
+             
+            db.session.commit()
             
-
-            #db.execute('update users set pincode=%s, password=%s where uid=%s',  json['pincode'],new_password, json['uid'])
-            
-            
-            #db.execute('update meta_users set iteraction=%s, product=%s, modified_on=%s where user_uid=%s ', iterate,random_salt,t,json['uid'])
-            
-            db2.session.commit()
-            #db.commit()
 
         return self.put_response()
 
@@ -126,7 +113,7 @@ class UserService(BaseService):
     def delete(self, uid):
         user = User.query.filter_by( uid = uid).first()
         user.active = 0
-        db2.session.commit()
+        db.session.commit()
         return self.delete_response()
 
         
@@ -143,6 +130,7 @@ class LoginService(BaseService):
     """
     def post(self):
         user=validate_user()
+
         if user:
             login_user(user)
             if request.json:
@@ -159,17 +147,16 @@ class LoginService(BaseService):
     """
     def delete(self,uid):
         logout_user()
-
-        db.execute_rowcount('update tokens set active=0 where token=%s', uid)
-        db.commit()
-
+        Token.query.filter_by(token = uid).update( dict( active = 0) )
+        db.session.commit()
         return self.delete_response()
 
 def generate_token(user):
     token =str(uuid.uuid1())
-    db.execute("insert into tokens(user_uid,token) values(%s,%s)",user.uid, token,)
-    db.commit()
-    return token
+    token = Token (user.uid, token )
+    db.session.add(token)
+    db.session.commit()
+    return token.token
 
 def validate_user():
     if request.json:
@@ -180,16 +167,17 @@ def validate_user():
     if not password or not username:
         abort(400, 'Password or user cannot be empty')
 
-    record_user=db.get("select * from users where username=%s",username,)
-    password_encrypt=record_user.password
 
-    record=db.get("select iteraction,product,modified_on from meta_users where user_uid=%s",record_user.uid,)
+    user = User.query.filter_by( username = username ).first()
+
+    meta_user = MetaUser.query.filter_by( user_uid = user.uid ).first()
+    #record=db.get("select iteraction,product,modified_on from meta_users where user_uid=%s",record_user.uid,)
 
     #Ignore iterate, salt, time will not be use this time we just need the encrypted password
-    password,_,_,_=encrypt_with_interaction(password,random_salt=record.product,iterate=record.iteraction,t=record.modified_on)
+    password,_,_,_=encrypt_with_interaction(password,random_salt=meta_user.product,iterate=meta_user.iteraction,t=meta_user.modified_on)
 
-    if  password==password_encrypt:
-        return create_user_from_record(record_user)
+    if  password==user.password:
+        return create_user_from_record(user)
 
 def create_user_from_record(record):
 
