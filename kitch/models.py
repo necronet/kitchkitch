@@ -49,4 +49,40 @@ class MenuItem(db.Model):
 		self.items_uid = items_uid
 		self.active = active
 
-		
+class User(db.Model):
+	__tablename__='users'
+	uid = db.Column(db.String(36),primary_key=True)
+	username = db.Column(db.String(50),nullable=False)
+	password = db.Column(db.String(64),nullable=False)
+	pincode = db.Column(db.String(4),nullable=False)
+	active = db.Column(db.Integer, default=1)
+	authenticated = True
+
+	def __init__(self, uid,username,password,pincode,active=1):
+		self.uid=uid
+		self.username=username
+		self.password=password
+		self.pincode=pincode
+		self.active=active
+
+	def is_active(self):
+		return self.active
+
+	def get_id(self):
+		return self.uid
+
+	def is_authenticated(self):
+		return self.authenticated and self.active
+
+class Token(db.Model):
+	__tablename__='tokens'
+	user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
+	token = db.Column(db.String(40), primary_key=True)
+	active = db.Column(db.Integer, default=1)
+
+	def __init__(self, user_uid, token, active):
+		self.user_uid = user_uid
+		self.token = token
+		self.active = active
+
+
