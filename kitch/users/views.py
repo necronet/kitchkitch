@@ -3,8 +3,8 @@ from flask.ext.login import login_user,logout_user,login_required
 from kitch_db import db
 from utils.entities import BaseService, register_api,encrypt_with_interaction,KitchObject
 from utils.exceptions import abort
-from models import User
-import MySQLdb
+from models import User, MetaUser, Token, db as db2
+import sqlalchemy
 import uuid
 
 app = Blueprint('user',__name__,template_folder='templates')
@@ -37,7 +37,7 @@ class UserService(BaseService):
             for row in rows:
                 items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,username=row.username,pincode=row.pincode) )
         else:
-            row = db.get("select uid,username,pincode from users where active=1 and uid=%s" , uid )
+            row = User.query.filter_by(active=1, uid=uid).limit(self.limit).offset(self.offset).first()#db.get("select uid,username,pincode from users where active=1 and uid=%s" , uid )
             
             items=dict(href='%s'%(request.base_url,),uid=row.uid,username=row.username,pincode=row.pincode) 
         
@@ -54,20 +54,20 @@ class UserService(BaseService):
         Then the method will ensure to hashed the password properly
     """
     @login_required
-    def post(self):       
-
-        user= KitchObject(request.json)
+    def post(self):
+        json = request.json
         uid =str(uuid.uuid1())
         try:
             
-            password,iterate,t,random_salt=encrypt_with_interaction(user.password)
-            db.execute('insert into users(uid,username,password,pincode) values(%s,%s,%s,%s) ', uid,user.username,password,user.pincode)
-            db.execute('insert into meta_users(user_uid,iteraction,product,modified_on) values(%s,%s,%s,%s) ', uid,iterate,random_salt,t)
-
-            db.commit()
+            password,iterate,t,random_salt=encrypt_with_interaction(json['password'])
+            user = User(uid,json['username'],password,json['pincode'])
+            meta_user = MetaUser(uid, iterate, random_salt,t)
+            db2.session.add(user)
+            db2.session.add(meta_user)
+            db2.session.commit()
             return self.post_response()
-        except MySQLdb.IntegrityError as e:
-            abort(409, 'This username already exist.')
+        except sqlalchemy.exc.IntegrityError as e:
+            abort(409, 'This username already exist. %s' % e.message)
 
     '''
     Update a user record. The method will ensure that to update the password if changed and re-hashed again.
@@ -76,30 +76,49 @@ class UserService(BaseService):
     @login_required
     def put(self):
         
-        user= KitchObject(request.json)
-        if user.uid:
-
-            record=db.get("select iteraction,product,modified_on from meta_users where user_uid=%s",user.uid,)
+        json = request.json
+        if json['uid']:
+            
+            record=MetaUser.query.filter_by(user_uid = json['uid']).first()
+            user = User.query.filter_by( uid = json['uid'], active=1).first()
 
             #Ignore iterate, salt, time will not be use this time we just need the encrypted password
-            new_password,_,_,_=encrypt_with_interaction(user.password,random_salt=record.product,iterate=record.iteraction,t=record.modified_on)
+            new_password,_,_,_=encrypt_with_interaction( json['password'],
+                                                         random_salt=record.product,
+                                                         iterate=record.iteraction,
+                                                         t=record.modified_on )
             
-            row = db.get("select password from users where active=1 and uid=%s" , user.uid )
-            current_password = row['password']
+
+            
+            current_password = user.password
             
 
             if current_password != new_password:
                 #Create a new salted password
-                new_password,iterate,t,random_salt=encrypt_with_interaction(user.password)
+                new_password,iterate,t,random_salt = encrypt_with_interaction(json['password'])
                 #Now inactive all token related to the user so we can asked him to login again
-                db.execute('update tokens set active=0 where user_uid=%s',  user.uid)
+                Token.query.filter_by(user_uid = json['uid']).update( dict ( active = 0 ))
+
+                #Overwrite the meta user information of the password
+                meta_user = MetaUser.query.filter_by( user_uid = json['uid'] )
+                meta_user.iteraction = iterate
+                meta_user.product = random_salt
+                meta_user.modified_on = t
+                user.password = new_password
+                
+                #db.execute('update tokens set active=0 where user_uid=%s',  json['uid'])
                 
             
-            db.execute('update users set pincode=%s, password=%s where uid=%s',  user.pincode,new_password, user.uid)
+            user.pincode = json['pincode']
+            
+
+            #db.execute('update users set pincode=%s, password=%s where uid=%s',  json['pincode'],new_password, json['uid'])
             
             
-            db.execute('update meta_users set iteraction=%s, product=%s, modified_on=%s where user_uid=%s ', iterate,random_salt,t,user.uid)
-            db.commit()
+            #db.execute('update meta_users set iteraction=%s, product=%s, modified_on=%s where user_uid=%s ', iterate,random_salt,t,json['uid'])
+            
+            db2.session.commit()
+            #db.commit()
 
         return self.put_response()
 
