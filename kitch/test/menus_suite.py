@@ -100,7 +100,7 @@ class MenuItemTest(BaseTest):
 
         uid=json.loads(rv.data)['items'][0]['uid']
 
-        menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
+        menu_items={"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}
         rv=self.post(data=json.dumps(menu_items),menus_uid=uid)
         assert rv.status_code == 201
 
@@ -111,7 +111,7 @@ class MenuItemTest(BaseTest):
         rv=self.get(url='/menuItems/',menus_uid=menus_uid)
 
         menu_item=json.loads(rv.data)['items'][0]
-        update_data = {'items':[{'uid':menu_item['uid'],'title':menu_item['title'],'description':menu_item['description'],'price':menu_item['price']}]}
+        update_data = {'uid':menu_item['uid'],'title':menu_item['title'],'description':menu_item['description'],'price':menu_item['price']}
 
         rv=self.put(data=json.dumps(update_data),menus_uid=menus_uid )
         assert rv.status_code == 200

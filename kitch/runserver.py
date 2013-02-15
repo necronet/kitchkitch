@@ -46,7 +46,8 @@ def validate_request():
         if not request.json:
             bad_request_response()
         #Case request does not provided items
-        elif request.endpoint in ('user.userService','menus.menuService') :
+        
+        elif request.endpoint in ('user.userService','menus.menuService','menus.menuItemService') :
 
             return None
         elif not request.json.has_key('items'):

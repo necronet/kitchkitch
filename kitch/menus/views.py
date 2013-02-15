@@ -1,11 +1,9 @@
 import uuid
-from utils.entities import KitchObject, BaseService, register_api
+from utils.entities import BaseService, register_api
 from flask import request, Blueprint,url_for
 from utils.exceptions import abort
-from kitch_db import db
-
 from flask.ext.login import login_required
-from models import Menu, db as db2
+from models import Menu, Item, MenuItem, db
 
 
 
@@ -57,7 +55,7 @@ class MenuService(BaseService):
        
 
     def fetch_items(self,uid):
-        result= db.query("select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s" ,uid)
+        result= Item.query.join(Item.menuItems).filter(MenuItem.active==1, MenuItem.menus_uid==uid).all()
         menu_items= [dict(href='%s%s'%(url_for('.menuItemService',_method='GET',_external=True),item.uid),uid=item.uid,title=item.title,description=item.description,price=str(item.price)) for item in result]
         return menu_items
     
@@ -74,8 +72,8 @@ class MenuService(BaseService):
             menu= Menu(uid,json['title'])
         except KeyError as e:
             abort(400, 'Bad request to Menu, please check the posted data %s' % e.message)
-        db2.session.add(menu)
-        db2.session.commit()
+        db.session.add(menu)
+        db.session.commit()
         
         return self.post_response()
 
@@ -91,7 +89,7 @@ class MenuService(BaseService):
         json=request.json
         menu=Menu.query.filter_by(active=1, uid=json['uid']).first()
         menu.title=json['title']
-        db2.session.commit()
+        db.session.commit()
 
         return self.put_response()
 
@@ -99,7 +97,7 @@ class MenuService(BaseService):
     def delete(self, uid):
         menu=Menu.query.filter_by(active=1, uid=uid).first()
         menu.active=0
-        db2.session.commit()
+        db.session.commit()
         return self.delete_response()
         
 
@@ -111,14 +109,14 @@ class MenuItemsService(BaseService):
         menus_uid=request.args.get('menus_uid')
 
         if uid is not None:
-            result = db.get('select uid,title,description,price from items where uid=%s and active=1 limit %s offset %s',uid,self.limit, self.offset)
+            result = Item.query.filter_by(active=1, uid=uid).limit(self.limit).offset(self.offset).first()
             items = dict(href='%s%s'%(request.base_url,uid), uid=result.uid,title=result.title,description=result.description,price=str(result.price))
             return self.get_response(items)
 
         if menus_uid is None:
-            result = db.query("select uid,title,description,price from items where active=1 limit %s offset %s", self.limit, self.offset)
+            result = Item.query.filter_by(active=1).limit(self.limit).offset(self.offset).all()
         else:
-            result = db.query("select uid,title,description,price from items i inner join menus_items mi on mi.items_uid=i.uid where mi.active=1 and mi.menus_uid=%s limit %s offset %s" ,menus_uid,self.limit, self.offset)
+            result = Item.query.join(Item.menuItems).filter(MenuItem.active==1, MenuItem.menus_uid==menus_uid).limit(self.limit).offset(self.offset).all()
         
         items = [dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,title=row.title,description=row.description,price=str(row.price)) for row in result]
         
@@ -130,14 +128,13 @@ class MenuItemsService(BaseService):
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
 
-        
-        for json_object in request.json['items']:
-            menu_items=KitchObject(json_object)            
-            uid =str(uuid.uuid1())
-
-            db.execute('insert into items(uid,title,description,price) values(%s,%s,%s,%s) ', uid,menu_items.title,menu_items.description,menu_items.price)
-            db.execute('insert into menus_items(menus_uid,items_uid) values(%s,%s) ', menus_uid,uid)
-            db.commit()        
+        json=request.json
+        uid =str(uuid.uuid1())
+        item = Item(uid,json['title'],json['description'],json['price'])
+        menu_item = MenuItem(menus_uid,uid)
+        db.session.add(item)
+        db.session.add(menu_item)
+        db.session.commit()
         
         return self.post_response()
 
@@ -149,12 +146,16 @@ class MenuItemsService(BaseService):
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to update items without a menu to be referenced')
 
-        for json_object in request.json['items']:            
-
-            menu_items= KitchObject(json_object)
-            db.execute("update items set title=%s, description=%s, price=%s where uid=%s",  menu_items.title,menu_items.description,menu_items.price,menu_items.uid)
-            db.execute("update menus_items set menus_uid=%s where items_uid=%s",menus_uid,menu_items.uid)
-            db.commit()
+        json=request.json
+        item=Item.query.filter_by(active=1, uid=json['uid']).first()
+        item.title=json['title']
+        item.description=json['description']
+        item.price=json['price']
+        
+        menu_item=MenuItem.query.filter_by(active=1, items_uid=json['uid']).first()
+        menu_item.menus_uid=menus_uid
+        
+        db.session.commit()
 
         return self.put_response()
     @login_required
@@ -164,10 +165,10 @@ class MenuItemsService(BaseService):
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
 
-        db.execute_rowcount('update menus_items set active=0 where menus_uid=%s and items_uid=%s', menus_uid,uid)
-        db.commit()
 
-
+        menu_item = MenuItem.query.filter_by(active=1, items_uid=uid, menus_uid=menus_uid).first()
+        menu_item.active = 0
+        db.session.commit()
 
         return self.delete_response()
 
