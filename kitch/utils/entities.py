@@ -25,13 +25,13 @@ def encrypt_with_interaction(data,random_salt=str(uuid.uuid1()),iterate=50000,t 
 
     return data,iterate,t,random_salt
 
-class KitchObject(object):
+"""class KitchObject(object):
     def __init__(self, obj):        
         for k, v in obj.iteritems():
             if isinstance(v, dict):
                 setattr(self, k, KitchObject(v))
             else:
-                setattr(self, k, v)
+                setattr(self, k, v)"""
 
 
 class BaseService(MethodView):
