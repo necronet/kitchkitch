@@ -74,6 +74,9 @@ class User(db.Model):
 	def is_authenticated(self):
 		return self.authenticated and self.active
 
+	def is_anonymous(self):
+		return False
+
 class MetaUser(db.Model):
 	__tablename__='meta_users'
 	user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
