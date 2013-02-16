@@ -1,3 +1,4 @@
+ENV/
 *.log
 *.idea
 .ropeproject
