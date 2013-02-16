@@ -1,9 +1,8 @@
-import uuid
 from utils.entities import BaseService, register_api
 from flask import request, Blueprint,url_for
 from utils.exceptions import abort
 from flask.ext.login import login_required
-from models import Menu, Item, MenuItem, db
+from models import Menu, Item, MenuItem
 
 class MenuService(BaseService):
     """
@@ -15,40 +14,23 @@ class MenuService(BaseService):
 
     @login_required
     def get(self, uid):
-        super(MenuService, self).get(uid,'show_menu.html')
-        menu_items=[]
+        query_result=super(MenuService, self).get(uid,'show_menu.html')
         if uid is None:
-            
-            rows = Menu.query.filter_by(active=1).limit(self.limit).offset(self.offset).all()
-
-            items=[]
-            for row in rows:
-
-                if self.expand is not None:
-                    for argument in self.expand_arguments():
-                        if argument == 'items':
-                            menu_items = self.fetch_items(row.uid)
-
-                if not menu_items:
-                    menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_external=True),row.uid,))
-
-                items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,title=row.title,items=menu_items) )
-                
+            return self.get_response( [self.retrieve_object(row) for row in query_result] )
         else:
-            result = Menu.query.filter_by(active=1, uid=uid).limit(self.limit).offset(self.offset).first()
-            
-            if self.expand is not None:
-                for argument in self.expand_arguments():
+            return self.get_response(self.retrieve_object(query_result))
 
-                    if argument == 'items':
-                        menu_items= self.fetch_items(uid)
+    def retrieve_object(self, row):
+        item = row.as_dict()
+                
+        if 'items' in self.expand_arguments() :
+            menu_items = self.fetch_items(row.uid)
+        else:
+            menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_external=True),row.uid,))
+                
+        item['items'] = menu_items
 
-            if not menu_items:
-                menu_items=dict(href='%s?menus_uid=%s' % ( url_for('.menuItemService',_external=True),result.uid,) )
-
-            items = dict(href="%s" % (request.base_url,),uid=result.uid,title=result.title, items=menu_items)
-
-        return self.get_response(items)
+        return item
     
     def update_object(self,json):
         menu = Menu.query.filter_by(active=1, uid=json['uid']).first()
@@ -60,7 +42,7 @@ class MenuService(BaseService):
         return menu_items
     
     def object_from_json(self,uid,json):
-        return Menu(uid,json['title'])
+        return [Menu(uid,json['title'])]
 
 
 class MenuItemsService(BaseService):
@@ -84,31 +66,22 @@ class MenuItemsService(BaseService):
         
         return self.get_response(items)
         
-    @login_required    
-    def post(self):
+    def object_from_json(self,uid,json):
         menus_uid=request.args.get('menus_uid')
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
-
-        json=request.json
-        uid =str(uuid.uuid1())
+        
         item = Item(uid,json['title'],json['description'],json['price'])
         menu_item = MenuItem(menus_uid,uid)
-        db.session.add(item)
-        db.session.add(menu_item)
-        db.session.commit()
         
-        return self.post_response()
+        return [item,menu_item]
 
-    @login_required
-    def put(self):
-
+    def update_object(self,json):
         menus_uid=request.args.get('menus_uid')
 
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to update items without a menu to be referenced')
 
-        json=request.json
         item=Item.query.filter_by(active=1, uid=json['uid']).first()
         item.title=json['title']
         item.description=json['description']
@@ -116,21 +89,15 @@ class MenuItemsService(BaseService):
         
         menu_item=MenuItem.query.filter_by(active=1, items_uid=json['uid']).first()
         menu_item.menus_uid=menus_uid
-        
-        db.session.commit()
 
-        return self.put_response()
+
     @login_required
-    def delete(self,uid):
-        
+    def delete(self, uid):
         menus_uid=request.args.get('menus_uid')
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
-
-        menu_item = MenuItem.query.filter_by(active=1, items_uid=uid, menus_uid=menus_uid).first()
-        menu_item.active = 0
-        db.session.commit()
-
+        
+        self.delete_entity(active=1, items_uid=uid, menus_uid=menus_uid)
         return self.delete_response()
 
 app = Blueprint('menus',__name__,template_folder='templates')
