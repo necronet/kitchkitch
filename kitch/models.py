@@ -7,7 +7,7 @@ db = SQLAlchemy()
 class Menu(db.Model):
     __tablename__='menus'
     uid = db.Column(db.String(36),primary_key=True)
-    active = db.Column(db.Integer, default=1)
+    active = db.Column(db.Boolean, default=1)
     title = db.Column(db.String(100), nullable=False)
     menuItems = relationship("MenuItem")
 
@@ -18,6 +18,14 @@ class Menu(db.Model):
 
     def __repr__(self):
     	return "Menu uid=%s, title=%s, active=%s" % (self.uid, self.title, self.active)
+
+    def as_dict(self):
+    	d = {}
+        for column in self.__table__.columns:
+        	if column.name is not 'active':
+				d[column.name] = getattr(self, column.name)
+
+        return d
 
 class Item(db.Model):
     __tablename__='items'
