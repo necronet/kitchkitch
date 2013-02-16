@@ -1,5 +1,6 @@
 jinja2
+MySQL-Python
 werkzeug
-flask
+flask==dev
 Flask-Login
 Flask-SQLAlchemy
