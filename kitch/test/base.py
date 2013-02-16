@@ -41,7 +41,6 @@ class BaseTest(unittest.TestCase):
     @auth_token.setter
     def auth_token(self,value):
         self._auth_token=value
-
        
     def test_get(self, **kwargs):
         """
@@ -50,7 +49,6 @@ class BaseTest(unittest.TestCase):
         checking:
             - response 200 OK
             - at least there is one item in the list
-            - href is present in each item
 
         """
         self.test_post()
@@ -59,8 +57,8 @@ class BaseTest(unittest.TestCase):
 
         response_data=json.loads(rv.data)['items']
         assert len(response_data) > 0
-        for item in response_data:
-            assert item['href'] is not None
+        #for item in response_data:
+        #    assert item['href'] is not None
 
         return response_data
     
@@ -75,7 +73,7 @@ class BaseTest(unittest.TestCase):
 
         Note: will always append 'href' to keys list.
         """
-        keys.append('href')
+        
         self.test_post()
         rv=self.get()
         uid=json.loads(rv.data)['items'][0]['uid']
@@ -124,6 +122,7 @@ class BaseTest(unittest.TestCase):
         Allows to clear the authorization session currently in the test_client() objects
         by simply removing the _id and user_id from session_transaction object.
         """
+
         with self.c.session_transaction() as session:
             session['_id']=None
             session['user_id']=None
