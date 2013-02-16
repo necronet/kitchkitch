@@ -1,5 +1,8 @@
 from flask.views import MethodView
 from flask import request, jsonify, make_response, render_template
+from flask.ext.login import login_required
+from models import db
+from utils.exceptions import abort
 
 def to_json(datas):
     if type(datas)==list:
@@ -96,9 +99,44 @@ class BaseService(MethodView):
 
         return expand_arguments
 
+    @login_required
+    def post(self):
+        """
+            Post a single menu item and return 202 repsonse if successful
+            {title:'TITLEMENU'}
+        """
+
+        json = request.json
+        uid =str(uuid.uuid1())
+        try:
+            data_object= self.object_from_json(uid,json)
+        except KeyError as e:
+            abort(400, 'Bad request Resource, please check the posted data %s' % e.message)
+        db.session.add(data_object)
+        db.session.commit()
+        
+        return self.post_response()
+
+    @login_required
+    def put(self):
+        """
+            PUT a single menu item and return 200 repsonse if successful
+            {
+                uid:'unique_identifier',
+                title:'TITLEMENU'
+            }
+        """
+        json=request.json
+        self.update_object(json)
+        db.session.commit()
+
+        return self.put_response()
+
+    @login_required
     def delete(self, uid):
-        #db.execute_rowcount('update '+self.schema_table+' set active=0 where uid=%s', uid)
-        #db.commit()
+        model=self.schema_table.query.filter_by(active=1, uid=uid).first()
+        model.active=0
+        db.session.commit()
         return self.delete_response()
 
 def register_api(app,view, endpoint, url, pk, pk_type='string'):

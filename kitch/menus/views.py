@@ -5,16 +5,13 @@ from utils.exceptions import abort
 from flask.ext.login import login_required
 from models import Menu, Item, MenuItem, db
 
-
-
-
 class MenuService(BaseService):
     """
     Represent menus with associated their dishes as a collection of items.
     It consist on standars REST calls GET for listing, POST for creating,
     PUT for modifying and DELETE to mark as remove.
     """
-    schema_table='menus'
+    schema_table=Menu
 
     @login_required
     def get(self, uid):
@@ -52,54 +49,19 @@ class MenuService(BaseService):
             items = dict(href="%s" % (request.base_url,),uid=result.uid,title=result.title, items=menu_items)
 
         return self.get_response(items)
-       
+    
+    def update_object(self,json):
+        menu = Menu.query.filter_by(active=1, uid=json['uid']).first()
+        menu.title=json['title']
 
     def fetch_items(self,uid):
         result= Item.query.join(Item.menuItems).filter(MenuItem.active==1, MenuItem.menus_uid==uid).all()
         menu_items= [dict(href='%s%s'%(url_for('.menuItemService',_method='GET',_external=True),item.uid),uid=item.uid,title=item.title,description=item.description,price=str(item.price)) for item in result]
         return menu_items
     
-    @login_required
-    def post(self):
-        """
-            Post a single menu item and return 202 repsonse if successful
-            {title:'TITLEMENU'}
-        """
+    def object_from_json(self,uid,json):
+        return Menu(uid,json['title'])
 
-        json = request.json
-        uid =str(uuid.uuid1())
-        try:
-            menu= Menu(uid,json['title'])
-        except KeyError as e:
-            abort(400, 'Bad request to Menu, please check the posted data %s' % e.message)
-        db.session.add(menu)
-        db.session.commit()
-        
-        return self.post_response()
-
-    @login_required
-    def put(self):
-        """
-            PUT a single menu item and return 200 repsonse if successful
-            {
-                uid:'unique_identifier',
-                title:'TITLEMENU'
-            }
-        """
-        json=request.json
-        menu=Menu.query.filter_by(active=1, uid=json['uid']).first()
-        menu.title=json['title']
-        db.session.commit()
-
-        return self.put_response()
-
-    @login_required
-    def delete(self, uid):
-        menu=Menu.query.filter_by(active=1, uid=uid).first()
-        menu.active=0
-        db.session.commit()
-        return self.delete_response()
-        
 
 class MenuItemsService(BaseService):
     schema_table='items'
@@ -164,7 +126,6 @@ class MenuItemsService(BaseService):
         menus_uid=request.args.get('menus_uid')
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
-
 
         menu_item = MenuItem.query.filter_by(active=1, items_uid=uid, menus_uid=menus_uid).first()
         menu_item.active = 0
