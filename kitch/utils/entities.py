@@ -43,7 +43,8 @@ class BaseService(MethodView):
     """
     schema_table=None
 
-    def get(self,id,template=None):
+    @login_required
+    def get(self,uid,template=None):
         """
         
         Get and validate offset and limit in query string.
@@ -55,7 +56,17 @@ class BaseService(MethodView):
         self.limit= int(self.get_parameter('limit',50))
         self.expand=request.args.get('expand')
         self.template=template
-        
+
+        query = self.schema_table.query.filter_by(active=1)
+
+        if uid :
+            query.filter_by(uid=uid)
+            model_object = query.first()
+            return model_object
+
+        query.limit(self.limit).offset(self.offset)
+
+        return query.all()
 
     def get_parameter(self, param_name, default_value=0):
         parameter=request.args.get(param_name)
@@ -91,7 +102,7 @@ class BaseService(MethodView):
 
         """
         if self.expand is None:
-            return None
+            return []
 
         expand_arguments=[]
         for attribute in self.expand.split(','):
@@ -109,10 +120,13 @@ class BaseService(MethodView):
         json = request.json
         uid =str(uuid.uuid1())
         try:
-            data_object= self.object_from_json(uid,json)
+            data_objects = self.object_from_json(uid,json)
         except KeyError as e:
             abort(400, 'Bad request Resource, please check the posted data %s' % e.message)
-        db.session.add(data_object)
+
+        for data_object in data_objects:
+            db.session.add(data_object)
+
         db.session.commit()
         
         return self.post_response()
@@ -134,10 +148,13 @@ class BaseService(MethodView):
 
     @login_required
     def delete(self, uid):
-        model=self.schema_table.query.filter_by(active=1, uid=uid).first()
+        self.delete_entity(active=1, uid=uid)
+        return self.delete_response()
+
+    def delete_entity(self, **query_args):
+        model=self.schema_table.query.filter_by(**query_args).first()
         model.active=0
         db.session.commit()
-        return self.delete_response()
 
 def register_api(app,view, endpoint, url, pk, pk_type='string'):
     """
