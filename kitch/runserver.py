@@ -58,16 +58,7 @@ def validate_request():
         if not request.json:
             bad_request_response()
         #Case request does not provided items
-        
-        elif request.endpoint in ('user.userService','menus.menuService','menus.menuItemService') :
 
-            return None
-        elif not request.json.has_key('items'):
-            bad_request_response()
-        
-        #If instance is not a instance of list or tuples
-        elif not isinstance(request.json['items'], (list,tuple)):
-            bad_request_response()
 
 
 def bad_request_response():
