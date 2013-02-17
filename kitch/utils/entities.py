@@ -3,6 +3,7 @@ from flask import request, jsonify, make_response, render_template
 from flask.ext.login import login_required
 from models import db
 from utils.exceptions import abort
+import sqlalchemy
 
 def to_json(datas):
     if type(datas)==list:
@@ -131,10 +132,15 @@ class BaseService(MethodView):
         except KeyError as e:
             abort(400, 'Bad request Resource, please check the posted data %s' % e.message)
 
-        for data_object in data_objects:
-            db.session.add(data_object)
+        try:
+            for data_object in data_objects:
+                db.session.add(data_object)
 
-        db.session.commit()
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError as e:
+            abort(409, 'Conflict on creating record. %s' % e.message)
+
+
         
         return self.post_response()
 
