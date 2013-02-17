@@ -23,21 +23,17 @@ class UserService(BaseService):
         Note this method will retrieve your profile along with the profile 
         that you are allow to see.
     """
+    schema_table = User
+
     @login_required
     def get(self,uid):
-        super(UserService, self).get(uid,'show_user.html')
-        items=[]
-        if uid is None:
+        query_result = super(UserService, self).get(uid,'show_user.html')
 
-            rows = User.query.filter_by(active=1).limit(self.limit).offset(self.offset).all()
-            for row in rows:
-                items.append( dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,username=row.username,pincode=row.pincode) )
+        if type(query_result) == list:
+            return self.get_response( [ row.as_dict() for row in query_result ] )
         else:
-            row = User.query.filter_by(active=1, uid=uid).limit(self.limit).offset(self.offset).first()#db.get("select uid,username,pincode from users where active=1 and uid=%s" , uid )
-            
-            items=dict(href='%s'%(request.base_url,),uid=row.uid,username=row.username,pincode=row.pincode) 
+            return self.get_response( query_result.as_dict() )
         
-        return self.get_response(items)
 
     """
         Create a new User in the system. The structure that need to be provided is the following:
