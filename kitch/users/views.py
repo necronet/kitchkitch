@@ -45,21 +45,12 @@ class UserService(BaseService):
         }
         Then the method will ensure to hashed the password properly
     """
-    @login_required
-    def post(self):
-        json = request.json
-        uid =str(uuid.uuid1())
-        try:
-            
-            password,iterate,t,random_salt=encrypt_with_interaction(json['password'])
-            user = User(uid,json['username'],password,json['pincode'])
-            meta_user = MetaUser(uid, iterate, random_salt,t)
-            db.session.add(user)
-            db.session.add(meta_user)
-            db.session.commit()
-            return self.post_response()
-        except sqlalchemy.exc.IntegrityError as e:
-            abort(409, 'This username already exist. %s' % e.message)
+    def object_from_json(self,uid,json):
+        password,iterate,t,random_salt=encrypt_with_interaction(json['password'])
+        user = User(uid,json['username'],password,json['pincode'])
+        meta_user = MetaUser(uid, iterate, random_salt,t)
+        return [user,meta_user]
+
 
     '''
     Update a user record. The method will ensure that to update the password if changed and re-hashed again.
@@ -105,16 +96,8 @@ class UserService(BaseService):
 
         return self.put_response()
 
-    @login_required
-    def delete(self, uid):
-        user = User.query.filter_by( uid = uid).first()
-        user.active = 0
-        db.session.commit()
-        return self.delete_response()
-
-        
-
 class LoginService(BaseService):
+    schema_table = Token
     def get(self,uid):
         return make_response(jsonify({}),501)
 
