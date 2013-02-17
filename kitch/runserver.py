@@ -1,7 +1,7 @@
 # all the imports
 from flask import Flask, render_template
-from utils.exceptions import abort
-from users.views import app as user, get_user
+from utils.exceptions import abort, bad_request_response
+from users.views import app as user, get_user, check_user_permission
 from menus.views import  app as menu
 from flask import request, _request_ctx_stack
 from flask.ext.login import LoginManager
@@ -21,16 +21,23 @@ class CustomLoginManager(LoginManager):
 
     def reload_user(self):
 
-        if request.headers.has_key('Authorization'):
+        if request.headers.has_key('Authorization') and request.endpoint:
             ctx = _request_ctx_stack.top
             ctx.user = get_user(token=request.headers['Authorization'])
-            ctx.user = ctx.user if ctx.user is not None else self.anonymous_user()
+            if ctx.user:
+                check_user_permission(ctx.user)
+            else:
+                ctx.user = self.anonymous_user()
 
         else:
             super(CustomLoginManager,self).reload_user()
 
 
 app = Flask(__name__)
+
+login_manager = CustomLoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "user.login"
 
 app.json_encoder = APIEncoder
 
@@ -39,15 +46,16 @@ app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
 
-login_manager = CustomLoginManager()
-login_manager.init_app(app)
-login_manager.login_view = "user.login"
 
 @app.before_request
 def validate_request():
-    
-    if request.endpoint == 'user.loginService':
-        return None
+
+    """
+        Ensure that the request sent has the proper basic information to
+        be handle by the endpoint. Otherwise it would be a waste of resources
+        to proceed to following stages.
+    """
+
     #Validate mime type to always be json
     if request.mimetype!='application/json' and request.method != 'GET':
         abort(415)
@@ -56,7 +64,6 @@ def validate_request():
     if request.method in ('POST','PUT') and not request.json:
         #in case there is no json data
         bad_request_response()
-
 
 
 def bad_request_response():
@@ -72,7 +79,6 @@ def bad_request_response():
 
 @login_manager.user_loader
 def load_user(uid):
-
     return get_user(uid)
 
 @login_manager.unauthorized_handler
