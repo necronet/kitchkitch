@@ -24,3 +24,15 @@ def abort(status_code, body=None, headers={}):
 
     error_cls = type(class_name, tuple(bases), attributes)
     flask_abort(make_response(error_cls(body), status_code, headers))
+
+
+def bad_request_response():
+
+    if not request.json:
+        reason='Empty body is not allowed please submit the proper data'
+    elif not request.json.has_key('items'):
+        reason='Body content should include items array. For call %s' % request.url
+    elif not isinstance(request.json['items'], (list,tuple)):
+        reason='Items must be a json array. Enclose with brackets items:[{}]'
+
+    return abort(400,'Error has occurred, reason %s' % reason )
