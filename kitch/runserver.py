@@ -6,6 +6,16 @@ from menus.views import  app as menu
 from flask import request, _request_ctx_stack
 from flask.ext.login import LoginManager
 from models import db
+from flask import json
+import decimal
+
+class APIEncoder(json.JSONEncoder):
+    def default(self, obj):
+
+        if isinstance(obj, decimal.Decimal):
+            return str(obj)
+
+        return json.JSONEncoder.default(self, obj)
 
 class CustomLoginManager(LoginManager):
 
@@ -21,8 +31,10 @@ class CustomLoginManager(LoginManager):
 
 
 app = Flask(__name__)
-db.init_app(app)
 
+app.json_encoder = APIEncoder
+
+db.init_app(app)
 app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
@@ -33,7 +45,7 @@ login_manager.login_view = "user.login"
 
 @app.before_request
 def validate_request():
-
+    
     if request.endpoint == 'user.loginService':
         return None
     #Validate mime type to always be json
