@@ -52,12 +52,11 @@ def validate_request():
     if request.mimetype!='application/json' and request.method != 'GET':
         abort(415)
 
+
+    if request.method in ('POST','PUT') and not request.json:
     if request.method in ('POST','PUT'):
         #in case there is no json data
-        
-        if not request.json:
-            bad_request_response()
-        #Case request does not provided items
+        bad_request_response()
 
 
 
