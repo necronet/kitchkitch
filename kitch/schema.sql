@@ -61,6 +61,9 @@ uid varchar(36) not null primary key,
 name varchar(40) not null unique,
 active int default 1);
 
+#Default group for administrative 
+insert into groups(uid,name) values('64344887-7902-11e2-821d-3c0754558970','admin');
+
 #List of available permission might contain 
 drop table if exists permissions;
 create table permissions(
@@ -85,6 +88,38 @@ insert into resources(uid,name) values('00260202-6e59-11e2-b8ac-3c0754558970','l
 insert into resources(uid,name) values('00360202-6e59-11e2-b8ac-3c0754558970','menus');
 insert into resources(uid,name) values('00460202-6e59-11e2-b8ac-3c0754558970','menuItems');
 
+#Table that map a group, resources and the permission this can have
+drop table if exists group_resources_permission;
+create table group_resources_permission(
+	group_uid varchar(36) not null,
+	resource_uid varchar(36) not null,
+	permission_uid varchar(36) not null,
+	primary key(group_uid, resource_uid, permission_uid)
+);
+
+#Set Admin group to post put delete for user resources
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00160202-6e59-11e2-b8ac-3c0754558970','158d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00160202-6e59-11e2-b8ac-3c0754558970','258d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00160202-6e59-11e2-b8ac-3c0754558970','358d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00160202-6e59-11e2-b8ac-3c0754558970','458d527d-7901-11e2-bc99-3c0754558970');
+
+#Set Admin group to post put delete for login resources
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00260202-6e59-11e2-b8ac-3c0754558970','158d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00260202-6e59-11e2-b8ac-3c0754558970','258d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00260202-6e59-11e2-b8ac-3c0754558970','358d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00260202-6e59-11e2-b8ac-3c0754558970','458d527d-7901-11e2-bc99-3c0754558970');
+
+#Set Admin group to post put delete for menus resources
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00360202-6e59-11e2-b8ac-3c0754558970','158d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00360202-6e59-11e2-b8ac-3c0754558970','258d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00360202-6e59-11e2-b8ac-3c0754558970','358d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00360202-6e59-11e2-b8ac-3c0754558970','458d527d-7901-11e2-bc99-3c0754558970');
+
+#Set Admin group to post put delete for menusItems resources
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00460202-6e59-11e2-b8ac-3c0754558970','158d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00460202-6e59-11e2-b8ac-3c0754558970','258d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00460202-6e59-11e2-b8ac-3c0754558970','358d527d-7901-11e2-bc99-3c0754558970');
+insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00460202-6e59-11e2-b8ac-3c0754558970','458d527d-7901-11e2-bc99-3c0754558970');
 
 #Menus modules
 drop table if exists menus;
