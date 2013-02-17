@@ -46,6 +46,15 @@ class Item(db.Model):
     def __repr__(self):
     	return "Items uid=%s, title=%s, description=%s, price=%s, active=%s" % (self.uid, self.title, self.description, self.price, self.active)
 
+    def as_dict(self):
+    	d = {}
+
+    	for column in self.__table__.columns:
+			if column.name is not 'active':
+				d[column.name] = getattr(self, column.name)
+
+        return d
+
 class MenuItem(db.Model):
 	__tablename__='menus_items'
 	menus_uid = db.Column(db.String(36), db.ForeignKey('menus.uid'), primary_key=True)
@@ -84,6 +93,15 @@ class User(db.Model):
 
 	def is_anonymous(self):
 		return False
+
+	def as_dict(self):
+		d = {}
+
+		for column in self.__table__.columns:
+			if column.name is not 'active':
+				d[column.name] = getattr(self, column.name)
+		
+		return d
 
 class MetaUser(db.Model):
 	__tablename__='meta_users'
