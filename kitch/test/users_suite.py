@@ -86,11 +86,12 @@ class UserTest(BaseTest):
         user['pincode']='8989'
         user['password']='admin'
         rv=self.put(data=json.dumps(user))
-        assert rv.status_code == 200
+
+        assert rv.status_code == 403
 
         #Check that the record changed can login with the new password
-        rv=login(self.c,user['username'],"admin")
-        assert rv.status_code == 200
+        #rv=login(self.c,user['username'],"admin")
+        #assert rv.status_code == 200
 
     def test_delete_users(self):
         """
