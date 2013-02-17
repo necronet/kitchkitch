@@ -14,8 +14,9 @@ class MenuService(BaseService):
 
     @login_required
     def get(self, uid):
-        query_result=super(MenuService, self).get(uid,'show_menu.html')
-        if uid is None:
+        query_result=super(MenuService, self).get(uid, 'show_menu.html')
+
+        if type(query_result) == list:
             return self.get_response( [self.retrieve_object(row) for row in query_result] )
         else:
             return self.get_response(self.retrieve_object(query_result))
@@ -46,25 +47,26 @@ class MenuService(BaseService):
 
 
 class MenuItemsService(BaseService):
-    schema_table='items'
+    schema_table = Item
     @login_required
     def get(self, uid):
-        super(MenuItemsService, self).get(uid)
+
         menus_uid=request.args.get('menus_uid')
 
-        if uid is not None:
-            result = Item.query.filter_by(active=1, uid=uid).limit(self.limit).offset(self.offset).first()
-            items = dict(href='%s%s'%(request.base_url,uid), uid=result.uid,title=result.title,description=result.description,price=str(result.price))
-            return self.get_response(items)
-
-        if menus_uid is None:
-            result = Item.query.filter_by(active=1).limit(self.limit).offset(self.offset).all()
+        if menus_uid:
+            query_result = super(MenuItemsService, self).get(join=Item.menuItems, active=1, menus_uid=menus_uid )
+            return self.get_response( [row.as_dict() for row in query_result] )
         else:
-            result = Item.query.join(Item.menuItems).filter(MenuItem.active==1, MenuItem.menus_uid==menus_uid).limit(self.limit).offset(self.offset).all()
-        
-        items = [dict(href='%s%s'%(request.base_url,row.uid),uid=row.uid,title=row.title,description=row.description,price=str(row.price)) for row in result]
-        
-        return self.get_response(items)
+            query_result = super(MenuItemsService, self).get(uid)
+
+            if uid:
+                result = query_result.as_dict()
+            else:
+                result = [ row.as_dict() for row in query_result ] 
+            
+            return self.get_response( result )
+
+
         
     def object_from_json(self,uid,json):
         menus_uid=request.args.get('menus_uid')
@@ -97,7 +99,7 @@ class MenuItemsService(BaseService):
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to delete items without a menu to be referenced')
         
-        self.delete_entity(active=1, items_uid=uid, menus_uid=menus_uid)
+        self.delete_entity(MenuItem, active=1, items_uid=uid, menus_uid=menus_uid)
         return self.delete_response()
 
 app = Blueprint('menus',__name__,template_folder='templates')
