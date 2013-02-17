@@ -54,7 +54,6 @@ def validate_request():
 
 
     if request.method in ('POST','PUT') and not request.json:
-    if request.method in ('POST','PUT'):
         #in case there is no json data
         bad_request_response()
 
