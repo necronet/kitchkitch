@@ -28,14 +28,6 @@ def encrypt_with_interaction(data,random_salt=str(uuid.uuid1()),iterate=50000,t 
 
     return data,iterate,t,random_salt
 
-"""class KitchObject(object):
-    def __init__(self, obj):        
-        for k, v in obj.iteritems():
-            if isinstance(v, dict):
-                setattr(self, k, KitchObject(v))
-            else:
-                setattr(self, k, v)"""
-
 
 class BaseService(MethodView):
     """
@@ -171,6 +163,7 @@ class BaseService(MethodView):
         model=self.schema_table.query.filter_by(**query_args).first()
         model.active=0
         db.session.commit()
+
 
 def register_api(app,view, endpoint, url, pk, pk_type='string'):
     """
