@@ -1,8 +1,8 @@
-from flask import request, redirect, url_for,Blueprint,make_response,jsonify
+from flask import request, redirect, url_for,Blueprint,make_response,jsonify, _request_ctx_stack
 from flask.ext.login import login_user,logout_user,login_required
 from utils.entities import BaseService, register_api,encrypt_with_interaction
 from utils.exceptions import abort
-from models import User, MetaUser, Token, db 
+from models import User, GroupResourcePermission, Group, UserGroup, MetaUser, Token, Permission, Resource, db
 import sqlalchemy
 import uuid
 
@@ -168,4 +168,14 @@ def create_user_from_record(record):
 register_api(app,LoginService, 'loginService','/login/','uid')
 register_api(app,UserService, 'userService','/user/','uid')
 
+def check_user_permission(user):
+    #Fetch to see wether the user has the permission in one of the groups where he is.
+    resource = request.endpoint.split('.')[0]
+    permission = request.method
 
+    result = GroupResourcePermission.query.join(Group,Permission, Resource)\
+            .filter(Permission.name == permission, Resource.name==resource).\
+                join(UserGroup).join(User).filter(User.uid==user.uid).all()
+
+    if not result:
+        abort(403,"Not authorized to access this resource")
