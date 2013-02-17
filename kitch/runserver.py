@@ -65,18 +65,6 @@ def validate_request():
         #in case there is no json data
         bad_request_response()
 
-
-def bad_request_response():
-
-    if not request.json:
-        reason='Empty body is not allowed please submit the proper data'
-    elif not request.json.has_key('items'):
-        reason='Body content should include items array. For call %s' % request.url
-    elif not isinstance(request.json['items'], (list,tuple)):
-        reason='Items must be a json array. Enclose with brackets items:[{}]'
-
-    return abort(400,'Error has occurred, reason %s' % reason )
-
 @login_manager.user_loader
 def load_user(uid):
     return get_user(uid)
