@@ -44,7 +44,7 @@ class BaseService(MethodView):
     schema_table=None
 
     @login_required
-    def get(self,uid,template=None):
+    def get(self, uid=None, template=None, join= None, *join_criterion,**kwargs):
         """
         
         Get and validate offset and limit in query string.
@@ -59,10 +59,17 @@ class BaseService(MethodView):
 
         query = self.schema_table.query.filter_by(active=1)
 
-        if uid :
+        if uid:
             query.filter_by(uid=uid)
             model_object = query.first()
             return model_object
+
+        if join:
+            query = query.join(join)
+
+        if len(kwargs)>0:
+            query = query.filter_by(**kwargs)
+
 
         query.limit(self.limit).offset(self.offset)
 
@@ -151,7 +158,10 @@ class BaseService(MethodView):
         self.delete_entity(active=1, uid=uid)
         return self.delete_response()
 
-    def delete_entity(self, **query_args):
+    def delete_entity(self, schema_table=None, **query_args):
+        if schema_table:
+            self.schema_table = schema_table
+        
         model=self.schema_table.query.filter_by(**query_args).first()
         model.active=0
         db.session.commit()
