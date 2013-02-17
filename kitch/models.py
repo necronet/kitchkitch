@@ -12,18 +12,18 @@ class Menu(db.Model):
     menuItems = relationship("MenuItem")
 
     def __init__(self,uid,title,active=1):
-    	self.uid = uid
-    	self.title = title
-    	self.active = active
+        self.uid = uid
+        self.title = title
+        self.active = active
 
     def __repr__(self):
-    	return "Menu uid=%s, title=%s, active=%s" % (self.uid, self.title, self.active)
+        return "Menu uid=%s, title=%s, active=%s" % (self.uid, self.title, self.active)
 
     def as_dict(self):
-    	d = {}
+        d = {}
         for column in self.__table__.columns:
-        	if column.name is not 'active':
-				d[column.name] = getattr(self, column.name)
+            if column.name is not 'active':
+                d[column.name] = getattr(self, column.name)
 
         return d
 
@@ -37,98 +37,127 @@ class Item(db.Model):
     menuItems = relationship("MenuItem")
 
     def __init__(self,uid,title,description,price,active=1):
-    	self.uid = uid
-    	self.title = title
-    	self.active = active
-    	self.description = description
-    	self.price = price
+        self.uid = uid
+        self.title = title
+        self.active = active
+        self.description = description
+        self.price = price
 
     def __repr__(self):
-    	return "Items uid=%s, title=%s, description=%s, price=%s, active=%s" % (self.uid, self.title, self.description, self.price, self.active)
+        return "Items uid=%s, title=%s, description=%s, price=%s, active=%s" % (self.uid, self.title, self.description, self.price, self.active)
 
     def as_dict(self):
-    	d = {}
+        d = {}
 
-    	for column in self.__table__.columns:
-			if column.name is not 'active':
-				d[column.name] = getattr(self, column.name)
+        for column in self.__table__.columns:
+            if column.name is not 'active':
+                d[column.name] = getattr(self, column.name)
 
         return d
 
 class MenuItem(db.Model):
-	__tablename__='menus_items'
-	menus_uid = db.Column(db.String(36), db.ForeignKey('menus.uid'), primary_key=True)
-	items_uid = db.Column(db.String(36), db.ForeignKey('items.uid'), primary_key=True)
-	active = db.Column(db.Integer, default=1)
+    __tablename__='menus_items'
+    menus_uid = db.Column(db.String(36), db.ForeignKey('menus.uid'), primary_key=True)
+    items_uid = db.Column(db.String(36), db.ForeignKey('items.uid'), primary_key=True)
+    active = db.Column(db.Integer, default=1)
 
-	def __init__(self, menus_uid, items_uid, active=1):
-		self.menus_uid = menus_uid
-		self.items_uid = items_uid
-		self.active = active
+    def __init__(self, menus_uid, items_uid, active=1):
+        self.menus_uid = menus_uid
+        self.items_uid = items_uid
+        self.active = active
 
 class User(db.Model):
-	__tablename__='users'
-	uid = db.Column(db.String(36),primary_key=True)
-	username = db.Column(db.String(50),nullable=False)
-	password = db.Column(db.String(64),nullable=False)
-	pincode = db.Column(db.String(4),nullable=False)
-	active = db.Column(db.Integer, default=1)
-	authenticated = True
+    __tablename__='users'
+    uid = db.Column(db.String(36),primary_key=True)
+    username = db.Column(db.String(50),nullable=False)
+    password = db.Column(db.String(64),nullable=False)
+    pincode = db.Column(db.String(4),nullable=False)
+    active = db.Column(db.Integer, default=1)
+    authenticated = True
 
-	def __init__(self, uid,username,password,pincode,active=1):
-		self.uid=uid
-		self.username=username
-		self.password=password
-		self.pincode=pincode
-		self.active=active
+    def __init__(self, uid,username,password,pincode,active=1):
+        self.uid=uid
+        self.username=username
+        self.password=password
+        self.pincode=pincode
+        self.active=active
 
-	def is_active(self):
-		return self.active
+    def is_active(self):
+        return self.active
 
-	def get_id(self):
-		return self.uid
+    def get_id(self):
+        return self.uid
 
-	def is_authenticated(self):
-		return self.authenticated and self.active
+    def is_authenticated(self):
+        return self.authenticated and self.active
 
-	def is_anonymous(self):
-		return False
+    def is_anonymous(self):
+        return False
 
-	def as_dict(self):
-		d = {}
+    def as_dict(self):
+        d = {}
 
-		for column in self.__table__.columns:
-			if column.name is not 'active':
-				d[column.name] = getattr(self, column.name)
-		
-		return d
+        for column in self.__table__.columns:
+            if column.name is not 'active':
+                d[column.name] = getattr(self, column.name)
+
+        return d
 
 class MetaUser(db.Model):
-	__tablename__='meta_users'
-	user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
-	iteraction = db.Column(db.Integer(), nullable=False)
-	product = db.Column(db.String(36), nullable=False)
-	modified_on = db.Column(db.Integer(), nullable=False)
+    __tablename__='meta_users'
+    user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
+    iteraction = db.Column(db.Integer(), nullable=False)
+    product = db.Column(db.String(36), nullable=False)
+    modified_on = db.Column(db.Integer(), nullable=False)
 
-	def __init__(self, user_uid, iteraction, product, modified_on):
-		self.user_uid = user_uid
-		self.iteraction = iteraction
-		self.product = product
-		self.modified_on = modified_on
+    def __init__(self, user_uid, iteraction, product, modified_on):
+        self.user_uid = user_uid
+        self.iteraction = iteraction
+        self.product = product
+        self.modified_on = modified_on
 
 
 class Token(db.Model):
-	__tablename__='tokens'
-	user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
-	token = db.Column(db.String(40), primary_key=True)
-	active = db.Column(db.Integer, default=1)
+    __tablename__='tokens'
+    user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
+    token = db.Column(db.String(40), primary_key=True)
+    active = db.Column(db.Integer, default=1)
 
-	def __init__(self, user_uid, token, active=1):
-		self.user_uid = user_uid
-		self.token = token
-		self.active = active
+    def __init__(self, user_uid, token, active=1):
+        self.user_uid = user_uid
+        self.token = token
+        self.active = active
 
-	def __repr__(self):
-		return "Token user_uid=%s, token=%s, active=%s" % (self.user_uid, self.token, self.active)
+    def __repr__(self):
+        return "Token user_uid=%s, token=%s, active=%s" % (self.user_uid, self.token, self.active)
 
+
+class Group(db.Model):
+    __tablename__='groups'
+    uid = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(50), primary_key=True)
+    active = db.Column(db.Integer, default=1)
+
+class UserGroup(db.Model):
+    __tablename__='users_groups'
+    user_uid = db.Column(db.String(36), primary_key=True)
+    group_uid = db.Column(db.String(36), primary_key=True)
+
+class Permission(db.Model):
+    __tablename__='permissions'
+    uid = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(50), primary_key=True)
+    active = db.Column(db.Integer, default=1)
+
+class Resouce(db.Model):
+    __tablename__='resources'
+    uid = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(50), primary_key=True)
+    active = db.Column(db.Integer, default=1)
+
+class UserGroupPermission(db.Model):
+    __tablename__='group_resources_permission'
+    group_uid = db.Column(db.String(36), db.ForeignKey('groups.uid'), primary_key=True)
+    resource_uid = db.Column(db.String(36), db.ForeignKey('resources.uid'), primary_key=True)
+    permission_uid = db.Column(db.String(36), db.ForeignKey('permissions.uid'), primary_key=True)
 
