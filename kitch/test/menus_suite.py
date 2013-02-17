@@ -66,11 +66,14 @@ class MenuItemTest(BaseTest):
 
     def test_get_item(self):
         rv=self.get(url='/menus/')
+
         uid=json.loads(rv.data)['items'][0]['uid']
 
         menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
-        response=self.check_item(json.dumps(menu_items),['uid','title'],menus_uid=uid)
-        assert response.has_key('href')
+
+        self.check_item(json.dumps(menu_items),['uid','title'],menus_uid=uid)
+
+        
 
     def test_get_menu_with_expand(self):
         #Make items
