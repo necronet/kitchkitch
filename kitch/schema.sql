@@ -68,6 +68,11 @@ uid varchar(36) not null primary key,
 name varchar(40) not null unique,
 active int default 1);
 
+insert into permissions(uid,name) values ('158d527d-7901-11e2-bc99-3c0754558970','put'),
+										 ('258d527d-7901-11e2-bc99-3c0754558970','post'),
+										 ('358d527d-7901-11e2-bc99-3c0754558970','get'),
+										 ('458d527d-7901-11e2-bc99-3c0754558970','delete');
+
 #List of available resources in the system login, menus, menusItems, user, etc....
 drop table if exists resources;
 create table resources(
