@@ -42,6 +42,10 @@ create table meta_users (
 insert into users values('c4860202-6e59-11e2-b8ac-3c0754558970','admin','d82670cb1512cddcf3a5b0d0760f65cf5a67704951abb3d45180e87eb31e5e6f',6969,1);
 insert into meta_users values('c4860202-6e59-11e2-b8ac-3c0754558970',50000,'98e8eb4f-6e59-11e2-b9a9-3c0754558970',1359934187);
 
+#unadmin is a test user for testing resources permissions
+insert into users values('a4860202-6e59-11e2-b8ac-3c0754558970','unadmin','d82670cb1512cddcf3a5b0d0760f65cf5a67704951abb3d45180e87eb31e5e6f',6969,1);
+insert into meta_users values('a4860202-6e59-11e2-b8ac-3c0754558970',50000,'98e8eb4f-6e59-11e2-b9a9-3c0754558970',1359934187);
+
 
 #Tokens are needed for validate the authenticity of a user, instead of passing username, password everytime.
 #the app should pass a validated token
@@ -62,7 +66,18 @@ name varchar(40) not null unique,
 active int default 1);
 
 #Default group for administrative 
-insert into groups(uid,name) values('64344887-7902-11e2-821d-3c0754558970','admin');
+insert into groups(uid,name) values('64344887-7902-11e2-821d-3c0754558970','Administrator');
+
+
+#Map a user with multiples groups this is useful to get the permission
+drop table if exists users_groups;
+create table users_groups( 
+group_uid varchar(36) not null ,
+user_uid varchar(36) not null,
+primary key (group_uid, user_uid));
+
+#admin to administrative users
+insert into users_groups values('64344887-7902-11e2-821d-3c0754558970','c4860202-6e59-11e2-b8ac-3c0754558970');
 
 #List of available permission might contain 
 drop table if exists permissions;
@@ -102,12 +117,6 @@ insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558
 insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00160202-6e59-11e2-b8ac-3c0754558970','258d527d-7901-11e2-bc99-3c0754558970');
 insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00160202-6e59-11e2-b8ac-3c0754558970','358d527d-7901-11e2-bc99-3c0754558970');
 insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00160202-6e59-11e2-b8ac-3c0754558970','458d527d-7901-11e2-bc99-3c0754558970');
-
-#Set Admin group to post put delete for login resources
-insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00260202-6e59-11e2-b8ac-3c0754558970','158d527d-7901-11e2-bc99-3c0754558970');
-insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00260202-6e59-11e2-b8ac-3c0754558970','258d527d-7901-11e2-bc99-3c0754558970');
-insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00260202-6e59-11e2-b8ac-3c0754558970','358d527d-7901-11e2-bc99-3c0754558970');
-insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00260202-6e59-11e2-b8ac-3c0754558970','458d527d-7901-11e2-bc99-3c0754558970');
 
 #Set Admin group to post put delete for menus resources
 insert into group_resources_permission values('64344887-7902-11e2-821d-3c0754558970','00360202-6e59-11e2-b8ac-3c0754558970','158d527d-7901-11e2-bc99-3c0754558970');
