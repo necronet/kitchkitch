@@ -73,6 +73,7 @@ class User(db.Model):
     password = db.Column(db.String(64),nullable=False)
     pincode = db.Column(db.String(4),nullable=False)
     active = db.Column(db.Integer, default=1)
+    groups = relationship("UserGroup")
     authenticated = True
 
     def __init__(self, uid,username,password,pincode,active=1):
@@ -137,25 +138,28 @@ class Group(db.Model):
     uid = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(50), primary_key=True)
     active = db.Column(db.Integer, default=1)
+    resourcesPermission = relationship("GroupResourcePermission")
 
 class UserGroup(db.Model):
     __tablename__='users_groups'
-    user_uid = db.Column(db.String(36), primary_key=True)
-    group_uid = db.Column(db.String(36), primary_key=True)
+    user_uid = db.Column(db.String(36), db.ForeignKey('users.uid'), primary_key=True)
+    group_uid = db.Column(db.String(36), db.ForeignKey('groups.uid'), primary_key=True)
 
 class Permission(db.Model):
     __tablename__='permissions'
     uid = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(50), primary_key=True)
     active = db.Column(db.Integer, default=1)
+    resourcesPermission = relationship("GroupResourcePermission")
 
-class Resouce(db.Model):
+class Resource(db.Model):
     __tablename__='resources'
     uid = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(50), primary_key=True)
     active = db.Column(db.Integer, default=1)
+    resourcesPermission = relationship("GroupResourcePermission")
 
-class UserGroupPermission(db.Model):
+class GroupResourcePermission(db.Model):
     __tablename__='group_resources_permission'
     group_uid = db.Column(db.String(36), db.ForeignKey('groups.uid'), primary_key=True)
     resource_uid = db.Column(db.String(36), db.ForeignKey('resources.uid'), primary_key=True)
