@@ -114,7 +114,7 @@ class MenuItemTest(BaseTest):
         rv=self.get(url='/menuItems/',menus_uid=menus_uid)
 
         menu_item=json.loads(rv.data)['items'][0]
-        update_data = {'uid':menu_item['uid'],'title':menu_item['title'],'description':menu_item['description'],'price':menu_item['price']}
+        update_data = {'uid':menu_item['uid'],'title':menu_item['title']+' modified','description':menu_item['description'],'price':menu_item['price']}
 
         rv=self.put(data=json.dumps(update_data),menus_uid=menus_uid )
         assert rv.status_code == 200
