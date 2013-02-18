@@ -73,7 +73,11 @@ class MenuItemsService(BaseService):
         if menus_uid is None:
             abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
         
-        item = Item(uid,json['title'],json['description'],json['price'])
+        addon = False
+        if json.has_key('addon'):
+            addon = bool(json['addon'])
+
+        item = Item(uid,json['title'],json['description'],json['price'],  addon = addon)
         menu_item = MenuItem(menus_uid,uid)
         
         return [item,menu_item]
