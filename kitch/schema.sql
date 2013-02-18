@@ -62,7 +62,7 @@ primary key(user_uid,token));
 drop table if exists groups;
 create table groups( 
 uid varchar(36) not null primary key,
-name varchar(40) not null unique,
+name varchar(50) not null unique,
 active int default 1);
 
 #Default group for administrative 
@@ -146,12 +146,13 @@ create table items (
  title varchar(100) not null, #Dishes longer thatn 100 character really?
  description varchar(1000) not null,#1000 character should be good enough to describe a dish
  price decimal(6,2) not null,
- active int default 1
+ active int default 1,
+ addon int default 0 #Describe wether this specific item is an addon or not
 );
 
-insert into items values('102ef8f0-6a5b-11e2-9d54-3c075455897','Menu Item Test','This is just a test',500,1);
-insert into items values('202ef8f0-6a5b-11e2-9d54-3c075455897','Menu Item ','Second test',101,1);
-insert into items values('302ef8f0-6a5b-11e2-9d54-3c075455897','Iem of Menu','This is just a test',120,1);
+insert into items(uid,title,description,price) values('102ef8f0-6a5b-11e2-9d54-3c075455897','Menu Item Test','This is just a test',500);
+insert into items(uid,title,description,price) values('202ef8f0-6a5b-11e2-9d54-3c075455897','Menu Item ','Second test',101);
+insert into items(uid,title,description,price) values('302ef8f0-6a5b-11e2-9d54-3c075455897','Iem of Menu','This is just a test',120);
 
 drop table if exists menus_items;
 create table menus_items (
