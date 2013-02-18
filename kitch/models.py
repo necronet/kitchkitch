@@ -33,15 +33,17 @@ class Item(db.Model):
     active = db.Column(db.Integer, default=1)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(1000), nullable=False)
-    price = db.Column(db.Float(), nullable=False)
+    price = db.Column(db.Float, nullable = False)
+    addon = db.Column(db.Boolean, default = False)
     menuItems = relationship("MenuItem")
 
-    def __init__(self,uid,title,description,price,active=1):
+    def __init__(self,uid,title,description,price,active=True,addon=False):
         self.uid = uid
         self.title = title
         self.active = active
         self.description = description
         self.price = price
+        self.addon = addon
 
     def __repr__(self):
         return "Items uid=%s, title=%s, description=%s, price=%s, active=%s" % (self.uid, self.title, self.description, self.price, self.active)
@@ -57,14 +59,15 @@ class Item(db.Model):
 
 class MenuItem(db.Model):
     __tablename__='menus_items'
-    menus_uid = db.Column(db.String(36), db.ForeignKey('menus.uid'), primary_key=True)
-    items_uid = db.Column(db.String(36), db.ForeignKey('items.uid'), primary_key=True)
-    active = db.Column(db.Integer, default=1)
+    menus_uid = db.Column(db.String(36), db.ForeignKey('menus.uid'), primary_key = True)
+    items_uid = db.Column(db.String(36), db.ForeignKey('items.uid'), primary_key = True)
+    active = db.Column(db.Boolean, default = True)    
 
-    def __init__(self, menus_uid, items_uid, active=1):
+    def __init__(self, menus_uid, items_uid, active=1, addon = False):
         self.menus_uid = menus_uid
         self.items_uid = items_uid
         self.active = active
+        self.addon = addon
 
 class User(db.Model):
     __tablename__='users'
