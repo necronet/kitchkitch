@@ -36,3 +36,18 @@ class TableTest(BaseTest):
         rv=self.put(data=json.dumps(table))
 
         assert rv.status_code == 200
+
+    def test_delete_menus(self):
+        rv=self.get()
+
+        assert rv.status_code == 200
+        items=json.loads(rv.data)
+
+        for data in items['items']:
+            rv=self.delete(data['uid'])
+
+            assert rv.status_code==204
+
+        rv=self.get()
+        assert rv.status_code == 200
+        items=json.loads(rv.data)
