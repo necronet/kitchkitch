@@ -10,6 +10,6 @@ run:clean
 	python kitch/runserver.py
 
 clean:
-	find . -name '*.pyc' -exec rm -f {} +
+	find . -name 'kitch/*.pyc' -exec rm -f {} +
 test:
 	python kitch/test/suite_run.py --test $(SUITE)
