@@ -177,4 +177,17 @@ class Table(db.Model):
     __tablename__='tables'
     uid = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(100))
-    active = db.Column(db.Boolean, default=1)
+    active = db.Column(db.Boolean, default = 1)
+
+    def as_dict(self):
+        d = {}
+        for column in self.__table__.columns:
+            if column.name is not 'active':
+                d[column.name] = getattr(self, column.name)
+
+        return d
+
+    def __init__(self, uid, name, active = 1):
+        self.uid = uid
+        self.name = name
+        self.active = active
