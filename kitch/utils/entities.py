@@ -4,17 +4,16 @@ from flask.ext.login import login_required
 from models import db
 from utils.exceptions import abort
 import sqlalchemy
-
-def to_json(datas):
-    if type(datas)==list:
-        return jsonify(items=datas)        
-    return jsonify(datas)
-
-encoders={'application/json':to_json,'text/html':render_template}
-
 import hashlib
 import uuid
 import time
+
+def to_json(datas):
+    if type(datas)==list:
+        return jsonify(items=datas)
+    return jsonify(datas)
+
+encoders={'application/json':to_json,'text/html':render_template}
 
 """
 Very importan encryption function that create a random salt with a timestamp
