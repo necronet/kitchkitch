@@ -6,7 +6,6 @@ from models import User, GroupResourcePermission, Group, UserGroup, MetaUser, To
 import sqlalchemy
 import uuid
 
-app = Blueprint('user',__name__,template_folder='templates')
 
 
 def get_user(uid=None, token=None):        
@@ -165,8 +164,7 @@ def create_user_from_record(record):
     user =User(record.uid,record.username,record.password,record.active)
     return user
 
-register_api(app,LoginService, 'loginService','/login/','uid')
-register_api(app,UserService, 'userService','/user/','uid')
+
 
 def check_user_permission(user):
     #Fetch to see wether the user has the permission in one of the groups where he is.
@@ -179,3 +177,7 @@ def check_user_permission(user):
 
     if not result:
         abort(403,"Not authorized to access this resource")
+
+app = Blueprint('user',__name__,template_folder='templates')
+register_api(app,LoginService, 'loginService','/login/','uid')
+register_api(app,UserService, 'userService','/user/','uid')
