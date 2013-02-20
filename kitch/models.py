@@ -168,3 +168,13 @@ class GroupResourcePermission(db.Model):
     resource_uid = db.Column(db.String(36), db.ForeignKey('resources.uid'), primary_key=True)
     permission_uid = db.Column(db.String(36), db.ForeignKey('permissions.uid'), primary_key=True)
 
+class State(db.Model):
+    __tablename__='states'
+    id = db.Column(db.Integer(), autoincrement=True, primary_key=True)
+    name = db.Column(db.String(30), nullable=False)
+
+class Table(db.Model):
+    __tablename__='tables'
+    uid = db.Column(db.String(36), primary_key=True)
+    name = db.Column(db.String(100))
+    active = db.Column(db.Boolean, default=1)
