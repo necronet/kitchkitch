@@ -120,7 +120,9 @@ class BaseService(MethodView):
         json = request.json
         uid =str(uuid.uuid1())
         try:
-            data_objects = self.object_from_json(uid,json)
+            data_objects = getattr(self, "object_from_json")(uid,json)
+        except AttributeError as e:
+            abort(501, 'Method not implemented %s' % e.message)
         except KeyError as e:
             abort(400, 'Bad request Resource, please check the posted data %s' % e.message)
 
