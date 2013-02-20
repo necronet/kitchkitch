@@ -41,7 +41,18 @@ class BaseTest(unittest.TestCase):
     @auth_token.setter
     def auth_token(self,value):
         self._auth_token=value
-       
+
+    def test_get_wrong_id(self, **kwargs):
+        """
+        Try to get a resources with an unexisting UID
+        response 404 Not Found
+        """
+
+        rv=self.get(uid='FAKE_UID')
+
+        assert rv.status_code == 404
+
+
     def test_get(self, **kwargs):
         """
         Insert a record
@@ -58,8 +69,6 @@ class BaseTest(unittest.TestCase):
         response_data=json.loads(rv.data)['items']
 
         assert len(response_data) > 0
-        #for item in response_data:
-        #    assert item['href'] is not None
 
         return response_data
     
