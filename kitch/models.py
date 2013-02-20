@@ -191,3 +191,15 @@ class Table(db.Model):
         self.uid = uid
         self.name = name
         self.active = active
+
+#Association from tables and orders (Many To Many)
+order_tables_assoc = db.Table('orders_tables',
+                         db.Column('order_uid', db.String(36), db.ForeignKey('orders.uid')),
+                         db.Column('table_uid', db.String(36), db.ForeignKey('tables.uid')))
+
+class Order(db.Model):
+    __tablename__ = 'orders'
+    uid = db.Column(db.String(36), primary_key=True)
+    name = name = db.Column(db.String(100))
+    started_on = db.Column(db.DateTime, nullable=False)
+    tables = relationship('Table', secondary=order_tables_assoc)
