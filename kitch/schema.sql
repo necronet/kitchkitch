@@ -186,7 +186,7 @@ drop table if exists orders;
 create table orders (
  uid varchar(36) primary key,
  name varchar(100) , #This will identify the order, in the app this might be autogerated.
- create_on timestamp not null
+ started_on timestamp not null
 );
 
 #Holds the tables for a specific order.
