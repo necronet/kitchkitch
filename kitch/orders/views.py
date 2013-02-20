@@ -8,11 +8,11 @@ class TableService(BaseService):
 
     def get(self, uid):
         query_result = super(TableService, self).get(uid)
+
         if type(query_result) == list:
             return self.get_response( [row.as_dict() for row in query_result] )
-        else:
+        elif type(query_result) == Table:
             return self.get_response(query_result.as_dict())
-
 
     def object_from_json(self, uid, json):
         return [Table(uid, json['name'])]

@@ -53,9 +53,10 @@ class BaseService(MethodView):
         query = self.schema_table.query.filter_by(active=1)
 
         if uid:
-            query.filter_by(uid=uid)
+            query = query.filter_by(uid=uid)
             model_object = query.first()
-            return model_object
+
+            return model_object if model_object else abort(404, "Resources was not found")
 
         if join:
             query = query.join(join)
