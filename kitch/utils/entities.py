@@ -148,7 +148,10 @@ class BaseService(MethodView):
             }
         """
         json=request.json
-        self.update_object(json)
+        try:
+            getattr(self,"update_object")(json)
+        except AttributeError as e:
+            abort(501, "Method not implemented %s" % e.message)
         db.session.commit()
 
         return self.put_response()
