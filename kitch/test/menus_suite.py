@@ -17,7 +17,7 @@ class MenuTest(BaseTest):
         assert rv.status_code == 201
 
     def test_get_item(self):
-        response_object=self.check_item(json.dumps({"items":[{"title":"Menu #1"}]}),['uid','title'])
+        response_object=self.check_item(['uid','title'])
         assert response_object.has_key('items')
 
     def test_put(self):
@@ -68,12 +68,7 @@ class MenuItemTest(BaseTest):
         rv=self.get(url='/menus/')
 
         uid=json.loads(rv.data)['items'][0]['uid']
-
-        menu_items={"items":[{"title":"Menu Items #1",'description':'delicous meal to serve','price':10.25}]}
-
-        self.check_item(json.dumps(menu_items),['uid','title'],menus_uid=uid)
-
-        
+        self.check_item(['uid','title'])
 
     def test_get_menu_with_expand(self):
         #Make items

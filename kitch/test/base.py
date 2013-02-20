@@ -56,13 +56,14 @@ class BaseTest(unittest.TestCase):
         assert rv.status_code == 200
 
         response_data=json.loads(rv.data)['items']
+
         assert len(response_data) > 0
         #for item in response_data:
         #    assert item['href'] is not None
 
         return response_data
     
-    def check_item(self,data,keys,**kwargs):
+    def check_item(self, keys):
         """
         Basic method to check that get request with a uid
         is correct.

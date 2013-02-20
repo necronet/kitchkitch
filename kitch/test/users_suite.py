@@ -39,10 +39,7 @@ class UserTest(BaseTest):
 
             Checks that the retrieve response conains uid, username, pincode.
         """
-        response_object=self.check_item({
-                                        'username':'necronet%d' % random.randint(0,500000000),
-                                        'password':'necronet',
-                                        'pincode':'0000'},['uid','username','pincode'])
+        response_object=self.check_item(['uid','username','pincode'])
 
     def test_post(self,username=None):
         """
