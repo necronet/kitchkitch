@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from utils.exceptions import abort, bad_request_response
 from users.views import app as user, get_user, check_user_permission
 from menus.views import  app as menu
+from orders.views import app as table
 from flask import request, _request_ctx_stack
 from flask.ext.login import LoginManager
 from models import db
@@ -45,6 +46,7 @@ db.init_app(app)
 app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
+app.register_blueprint(table)
 
 
 @app.before_request
