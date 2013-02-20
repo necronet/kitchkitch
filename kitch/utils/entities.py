@@ -39,10 +39,11 @@ class BaseService(MethodView):
     @login_required
     def get(self, uid=None, template=None, join= None, *join_criterion,**kwargs):
         """
-        
-        Get and validate offset and limit in query string.
-        Handle expand parameter and return the list of expand entities.
-        Template.
+        Base method for retrieving objects from a resource it will by default:
+
+        - Validate offset and limit as wel as other query string parameters.
+        - Query from the schema_table a list or a single record (if uid was provided).
+        - In case no record can be found a 404 will be thrown.
 
         """
         self.offset= int(self.get_parameter('offset'))
