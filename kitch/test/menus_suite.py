@@ -46,7 +46,7 @@ class MenuTest(BaseTest):
         for data in items['items']:
             rv=self.delete(data['uid'])
 
-            assert rv.status_code==202
+            assert rv.status_code==204
 
         rv=self.get()
         assert rv.status_code == 200
@@ -125,7 +125,7 @@ class MenuItemTest(BaseTest):
         for data in json.loads(rv.data)['items']:
 
             rv=self.delete(data['uid'],menus_uid=menus_uid)
-            assert rv.status_code == 202
+            assert rv.status_code == 204
 
         rv=self.get(menus_uid=menus_uid)
 

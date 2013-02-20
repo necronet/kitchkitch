@@ -93,7 +93,7 @@ class UserTest(BaseTest):
     def test_delete_users(self):
         """
             Get all users and delete them. Making sure that does not delete the administrative profile.
-            Assert that in the response is a 202 Accepted.
+            Assert that in the response is a 204 Accepted.
         """
         items=self.test_get()
 
@@ -101,7 +101,8 @@ class UserTest(BaseTest):
             if data['username'] == 'admin': continue
             
             rv=self.delete(data['uid'])
-            assert rv.status_code==202
+            
+            assert rv.status_code==204
 
     def test_post_conflict(self):
         '''
@@ -149,12 +150,12 @@ class LoginTest(unittest.TestCase):
         Try to logout in order to do this there should be a login and a authtoken to logout.
         no need to pass any special data in the body.
 
-        Assert that the response is a 202.
+        Assert that the response is a 204.
         """
         rv=login(self.c,"admin","admin")
         self.auth_token=json.loads(rv.data)['token']
         rv=self.c.delete('/login/%s'% self.auth_token,content_type='application/json',headers=self.config_headers([]))
-        assert rv.status_code == 202
+        assert rv.status_code == 204
 
     def test_empty_user_and_password(self):
         """

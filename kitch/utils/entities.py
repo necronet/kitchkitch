@@ -86,7 +86,7 @@ class BaseService(MethodView):
         return make_response(to_json({'message':'Replace succesfully'}),200,{'Location':request.url})
 
     def delete_response(self):
-        return make_response(to_json({ 'message':'Delete succesfully'}), 202)
+        return make_response(to_json({ 'message':'Delete succesfully'}), 204)
         
 
     def expand_arguments(self):
@@ -113,7 +113,7 @@ class BaseService(MethodView):
     @login_required
     def post(self):
         """
-            Post a single menu item and return 202 repsonse if successful
+            Post a single menu item and return 204 repsonse if successful
             {title:'TITLEMENU'}
         """
 
