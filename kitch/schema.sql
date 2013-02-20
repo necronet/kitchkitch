@@ -165,3 +165,60 @@ create table menus_items (
 insert into menus_items values('702ef8f0-6a5b-11e2-9d54-3c075455897','102ef8f0-6a5b-11e2-9d54-3c075455897',1);
 insert into menus_items values('702ef8f0-6a5b-11e2-9d54-3c075455897','202ef8f0-6a5b-11e2-9d54-3c075455897',1);
 insert into menus_items values('702ef8f0-6a5b-11e2-9d54-3c075455897','302ef8f0-6a5b-11e2-9d54-3c075455897',1);
+
+
+drop table if exists tables;
+create table tables (
+ uid varchar(36) primary key,
+ name varchar(100) not null unique, #It could be numeric or could be by other name
+ active int default 1
+);
+
+#Represent an order 
+drop table if exists orders;
+create table orders (
+ uid varchar(36) primary key,
+ name varchar(100) , #This will identify the order, in the app this might be autogerated.
+ create_on timestamp not null
+);
+
+#Holds the tables for a specific order.
+drop table if exists orders_tables;
+create table orders_tables (
+ table_uid varchar(36) not null,
+ order_uid varchar(36) not null
+);
+
+
+drop table if exists orders_details;
+create table orders_details(
+	uid varchar(36) not null primary key,
+	order_uid varchar(36) not null,
+	item_uid varchar(36) not null,
+	menu_uid varchar(36) not null,
+	item_description varchar(36) not null,
+	price decimal(6,2) not null,
+	quantity int 
+); 
+
+#Holds the records of the states of the orders this table will be non modifiable 
+#makes no sense to modify this records.
+drop table if exists orders_details_states;
+create table orders_details_states( 
+ order_detail_uid varchar(36) not null,
+ state_id int not null,
+ created_on timestamp not null,
+ primary key(order_detail_uid, state_id)
+);
+
+#Represent general states in the application 
+drop table if exists states;
+create table states(
+	id int not null  auto_increment primary key,
+	name varchar(30) not null
+);
+
+insert into states(name) values('Ordered');
+insert into states(name) values('Ready');
+insert into states(name) values('Served');
+insert into states(name) values('Cleaned');
