@@ -36,7 +36,8 @@ create table meta_users (
   user_uid varchar(36) primary key,
   iteraction int not null,
   product varchar(36),
-  modified_on int not null
+  modified_on int not null,
+  foreign key (user_uid) references users(uid)
 );
 
 insert into users values('c4860202-6e59-11e2-b8ac-3c0754558970','admin','d82670cb1512cddcf3a5b0d0760f65cf5a67704951abb3d45180e87eb31e5e6f',6969,1);
