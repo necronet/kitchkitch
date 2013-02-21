@@ -77,6 +77,7 @@ class User(db.Model):
     pincode = db.Column(db.String(4),nullable=False)
     active = db.Column(db.Integer, default=1)
     groups = relationship("UserGroup")
+    meta_user = relationship("MetaUser")
     authenticated = True
 
     def __init__(self, uid,username,password,pincode,active=1):

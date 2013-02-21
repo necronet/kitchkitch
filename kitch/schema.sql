@@ -20,8 +20,14 @@ Considere to add
 
 Fee free to edit this script as you like
 */
-
+drop table if exists users_groups;
+drop table if exists group_resources_permission;
+drop table if exists meta_users;
+drop table if exists tokens;
 drop table if exists users;
+drop table if exists groups;
+
+
 create table users( 
 uid varchar(36) primary key, 
 username varchar(50) not null, #Username bigger than 50? I don't think so
@@ -31,7 +37,7 @@ active int default 1,
 unique(username) );
 
 #Hold data regarding data to be use in the user encryption schemas
-drop table if exists meta_users;
+
 create table meta_users (
   user_uid varchar(36) primary key,
   iteraction int not null,
@@ -50,17 +56,17 @@ insert into meta_users values('a4860202-6e59-11e2-b8ac-3c0754558970',50000,'98e8
 
 #Tokens are needed for validate the authenticity of a user, instead of passing username, password everytime.
 #the app should pass a validated token
-drop table if exists tokens;
+
 create table tokens( 
 user_uid varchar(36) not null,
 token varchar(40) not null,
 active int default 1,
-primary key(user_uid,token));
+primary key(user_uid,token),
+foreign key (user_uid) references users(uid));
 
 #Group will hold general membership to which users can be. This will be highly tied with the 
 #permission that a user amy have over a specific Resource and specific condition in which they
 #might be able to execute it.
-drop table if exists groups;
 create table groups( 
 uid varchar(36) not null primary key,
 name varchar(50) not null unique,
@@ -71,11 +77,12 @@ insert into groups(uid,name) values('64344887-7902-11e2-821d-3c0754558970','Admi
 
 
 #Map a user with multiples groups this is useful to get the permission
-drop table if exists users_groups;
 create table users_groups( 
 group_uid varchar(36) not null ,
 user_uid varchar(36) not null,
-primary key (group_uid, user_uid));
+primary key (group_uid, user_uid),
+foreign key (user_uid) references users(uid),
+foreign key (group_uid) references groups(uid));
 
 #admin to administrative users
 insert into users_groups values('64344887-7902-11e2-821d-3c0754558970','c4860202-6e59-11e2-b8ac-3c0754558970');
@@ -106,12 +113,14 @@ insert into resources(uid,name) values('00460202-6e59-11e2-b8ac-3c0754558970','m
 insert into resources(uid,name) values('00560202-6e59-11e2-b8ac-3c0754558970','table');
 
 #Table that map a group, resources and the permission this can have
-drop table if exists group_resources_permission;
 create table group_resources_permission(
 	group_uid varchar(36) not null,
 	resource_uid varchar(36) not null,
 	permission_uid varchar(36) not null,
-	primary key(group_uid, resource_uid, permission_uid)
+	primary key(group_uid, resource_uid, permission_uid),
+	foreign key (group_uid) references groups(uid),
+	foreign key (resource_uid) references resources(uid),
+	foreign key (permission_uid) references permissions(uid)
 );
 
 #Set Admin group to post put delete for user resources
