@@ -13,6 +13,7 @@ def to_json(datas):
         return jsonify(items=datas)
     return jsonify(datas)
 
+#List of available encoding function to be returned.
 encoders={'application/json':to_json,'text/html':render_template}
 
 """

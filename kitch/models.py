@@ -204,3 +204,12 @@ class Order(db.Model):
     name = name = db.Column(db.String(100))
     started_on = db.Column(db.DateTime, nullable=False)
     tables = relationship('Table', secondary=order_tables_assoc)
+
+class OrderDetails(db.Model):
+    uid = db.Column(db.String(36), primary_key=True)
+    order_uid = db.Column(db.String(36), db.ForeignKey('order.uid'))
+    item_uid = db.Column(db.String(36), db.ForeignKey('menus_items.item_uid'))
+    menu_uid = db.Column(db.String(36), db.ForeignKey('menus_items.menu_uid'))
+    item_description = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Float, nullable = False)
+    quantity = db.Column(db.Integer, nullable = False)
