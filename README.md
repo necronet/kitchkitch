@@ -3,7 +3,8 @@
 
 
 <br/>
-**Kitch** es primariamente un API REST orientado a mejorar los servicios ordenes en restaurantes.
+**Kitch** es un API REST con el proposito de mejorar los servicios ordenes en establecimientos orientado a este enfoque, aplicable tanto a bares como restaurantes.
+
 - - -
 ##Requerimientos
 
@@ -77,7 +78,7 @@ Con pip puedes instalar todas las dependencias ejecutando:
 
 	pip install -r requirements.txt
 
-Si necesitas saber [¿como instalar pip?](#install-pip)
+Si necesitas saber [¿como instalar pip?](#y-por-que-flask)
 
 ###Base de datos
 
@@ -140,7 +141,7 @@ Conclusion: Java durante estos años me ha forzado a buscar alternativas hoy enc
 Nota: En cuanto a un uso muy interesante es el uso de JasperReport para los reportes iniciales.
 
 
-###<a name="why-flask">¿Y Por que Flask?</a>
+###<a name="y-por-que-flask">¿Y Por que Flask?</a>
 
 Flask es un framework de traer tus herramientas a él. Por tanto provee un entorno bastante flexible si estas dispuesto a ensuciarte las manos por el proyecto. Evalue personalmente bottle, sinatra y otras combinaciones con Java como Jersey, sin embargo eran o muy simplista o demasiados complejos en cuanto a las dependencias, flask resulto ser un muy buen punto medio, y nos provee la oportunidad de 
 
