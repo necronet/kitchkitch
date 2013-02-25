@@ -213,7 +213,7 @@ create table orders_details(
 	order_uid varchar(36) not null,
 	item_uid varchar(36) not null,
 	menu_uid varchar(36) not null,
-	item_description varchar(36) not null,
+	item_description varchar(100) not null,
 	price decimal(6,2) not null,
 	quantity int 
 ); 
