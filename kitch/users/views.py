@@ -1,9 +1,8 @@
-from flask import request, redirect, url_for,Blueprint,make_response,jsonify, _request_ctx_stack
+from flask import request, redirect, url_for,Blueprint,make_response,jsonify
 from flask.ext.login import login_user,logout_user,login_required
 from utils.entities import BaseService, register_api,encrypt_with_interaction
 from utils.exceptions import abort
 from models import User, GroupResourcePermission, Group, UserGroup, MetaUser, Token, Permission, Resource, db
-import sqlalchemy
 import uuid
 
 
@@ -147,6 +146,9 @@ def validate_user():
 
 
     user = User.query.filter_by( username = username ).first()
+
+    if not user:
+        abort(401, 'Wrong username or password')
 
     meta_user = MetaUser.query.filter_by( user_uid = user.uid ).first()
     #record=db.get("select iteraction,product,modified_on from meta_users where user_uid=%s",record_user.uid,)
