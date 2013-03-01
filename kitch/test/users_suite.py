@@ -129,6 +129,14 @@ class LoginTest(unittest.TestCase):
         self.c= app.test_client()
         app.config['TESTING'] = True
 
+    def test_login_wrong_user_and_pasword(self):
+        """
+            Try to login using a wrong password.
+            Assert that the response is a 401.
+        """
+        rv=login(self.c,"wrongusername","wrongpassword")
+        assert rv.status_code == 401
+
 
     def test_login_wrong_pasword(self):
         """
