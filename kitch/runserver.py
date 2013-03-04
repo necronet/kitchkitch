@@ -4,8 +4,8 @@ from utils.exceptions import abort, bad_request_response
 from users.views import app as user, get_user, check_user_permission
 from menus.views import  app as menu
 from orders.views import app as table
-from flask import request, _request_ctx_stack
-from flask.ext.login import LoginManager
+from flask import request, _request_ctx_stack, redirect
+from flask.ext.login import LoginManager, login_required, login_url
 from models import db
 from flask import json
 import decimal
@@ -38,7 +38,7 @@ app = Flask(__name__)
 
 login_manager = CustomLoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "user.login"
+login_manager.login_view = "user.loginService"
 
 app.json_encoder = APIEncoder
 
@@ -73,9 +73,13 @@ def load_user(uid):
 
 @login_manager.unauthorized_handler
 def unauthorized_call():
-    return abort(401,'Unauthorized call please provide the proper credentials' )
+    if request.mimetype =='application/json':
+        return abort(401,'Unauthorized call please provide the proper credentials' )
+
+    return redirect(login_url(login_manager.login_view, request.url))
 
 @app.route('/',methods=['GET','POST'])
+@login_required
 def index():
     return render_template('index.html')
 
