@@ -1,4 +1,8 @@
-( function($){
-	console.log('initializing')
+var app = app || {};
 
-})(jQuery);
+( function(){
+
+	loginView = new app.LoginView({model: new app.Login()});
+	
+
+})();
