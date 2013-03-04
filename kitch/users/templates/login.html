@@ -1,14 +1,24 @@
-{% extends "layout.html" %}
-{% block body %}
-  <h2>Login</h2>
-  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
-  <form action="{{ url_for('user.login') }}" method=post>
-    <dl>
-      <dt>Username:
-      <dd><input type=text name=username>
-      <dt>Password:
-      <dd><input type=password name=password>
-      <dd><input type=submit value=Login>
-    </dl>
-  </form>
-{% endblock %}
+<html !DOCTYPE>
+
+<title>Kitch API</title>
+
+<body>
+	Index page should not be able to access here without login
+
+<script type="text/template" id="sample_template"> 
+<label>Username</label> <input type="text" id="username" name="username" />
+<label>Password</label> <input type="password" id="password" name="password" />
+<input type="button" id="search_button" value="Login" /> 
+</script>
+
+<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='js/underscore.js') }}"></script>
+<script src="{{ url_for('static', filename='js/backbone.js') }}"></script>
+<script src="{{ url_for('static', filename='js/models/login.js') }}"></script>
+<script src="{{ url_for('static', filename='js/views/login.js') }}"></script>
+<script src="{{ url_for('static', filename='js/routers/router.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+
+</html>
