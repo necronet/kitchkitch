@@ -1,4 +1,4 @@
-from flask import request, redirect, url_for,Blueprint,make_response,jsonify
+from flask import request, redirect, url_for, Blueprint, make_response, jsonify, render_template
 from flask.ext.login import login_user,logout_user,login_required
 from utils.entities import BaseService, register_api,encrypt_with_interaction
 from utils.exceptions import abort
@@ -97,7 +97,12 @@ class UserService(BaseService):
 class LoginService(BaseService):
     schema_table = Token
     def get(self,uid):
-        return make_response(jsonify({}),501)
+        #TODO: smelli this kind of call should be modularize
+        best_match = request.accept_mimetypes.best_match(['application/json','text/html']) 
+        if best_match == 'text/html':
+            return render_template('login.html')
+        else:
+            return make_response(jsonify({}),501)
 
     def put(self):
         return make_response(jsonify({}),501)
