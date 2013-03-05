@@ -4,11 +4,17 @@ var app = app || {};
 	
 	var Workspace = Backbone.Router.extend({
 		routes: {
-			'': 'home'
+			'': 'home',
+			'/login/': 'login'
+
 		},
 
 		home: function(){
-			
+			console.log('home')
+		},
+
+		login: function(){
+			console.log('login')
 		}
 	});
 

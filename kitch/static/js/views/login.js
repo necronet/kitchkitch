@@ -2,7 +2,7 @@ var app = app || {};
 
 ( function(){
 	app.LoginView = Backbone.View.extend({
-		el: $("#sample_container"),
+		el: $("#login_container"),
 
 		initialize: function(){
 			this.render();
@@ -41,7 +41,7 @@ var app = app || {};
 				
 				},
 				error: function() {
-				
+					alert('Unable to authenticate');
 				}});
 		}
 });

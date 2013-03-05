@@ -3,9 +3,26 @@
 <title>Kitch API</title>
 
 <body>
-	Index page should not be able to access here without login
+<div id="login_container"></div>	
 
+<script type="text/template" id="sample_template"> 
+<label>Username</label> <input type="text" id="username" name="username" />
+<label>Password</label> <input type="password" id="password" name="password" />
+<input type="button" id="search_button" value="Login" /> 
+</script>
 
+<script type="text/template" id="app-template">
+
+</script>
+
+<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='js/underscore.js') }}"></script>
+<script src="{{ url_for('static', filename='js/backbone.js') }}"></script>
+<script src="{{ url_for('static', filename='js/models/login.js') }}"></script>
+<script src="{{ url_for('static', filename='js/views/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/views/login.js') }}"></script>
+<script src="{{ url_for('static', filename='js/routers/router.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 
 
