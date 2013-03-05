@@ -5,9 +5,9 @@
   <h1>Kitch API</h1>
   <div class=metanav>
   {% if not current_user.is_authenticated() %}
-    <a href="{{ url_for('user.login') }}">log in</a>
+    <a href="{{ url_for('user.loginService') }}">log in</a>
   {% else %}
-    <a href="{{ url_for('user.logout') }}">log out</a>
+    <!--<a href="{{ url_for('user.logout') }}">log out</a>-->
   {% endif %}
   </div>
   {% for message in get_flashed_messages() %}
