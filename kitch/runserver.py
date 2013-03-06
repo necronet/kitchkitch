@@ -57,11 +57,12 @@ def validate_request():
         be handle by the endpoint. Otherwise it would be a waste of resources
         to proceed to following stages.
     """
+    if request.endpoint == 'user.loginService': 
+        return None
 
     #Validate mime type to always be json
     if request.mimetype!='application/json' and request.method != 'GET':
         abort(415)
-
 
     if request.method in ('POST','PUT') and not request.json:
         #in case there is no json data
@@ -73,12 +74,15 @@ def load_user(uid):
 
 @login_manager.unauthorized_handler
 def unauthorized_call():
-    if request.mimetype =='application/json':
+    #TODO: smellin code this should be in a utility
+    best_match = request.accept_mimetypes.best_match(['application/json','text/html'])
+
+    if request.mimetype =='application/json' or best_match == 'application/json':
         return abort(401,'Unauthorized call please provide the proper credentials' )
 
     return redirect(login_url(login_manager.login_view, request.url))
 
-@app.route('/',methods=['GET','POST'])
+@app.route('/',methods=['GET'])
 @login_required
 def index():
     return render_template('index.html')
