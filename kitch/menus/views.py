@@ -49,7 +49,10 @@ class MenuService(BaseService):
             Fetch specific items from a menu, used by the GET operation when expand option have items in it.            
         """
         result= Item.query.join(Item.menuItems).filter(MenuItem.active==1, MenuItem.menus_uid==uid).all()
-        menu_items= [dict(href='%s%s'%(url_for('.menuItemService',_method='GET',_external=True),item.uid),uid=item.uid,title=item.title,description=item.description,price=str(item.price)) for item in result]
+
+        menu_items = [row.as_dict() for row in result]
+
+        #menu_items= [dict(item.uid),uid=item.uid,title=item.title,description=item.description,price=str(item.price)) for item in result]
         return menu_items
     
     def object_from_json(self,uid,json):
