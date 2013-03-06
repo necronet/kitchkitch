@@ -11,7 +11,18 @@
 </script>
 
 <script type="text/template" id="menu-item-template">
-	<span><%= title %></span>
+	<span style="font-weight:bold"><%= title %></span>
+
+	<span><br/>
+	<% _.each(items, function(item) { %>  
+		
+		<span><%= item.title %></span> <br/>
+		<span><%= item.description %></span> <br/>
+		<span><%= item.price %></span> <br/>
+
+
+	<% }); %>
+	</span>
 </script>
 
 <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
