@@ -12,6 +12,7 @@
 
 <script type="text/template" id="menu-item-template">
 	<span style="font-weight:bold"><%= title %></span>
+	<span>Add Menu Item</span>
 
 	<span><br/>
 	<% _.each(items, function(item) { %>  
@@ -19,7 +20,7 @@
 		<span><%= item.title %></span> <br/>
 		<span><%= item.description %></span> <br/>
 		<span><%= item.price %></span> <br/>
-
+		<span><%= item.addon %></span> <br/>
 
 	<% }); %>
 	</span>
