@@ -1,12 +1,15 @@
 
 (function(){
 	app.AppView = Backbone.View.extend({
-		el: "#feed_app",
-
-		appTemplate: _.template($("#app-template").html()),
+		el: "#app-container",
 
 		initialize: function(){
-			//loginView = new app.LoginView({model: new app.Login()});
+			this.render();
+		},
+		render: function(){
+			menuListView = new app.MenuListView();
+
+			this.$el.append(menuListView.el);
 		}
 
 

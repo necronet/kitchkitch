@@ -3,24 +3,23 @@
 <title>Kitch API</title>
 
 <body>
-<div id="login_container"></div>	
+<div id="app-container"></div>	
+<div id="menu-container"></div>	
 
-<script type="text/template" id="sample_template"> 
-<label>Username</label> <input type="text" id="username" name="username" />
-<label>Password</label> <input type="password" id="password" name="password" />
-<input type="button" id="search_button" value="Login" /> 
+<script type="text/template" id="menu-template">
+	Menu template
 </script>
 
-<script type="text/template" id="app-template">
-
+<script type="text/template" id="menu-item-template">
+	<span><%= title %></span>
 </script>
 
 <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
 <script src="{{ url_for('static', filename='js/underscore.js') }}"></script>
 <script src="{{ url_for('static', filename='js/backbone.js') }}"></script>
-<script src="{{ url_for('static', filename='js/models/login.js') }}"></script>
+<script src="{{ url_for('static', filename='js/models/menu.js') }}"></script>
+<script src="{{ url_for('static', filename='js/views/menu.js') }}"></script>
 <script src="{{ url_for('static', filename='js/views/app.js') }}"></script>
-<script src="{{ url_for('static', filename='js/views/login.js') }}"></script>
 <script src="{{ url_for('static', filename='js/routers/router.js') }}"></script>
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
