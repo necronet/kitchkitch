@@ -1,13 +1,13 @@
 
 (function(){
-	app.AppView = Backbone.View.extend({
+	Kitch.Views.App = Backbone.View.extend({
 		el: "#app-container",
 
 		initialize: function(){
 			this.render();
 		},
 		render: function(){
-			menuListView = new app.MenuListView();
+			menuListView = new Kitch.Views.MenuList();
 
 			this.$el.append(menuListView.el);
 		}

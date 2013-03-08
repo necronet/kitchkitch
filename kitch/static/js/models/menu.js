@@ -1,7 +1,5 @@
-var app = app || {};
-
 ( function(){
 
-	app.Menu = Backbone.Model.extend({});
+	Kitch.Models.Menu = Backbone.Model.extend({});
 
 })();

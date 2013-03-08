@@ -12,20 +12,32 @@
 
 <script type="text/template" id="menu-item-template">
 	<span style="font-weight:bold"><%= title %></span>
-	<span>Add Menu Item</span>
-
+	<span>Add Menu</span>
 	<span><br/>
 	<% _.each(items, function(item) { %>  
 		
-		<span><%= item.title %></span> <br/>
-		<span><%= item.description %></span> <br/>
-		<span><%= item.price %></span> <br/>
-		<span><%= item.addon %></span> <br/>
-
+		<span><%= item.title %></span> 
+		<span><%= item.description %></span> 
+		<span><%= item.price %></span> 
+		<span><%= item.addon %></span> 
+		<br/>
 	<% }); %>
+	<label for="title">Title:</label><input type="textifield" name="title" id="title" />
+	<label for="description">Description:</label><input type="textifield" name="description" id="title" />
+	<label for="title">Price:</label><input type="textifield" name="price" id="title" />
+	<input type="button" value="Add item" name="add-item" class="add-item" />
 	</span>
 </script>
 
+<script>
+var Kitch = Kitch || {
+	Views: {},
+	Router: {},
+	Models:{},
+	Collections:{}
+};
+
+</script>
 <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
 <script src="{{ url_for('static', filename='js/underscore.js') }}"></script>
 <script src="{{ url_for('static', filename='js/backbone.js') }}"></script>

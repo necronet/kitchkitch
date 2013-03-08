@@ -1,9 +1,7 @@
-var app = app || {};
-
 ( function(){
 	
-	app.MenuList = Backbone.Collection.extend({
-		model: app.Menu,
+	Kitch.Collections.MenuList = Backbone.Collection.extend({
+		model: Kitch.Models.Menu,
 		url: '/menus',
 		parse: function(resp, xhr) {
         	return resp.items;
@@ -12,12 +10,12 @@ var app = app || {};
 
 	
 
-	app.MenuListView = Backbone.View.extend({
+	Kitch.Views.MenuList = Backbone.View.extend({
 		
 		template: _.template($('#menu-template').html()),
 
 		initialize: function(){
-			this.menuList = new app.MenuList();
+			this.menuList = new Kitch.Collections.MenuList();
 			_.bindAll(this, 'render');
 			this.menuList.on('reset', this.render, this);
 			this.menuList.fetch( { data: {expand:'items'} } )
@@ -28,7 +26,7 @@ var app = app || {};
 	        var self = this; 
 			
 		  	this.menuList.each(function(menu) { // iterate through the collection
-		  		var menuView = new app.MenuView({model: menu}); 
+		  		var menuView = new Kitch.Views.Menu({model: menu}); 
 		    	self.$el.append(menuView.el);
 		  	});
 
@@ -37,7 +35,15 @@ var app = app || {};
 	});
 
 
-	app.MenuView = Backbone.View.extend({
+	Kitch.Views.Menu = Backbone.View.extend({
+
+		events:{
+			'click .add-item': 'add'
+		},
+
+		add: function(){
+			console.log('add new item');
+		},
 
 		initialize: function(){
 			this.render();

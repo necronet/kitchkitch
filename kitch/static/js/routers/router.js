@@ -1,8 +1,5 @@
-var app = app || {};
-
-( function() {
-	
-	var Workspace = Backbone.Router.extend({
+( function() {	
+	Kitch.Workspace = Backbone.Router.extend({
 		routes: {
 			'': 'home'
 		},
@@ -12,8 +9,6 @@ var app = app || {};
 		}
 	});
 
-	app.Router = new Workspace();
-
+	new Kitch.Workspace();
 	Backbone.history.start();
-
 })();

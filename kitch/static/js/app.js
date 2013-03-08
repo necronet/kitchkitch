@@ -1,9 +1,8 @@
-var app = app || {};
 
 ( function(){
 
-	appView = new app.AppView();
-	
+	//General application View
+	kitchView = new Kitch.Views.App();	
 	
 
 })();
