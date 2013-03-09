@@ -17,12 +17,14 @@
 </script>
 
 <script type="text/template" id="item-add">
+
 	<form id="add-form" >
 		<label for="title">Title:</label><input placeholder="Type the item title" type="textifield" name="title" id="title" />
 		<label for="description">Description:</label><input placeholder="Type the item description" type="textifield" name="description" id="title" />
 		<label for="price">Price:</label><input type="textifield" name="price" placeholder="Type the item price" id="price" />
 		<input type="submit" value="Add item" name="add-item" class="add-item" />
 	</form>
+
 </script>
 
 <script type="text/template" id="menu">
@@ -35,6 +37,7 @@
 		<span><%= description %></span> 
 		<span><%= price %></span> 
 		<span><%= addon %></span> 
+		<button name="delete" data-id="{uid}" >Delete</button>
 		<br/>
 </script>
 

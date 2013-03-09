@@ -83,28 +83,30 @@
 			
 			this.collection = new Kitch.Collections.MenuItem().reset(this.collection);
 			this.collection.on('add', this.addMenuItem, this);
-
+		
 		},
 
 		render: function(){			
 			this.$el.empty();	
+			this.$el.append( template('item-add') );
 			if(this.collection.length > 0) {
 				this.collection.each(this.addMenuItem, this);
 			}
-			this.$el.append( template('item-add') );
+			
 	        return this;
 		},
 
 		addMenuItem: function(item){
 				
-				var menuItemView = new Kitch.Views.MenuItem({model: item}); 
-				
-		    	this.$el.append(menuItemView.render().el);
+			var menuItemView = new Kitch.Views.MenuItem({model: item}); 
+			
+			this.$el.find('#add-form').before(menuItemView.render().el);
 
 		},
 
 		events:{
-			'submit': 'add'
+			'submit': 'add',
+		
 		},
 
 		add: function(e){
@@ -129,13 +131,29 @@
 	});
 
 	Kitch.Views.MenuItem = Backbone.View.extend({
-		initialize: function(){},
+		initialize: function(){
+			this.model.on('destroy', this.remove, this);
+
+		},
 		render: function(){
 			
 			this.$el.html(template('menu-item', this.model.toJSON()));
 
 			return this;
+		},
+
+		events:{
+			'click button[name=delete]': 'delete'
+		},
+
+		remove: function(e){
+			this.$el.remove();
+		},
+
+		delete: function(e){
+			this.model.destroy();
 		}
+
 
 	});
 
