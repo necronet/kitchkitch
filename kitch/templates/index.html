@@ -1,6 +1,7 @@
 <html !DOCTYPE>
 
 <title>Kitch API</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 
 <body>
 <div id="app-container">
@@ -19,9 +20,9 @@
 <script type="text/template" id="item-add">
 
 	<form id="add-form" >
-		<label for="title">Title:</label><input placeholder="Type the item title" type="textifield" name="title" id="title" />
-		<label for="description">Description:</label><input placeholder="Type the item description" type="textifield" name="description" id="title" />
-		<label for="price">Price:</label><input type="textifield" name="price" placeholder="Type the item price" id="price" />
+		<input placeholder="Type the title" type="textifield" name="title" id="title" />
+		<input placeholder="Type the description" type="textifield" name="description" id="title" />
+		<input type="textifield" name="price" placeholder="Type the price" id="price" />
 		<input type="submit" value="Add item" name="add-item" class="add-item" />
 	</form>
 
@@ -33,12 +34,21 @@
 
 <script type="text/template" id="menu-item">
 		
+		<div class="detail">
 		<span><%= title %></span> 
 		<span><%= description %></span> 
 		<span><%= price %></span> 
 		<span><%= addon %></span> 
 		<button name="delete" data-id="{uid}" >Delete</button>
-		<br/>
+		</div>
+
+		<form id="edit-form" class="edit" >
+		<input value  = "<%= title %>" type="textifield" name="title" id="title" />
+		<input value  = "<%= description %>" type="textifield" name="description" id="title" />
+		<input type="textifield" value  = "<%= price %>" name="price" id="price" />
+		<input type="submit" value="Save" name="edit-item" class="edit-item" />
+		</form>
+		
 </script>
 
 <script>

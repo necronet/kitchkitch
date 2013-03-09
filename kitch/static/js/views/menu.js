@@ -64,13 +64,9 @@
 
 		render: function(){
 			this.$el.html( template('menu', this.model.toJSON()) );
-			
-			
-				itemList = new Kitch.Views.MenuListItem( { collection : this.model.get("items") });
-				this.$el.html( template('menu', this.model.toJSON()) );
-				this.$el.append( itemList.render().el );
-			
-			
+			itemList = new Kitch.Views.MenuListItem( { collection : this.model.get("items") });
+			this.$el.html( template('menu', this.model.toJSON()) );
+			this.$el.append( itemList.render().el );
 
 			return this;
 		}
@@ -105,8 +101,7 @@
 		},
 
 		events:{
-			'submit': 'add',
-		
+			'submit form[id=add-form]': 'add'
 		},
 
 		add: function(e){
@@ -131,8 +126,12 @@
 	});
 
 	Kitch.Views.MenuItem = Backbone.View.extend({
+
+		tagName:'li',
+
 		initialize: function(){
 			this.model.on('destroy', this.remove, this);
+			this.model.on('change', this.render, this);
 
 		},
 		render: function(){
@@ -143,7 +142,28 @@
 		},
 
 		events:{
-			'click button[name=delete]': 'delete'
+			'click button[name=delete]': 'delete',
+			'dblclick span': 'edit',
+			'submit form[id=edit-form]': 'finishEdit'
+		},
+
+		finishEdit: function(e){
+			e.preventDefault();
+			
+			title = $(e.currentTarget).find('input[name=title]').val();
+			description = $(e.currentTarget).find('input[name=description]').val();
+			price = $(e.currentTarget).find('input[name=price]').val();
+			
+			this.model.set("title", title);
+			this.model.set("description", description);
+			this.model.set("price", price);
+
+			this.$el.removeClass('editing');
+		},
+
+		edit: function(e){
+			this.$el.addClass('editing');
+
 		},
 
 		remove: function(e){
