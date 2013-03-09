@@ -10,6 +10,8 @@
 			menuListView = new Kitch.Views.MenuList();
 
 			this.$el.append(menuListView.el);
+
+			return this;
 		}
 
 
