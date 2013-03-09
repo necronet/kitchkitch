@@ -1,62 +1,144 @@
 ( function(){
 	
-	Kitch.Collections.MenuList = Backbone.Collection.extend({
+	Kitch.Collections.Menu = Backbone.Collection.extend({
 		model: Kitch.Models.Menu,
 		url: '/menus',
 		parse: function(resp, xhr) {
         	return resp.items;
     	}	
-	})
+	});	
 
-	
+	Kitch.Collections.MenuItem = Backbone.Collection.extend({});
 
-	Kitch.Views.MenuList = Backbone.View.extend({
-		
-		template: _.template($('#menu-template').html()),
+	Kitch.Views.MenuList = Backbone.View.extend({		
+
 
 		initialize: function(){
-			this.menuList = new Kitch.Collections.MenuList();
-			_.bindAll(this, 'render');
-			this.menuList.on('reset', this.render, this);
-			this.menuList.fetch( { data: {expand:'items'} } )
+			this.collection = new Kitch.Collections.Menu();			
+			this.collection.on('reset', this.render, this);
+			this.collection.on('add', this.addMenu, this);
+			this.collection.fetch( { data: {expand:'items'} } )
+
 		},
 
 		render: function(){
 			this.$el.empty(); 
-	        var self = this; 
-			
-		  	this.menuList.each(function(menu) { // iterate through the collection
-		  		var menuView = new Kitch.Views.Menu({model: menu}); 
-		    	self.$el.append(menuView.el);
-		  	});
+	        
+	        this.$el.html( template('menu-add'));
+
+	        this.collection.each(this.addMenu, this);
 
 	        return this;
-		}
+		},
+
+		events: {
+			'submit form[id=add-menu ]': 'add'
+		},
+
+		add: function(e){
+			e.preventDefault();
+			title = $(e.currentTarget).find('input[name=title]').val();
+			
+			if(title){
+				menu = new Kitch.Models.Menu({title: title});
+				this.collection.add(menu);
+				
+			}else{
+				alert('something wrong');
+			}
+		},
+		
+		addMenu:function(menu) { 
+		  		var menuView = new Kitch.Views.Menu({model: menu}); 
+		    	this.$el.append(menuView.render().el);
+		 }
+
 	});
 
 
 	Kitch.Views.Menu = Backbone.View.extend({
 
-		events:{
-			'click .add-item': 'add'
-		},
-
-		add: function(){
-			console.log('add new item');
-		},
-
 		initialize: function(){
-			this.render();
-		},
+			
+		},		
 
 		render: function(){
+			this.$el.html( template('menu', this.model.toJSON()) );
+			
+			
+				itemList = new Kitch.Views.MenuListItem( { collection : this.model.get("items") });
+				this.$el.html( template('menu', this.model.toJSON()) );
+				this.$el.append( itemList.render().el );
+			
+			
 
-			var template = _.template($('#menu-item-template').html(), this.model.toJSON());
-
-			this.$el.html( template );
-
+			return this;
 		}
 	});
+
+	Kitch.Views.MenuListItem = Backbone.View.extend({
+
+
+		initialize: function(){
+			
+			this.collection = new Kitch.Collections.MenuItem().reset(this.collection);
+			this.collection.on('add', this.addMenuItem, this);
+
+		},
+
+		render: function(){			
+			this.$el.empty();	
+			if(this.collection.length > 0) {
+				this.collection.each(this.addMenuItem, this);
+			}
+			this.$el.append( template('item-add') );
+	        return this;
+		},
+
+		addMenuItem: function(item){
+				
+				var menuItemView = new Kitch.Views.MenuItem({model: item}); 
+				
+		    	this.$el.append(menuItemView.render().el);
+
+		},
+
+		events:{
+			'submit': 'add'
+		},
+
+		add: function(e){
+			e.preventDefault();
+			title = $(e.currentTarget).find('input[name=title]').val();
+			description = $(e.currentTarget).find('input[name=description]').val();
+			price = $(e.currentTarget).find('input[name=price]').val();
+
+			if (price && description && price ){
+				menuItem = new Kitch.Models.MenuItem( {
+					title: title,
+					price: price,
+					description: description
+				} );
+
+				this.collection.add(menuItem);
+			}else{
+				console.log('validation here');
+			}
+
+		},
+	});
+
+	Kitch.Views.MenuItem = Backbone.View.extend({
+		initialize: function(){},
+		render: function(){
+			
+			this.$el.html(template('menu-item', this.model.toJSON()));
+
+			return this;
+		}
+
+	});
+
 
 })();
 	
