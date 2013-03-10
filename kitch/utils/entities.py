@@ -81,8 +81,8 @@ class BaseService(MethodView):
         #This is very clever way to mutate, will dinamically return  a function and will pass the proper data
         return encoders[encoder_key](datas)
 
-    def post_response(self):
-        return make_response(to_json({'message':'Create succesfully'}),201,{'Location':request.url})
+    def post_response(self, uid):
+        return make_response(to_json({'message':'Create succesfully'}),201,{'Location':request.url+uid})
 
     def put_response(self):
         return make_response(to_json({'message':'Replace succesfully'}),200,{'Location':request.url})
@@ -136,7 +136,7 @@ class BaseService(MethodView):
         except sqlalchemy.exc.IntegrityError as e:
             abort(409, 'Conflict on creating record. %s' % e.message)
         
-        return self.post_response()
+        return self.post_response(uid)
 
     @login_required
     def put(self, uid=None):
