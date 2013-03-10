@@ -133,7 +133,7 @@
 		tagName:'li',
 
 		initialize: function(){
-
+			this.model.parentId = this.options.parentId; //specify the menu that it belongs
 			this.model.on('destroy', this.remove, this);
 			this.model.on('change', this.render, this);
 
@@ -153,8 +153,6 @@
 
 		finishEdit: function(e){
 			e.preventDefault();
-
-			this.model.parentId = this.options.parentId; //specify the menu that it belongs
 
 			title = $(e.currentTarget).find('input[name=title]').val();
 			description = $(e.currentTarget).find('input[name=description]').val();
