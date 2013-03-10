@@ -135,13 +135,11 @@ class BaseService(MethodView):
             db.session.commit()
         except sqlalchemy.exc.IntegrityError as e:
             abort(409, 'Conflict on creating record. %s' % e.message)
-
-
         
         return self.post_response()
 
     @login_required
-    def put(self):
+    def put(self, uid=None):
         """
             PUT a single menu item and return 200 repsonse if successful
             {
@@ -185,6 +183,6 @@ def register_api(app,view, endpoint, url, pk, pk_type='string'):
         view_func=view_func, methods=['GET',])
     app.add_url_rule(url, view_func=view_func, methods=['POST','PUT',])
     app.add_url_rule('%s<%s:%s>' %(url,pk_type,pk), view_func=view_func,
-        methods=['GET', 'DELETE'])
+        methods=['GET', 'DELETE','PUT'])
 
 
