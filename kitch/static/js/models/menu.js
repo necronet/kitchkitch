@@ -1,6 +1,9 @@
 ( function(){
 
+	
+
 	Kitch.Models.Menu = Backbone.Model.extend({
+		idAttribute : "uid",
 
 		defaults:{
 			items: []
@@ -13,6 +16,7 @@
 	});
 
 	Kitch.Models.MenuItem = Backbone.Model.extend({
+		idAttribute: "uid",
 
 		defaults:{
 			addon: false
