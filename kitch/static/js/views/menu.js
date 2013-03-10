@@ -89,7 +89,9 @@
 		render: function(){			
 			this.$el.empty();	
 			this.$el.append( template('item-add') );
-			if(this.collection.length > 0) {
+
+			if(this.collection.length > 0 && this.collection.at(0).description ) {
+
 				this.collection.each(this.addMenuItem, this);
 			}
 			
