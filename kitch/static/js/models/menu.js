@@ -27,6 +27,7 @@
 
 	Kitch.Models.MenuItem = Backbone.Model.extend({
 		idAttribute: "uid",
+		urlRoot: '/menuItems/',
 
 		parentId: null, //reference the menu uid 
 
@@ -35,6 +36,7 @@
 			var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
 
 			query_parameter = "";
+			
 			if (this.parentId)
       			query_parameter = "?menus_uid=" + this.parentId;
       		
