@@ -44,8 +44,15 @@
 			
 			if(title){
 				menu = new Kitch.Models.Menu({title: title});
-				menu.save();
-				this.collection.add(menu);
+				self = this;
+				menu.save(null, {
+					success: function(model, response){
+						//add only when success
+						self.collection.add(model);
+					}
+
+				});
+				
 				
 			}else{
 				alert('something wrong');
@@ -53,7 +60,7 @@
 		},
 		
 		addMenu:function(menu) { 
-		  		var menuView = new Kitch.Views.Menu({model: menu}); 
+				var menuView = new Kitch.Views.Menu({model: menu}); 
 		    	this.$el.append(menuView.render().el);
 		 }
 
@@ -67,9 +74,10 @@
 		},		
 
 		render: function(){
+			
 			this.$el.html( template('menu', this.model.toJSON()) );
 			
-			itemList = new Kitch.Views.MenuListItem( { collection : this.model.get("items"), parentId: this.model.get('uid') });
+			itemList = new Kitch.Views.MenuItemList( { collection : this.model.get("items"), parentId: this.model.get('uid') });
 			this.$el.html( template('menu', this.model.toJSON()) );
 			this.$el.append( itemList.render().el );
 
@@ -77,13 +85,14 @@
 		}
 	});
 
-	Kitch.Views.MenuListItem = Backbone.View.extend({
+	Kitch.Views.MenuItemList = Backbone.View.extend({
 
 
 		initialize: function(){			
 			this.collection = new Kitch.Collections.MenuItem(this.collection);
 			this.collection.on('add', this.addMenuItem, this);
-		
+			
+			
 		},
 
 		render: function(){			
@@ -122,9 +131,15 @@
 					price: price,
 					description: description
 				} );
+				menuItem.parentId = this.options.parentId;
 
-				this.collection.add(menuItem);
-				menuItem.save();
+				self = this;
+
+				menuItem.save(null, {
+					success: function(model, response){
+						self.collection.add(model);		
+					}
+				});
 			}else{
 				console.log('validation here');
 			}
@@ -165,7 +180,6 @@
 			this.model.set("title", title);
 			this.model.set("description", description);
 			this.model.set("price", price);
-			
 
 			this.model.save();
 
