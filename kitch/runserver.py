@@ -60,8 +60,9 @@ def validate_request():
     if request.endpoint == 'user.loginService': 
         return None
 
+    
     #Validate mime type to always be json
-    if request.mimetype!='application/json' and request.method != 'GET':
+    if request.mimetype != 'application/json' and request.method not in ['GET','DELETE']:
         abort(415)
 
     if request.method in ('POST','PUT') and not request.json:
