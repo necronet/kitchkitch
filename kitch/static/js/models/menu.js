@@ -3,18 +3,10 @@
 	Backbone._sync = Backbone.sync;
 
 	Backbone.sync = function(method, model, options){
-		if (method == 'update') {
+		if (method == 'update' ) {
 			
-			options.url = _.result(model, 'url').split('/');
-
-			query_parameters = options.url[2].split('?');
-			
-			if(query_parameters[1] == undefined)
-				query_parameters = '';
-			else
-				query_parameters = '?' + query_parameters[1]
-
-			options.url = options.url[1]+'/'+ query_parameters;
+			options.url = _.result(model, 'url');
+			console.log(_.result(model, 'url'));
 		}
 		Backbone._sync(method,model, options)
 	}
