@@ -13,7 +13,7 @@
 
 	Kitch.Models.Menu = Backbone.Model.extend({
 		idAttribute : "uid",
-
+		urlRoot: '/menus/',
 		defaults: {
 			items: []
 		},

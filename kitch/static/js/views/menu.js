@@ -2,7 +2,7 @@
 	
 	Kitch.Collections.Menu = Backbone.Collection.extend({
 		model: Kitch.Models.Menu,
-		url: '/menus',
+		url: '/menus/',
 		parse: function(resp, xhr) {
         	return resp.items;
     	}	
@@ -44,6 +44,7 @@
 			
 			if(title){
 				menu = new Kitch.Models.Menu({title: title});
+				menu.save();
 				this.collection.add(menu);
 				
 			}else{
