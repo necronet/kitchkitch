@@ -51,22 +51,10 @@
 		
 </script>
 
-<script>
-var Kitch = Kitch || {
-	Views: {},
-	Router: {},
-	Models:{},
-	Collections:{}
-};
-
-var template = function(id, model){
-	return _.template($('#'+id).html(), model);
-}
-
-</script>
-<script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
-<script src="{{ url_for('static', filename='js/underscore.js') }}"></script>
-<script src="{{ url_for('static', filename='js/backbone.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lib/core.js')}}" > </script>
+<script src="{{ url_for('static', filename='js/lib/jquery.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lib/underscore.js') }}"></script>
+<script src="{{ url_for('static', filename='js/lib/backbone.js') }}"></script>
 <script src="{{ url_for('static', filename='js/models/menu.js') }}"></script>
 <script src="{{ url_for('static', filename='js/views/menu.js') }}"></script>
 <script src="{{ url_for('static', filename='js/views/app.js') }}"></script>
