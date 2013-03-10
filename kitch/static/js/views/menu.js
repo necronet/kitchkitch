@@ -121,6 +121,7 @@
 				} );
 
 				this.collection.add(menuItem);
+				menuItem.save();
 			}else{
 				console.log('validation here');
 			}
