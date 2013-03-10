@@ -16,12 +16,12 @@ def to_json(datas):
 #List of available encoding function to be returned.
 encoders={'application/json':to_json,'text/html':render_template}
 
-"""
-Very importan encryption function that create a random salt with a timestamp
-then concatenate this to the message to be hash and finally iterate it in order
-to make it hard to rainbow the data.
-"""
 def encrypt_with_interaction(data,random_salt=str(uuid.uuid1()),iterate=50000,t = int(round(time.time()))):
+    """
+    Very importan encryption function that create a random salt with a timestamp
+    then concatenate this to the message to be hash and finally iterate it in order
+    to make it hard to rainbow the data.
+    """
 
     for i in range(0,iterate):
         data = hashlib.sha256(data+random_salt+str(t)).hexdigest()
@@ -81,8 +81,8 @@ class BaseService(MethodView):
         #This is very clever way to mutate, will dinamically return  a function and will pass the proper data
         return encoders[encoder_key](datas)
 
-    def post_response(self, uid):
-        return make_response(to_json({'message':'Create succesfully'}),201,{'Location':request.url+uid})
+    def post_response(self, json_response, uid):
+        return make_response(json_response,201,{'Location':request.url+uid})
 
     def put_response(self):
         return make_response(to_json({'message':'Replace succesfully'}),200,{'Location':request.url})
@@ -136,7 +136,10 @@ class BaseService(MethodView):
         except sqlalchemy.exc.IntegrityError as e:
             abort(409, 'Conflict on creating record. %s' % e.message)
         
-        return self.post_response(uid)
+        response_object = self.get(uid);
+        
+
+        return self.post_response(response_object.data, uid)
 
     @login_required
     def put(self, uid=None):
