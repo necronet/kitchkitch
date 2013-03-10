@@ -67,7 +67,8 @@
 
 		render: function(){
 			this.$el.html( template('menu', this.model.toJSON()) );
-			itemList = new Kitch.Views.MenuListItem( { collection : this.model.get("items") });
+			
+			itemList = new Kitch.Views.MenuListItem( { collection : this.model.get("items"), parentId: this.model.get('uid') });
 			this.$el.html( template('menu', this.model.toJSON()) );
 			this.$el.append( itemList.render().el );
 
@@ -78,8 +79,7 @@
 	Kitch.Views.MenuListItem = Backbone.View.extend({
 
 
-		initialize: function(){
-			
+		initialize: function(){			
 			this.collection = new Kitch.Collections.MenuItem(this.collection);
 			this.collection.on('add', this.addMenuItem, this);
 		
@@ -96,8 +96,8 @@
 		},
 
 		addMenuItem: function(item){
-				
-			var menuItemView = new Kitch.Views.MenuItem({model: item}); 
+			
+			var menuItemView = new Kitch.Views.MenuItem({model: item, parentId: this.options.parentId}); 
 			
 			this.$el.find('#add-form').before(menuItemView.render().el);
 
@@ -133,6 +133,7 @@
 		tagName:'li',
 
 		initialize: function(){
+
 			this.model.on('destroy', this.remove, this);
 			this.model.on('change', this.render, this);
 
@@ -152,7 +153,9 @@
 
 		finishEdit: function(e){
 			e.preventDefault();
-			
+
+			this.model.parentId = this.options.parentId; //specify the menu that it belongs
+
 			title = $(e.currentTarget).find('input[name=title]').val();
 			description = $(e.currentTarget).find('input[name=description]').val();
 			price = $(e.currentTarget).find('input[name=price]').val();
@@ -160,7 +163,8 @@
 			this.model.set("title", title);
 			this.model.set("description", description);
 			this.model.set("price", price);
-			console.log('uid: '+this.model.isNew());
+			
+
 			this.model.save();
 
 			this.$el.removeClass('editing');
