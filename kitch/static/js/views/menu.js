@@ -8,7 +8,10 @@
     	}	
 	});	
 
-	Kitch.Collections.MenuItem = Backbone.Collection.extend({});
+	Kitch.Collections.MenuItem = Backbone.Collection.extend({
+		model: Kitch.Models.MenuItem,
+		url: '/menuItems/'
+	});
 
 	Kitch.Views.MenuList = Backbone.View.extend({		
 
@@ -77,7 +80,7 @@
 
 		initialize: function(){
 			
-			this.collection = new Kitch.Collections.MenuItem().reset(this.collection);
+			this.collection = new Kitch.Collections.MenuItem(this.collection);
 			this.collection.on('add', this.addMenuItem, this);
 		
 		},
@@ -153,17 +156,18 @@
 			title = $(e.currentTarget).find('input[name=title]').val();
 			description = $(e.currentTarget).find('input[name=description]').val();
 			price = $(e.currentTarget).find('input[name=price]').val();
-			
+
 			this.model.set("title", title);
 			this.model.set("description", description);
 			this.model.set("price", price);
+			console.log('uid: '+this.model.isNew());
+			this.model.save();
 
 			this.$el.removeClass('editing');
 		},
 
 		edit: function(e){
 			this.$el.addClass('editing');
-
 		},
 
 		remove: function(e){
