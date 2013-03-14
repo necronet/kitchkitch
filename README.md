@@ -9,6 +9,9 @@
 - Revisa los [Requerimientos](docs/requirements.md) antes de comenzar.<br/>
 - Algunas preguntas frecuentes en la seccion ([FAQ](docs/faq.md)) <br/>
 
+##Gráfica de arquitectura
+
+![image](docs/img/whoandwhere.png)
 
 ###Estructura del proyecto
 Es muy probable que si leas esto estes en el repositorio. El proyecto esta estructurado de la siguiente forma.
