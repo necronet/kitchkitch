@@ -91,15 +91,13 @@
 		initialize: function(){			
 			this.collection = new Kitch.Collections.MenuItem(this.collection);
 			this.collection.on('add', this.addMenuItem, this);
-			
-			
 		},
 
 		render: function(){			
 			this.$el.empty();	
 			this.$el.append( template('item-add') );
 
-			if(this.collection.length > 0 && this.collection.at(0).description ) {
+			if(this.collection.length > 0 && this.collection.at(0).has("description") ) {
 
 				this.collection.each(this.addMenuItem, this);
 			}
