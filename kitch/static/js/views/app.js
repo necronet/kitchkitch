@@ -1,7 +1,7 @@
 
 (function(){
 	Kitch.Views.App = Backbone.View.extend({
-		el: "#app-container",
+		el: "#container",
 
 		initialize: function(){
 			this.render();
