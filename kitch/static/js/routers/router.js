@@ -1,7 +1,8 @@
 ( function() {	
 	Kitch.Workspace = Backbone.Router.extend({
 		routes: {
-			'': 'home'
+			'': 'home',
+			'logout':'logout'
 		},
 
 		home: function(){
