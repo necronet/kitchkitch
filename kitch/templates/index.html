@@ -33,7 +33,7 @@
 			<h2><%= title %> <span><%= price %></span>
 			<button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  
 			</h2>
-			<p><%= description %> <input type="checkbox" value="addon" name="addon" <%= addon ? 'checked':'' %> /></p> 
+			<span><%= description %> <%= addon ? '<span class="label">Addon<span>' : '<span class="label">Dish<span>' %></span> </span> 
 		</div>
 
 		<form id="edit-form" class="edit" >
