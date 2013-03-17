@@ -24,18 +24,16 @@
 </script>
 
 <script type="text/template" id="menu">
-	<span style="font-weight:bold"><%= title %></span>
+	<h1><%= title %><button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  </h1>
 </script>
 
 <script type="text/template" id="menu-item">
 		
-		<div class="detail">
-		<span><%= title %></span> 
-		<span><%= description %></span> 
-		<span><%= price %></span> 
-		
-		<span><input type="checkbox" value="addon" name="addon" <%= addon ? 'checked':'' %> /></span> 
-		<button name="delete" data-id="{uid}" >Delete</button>
+		<div class="menu-item-detail">
+			<h2><%= title %> <span><%= price %></span>
+			<button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  
+			</h2>
+			<p><%= description %> <input type="checkbox" value="addon" name="addon" <%= addon ? 'checked':'' %> /></p> 
 		</div>
 
 		<form id="edit-form" class="edit" >
