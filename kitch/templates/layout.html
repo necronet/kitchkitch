@@ -7,10 +7,38 @@
 <script src="{{ url_for('static', filename='js/lib/bootstrap.js') }}"></script>
   <div>
   {% if current_user.is_authenticated() %}
-    <a href="#logout">Log out</a>
+    
   {% endif %}
   </div>
-  {% block body %}{% endblock %}  
+
+<div class="navbar navbar-inverse navbar-static-top">
+  <div class="navbar-inner">
+    <ul class="nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#myaccount">My account</a></li>
+      <li><a href="#logout">Log out</a></li>
+    </ul>
+
+  </div>
+</div>
+
+  <div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span2">
+      <ul class="nav nav-tabs nav-stacked">
+        <li ><a href="#menu">Dashboard</a> </li>
+        <li class="active"><a href="#menu">Menu & Dishes</a> </li>
+        <li ><a href="#order">Orders</a></li>
+        <li ><a href="#tables">Tables</a></li>
+      </ul>
+    </div>
+    <div class="span10">
+    <div id="container">
+    {% block body %}{% endblock %}  
+    </div>
+    </div>
+  </div>  
+  </div>
     <!--
   {% for message in get_flashed_messages() %}
     <div class=message>{{ message }}</div>
