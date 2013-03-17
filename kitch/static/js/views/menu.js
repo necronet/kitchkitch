@@ -94,7 +94,7 @@
 		},
 
 		remove: function(e){
-			
+
 			this.$el.remove();	
 		}
 
@@ -182,6 +182,7 @@
 		events:{
 			'click button[name=delete]': 'deleteItem',
 			'dblclick span': 'edit',
+			'dblclick h2': 'edit',
 			'submit form[id=edit-form]': 'finishEdit'
 		},
 
