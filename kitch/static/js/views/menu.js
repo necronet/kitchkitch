@@ -36,6 +36,7 @@
 
 		events: {
 			'submit form[id=add-menu ]': 'add'
+			
 		},
 
 		add: function(e){
@@ -70,8 +71,12 @@
 	Kitch.Views.Menu = Backbone.View.extend({
 
 		initialize: function(){
-			
+			this.model.on('destroy', this.remove, this);
 		},		
+
+		events:{
+			'click button[name=delete]':'deleteItem'
+		},
 
 		render: function(){
 			
@@ -82,7 +87,17 @@
 			this.$el.append( itemList.render().el );
 
 			return this;
+		},
+
+		deleteItem: function(e){
+			this.model.destroy();
+		},
+
+		remove: function(e){
+			
+			this.$el.remove();	
 		}
+
 	});
 
 	Kitch.Views.MenuItemList = Backbone.View.extend({
@@ -123,8 +138,7 @@
 			description = $(e.currentTarget).find('input[name=description]').val();
 			price = $(e.currentTarget).find('input[name=price]').val();
 			addon = $(e.currentTarget).find('input[name=addon]').is(":checked");
-			console.log(addon);
-
+			
 			if (price && description && price ){
 				menuItem = new Kitch.Models.MenuItem( {
 					title: title,
@@ -166,7 +180,7 @@
 		},
 
 		events:{
-			'click button[name=delete]': 'delete',
+			'click button[name=delete]': 'deleteItem',
 			'dblclick span': 'edit',
 			'submit form[id=edit-form]': 'finishEdit'
 		},
@@ -178,7 +192,7 @@
 			description = $(e.currentTarget).find('input[name=description]').val();
 			price = $(e.currentTarget).find('input[name=price]').val();
 			addon = $(e.currentTarget).find('input[name=addon]').is(":checked");
-			console.log(addon);
+			
 
 			this.model.set("title", title);
 			this.model.set("description", description);
@@ -198,7 +212,7 @@
 			this.$el.remove();
 		},
 
-		delete: function(e){
+		deleteItem: function(e){
 			this.model.destroy();
 		}
 
