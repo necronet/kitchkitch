@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
-<div id="container"/>
+
 
 <script type="text/template" id="menu-add">
 <div>
 		<form id="add-menu">
-		<label for="title">Title:</label><input placeholder="Type the item title" type="textifield" name="title" id="title" />
+		<input placeholder="Type the item title" type="textifield" name="title" id="title" />
 		<input type="submit" value="Add Menu" name="add-menu" class="add-menu" />
 		</form>
 </div>
@@ -17,6 +17,7 @@
 		<input placeholder="Type the title" type="textifield" name="title" id="title" />
 		<input placeholder="Type the description" type="textifield" name="description" id="title" />
 		<input type="textifield" name="price" placeholder="Type the price" id="price" />
+		<span><input type="checkbox" value="false" name="addon" /></span> 
 		<input type="submit" value="Add item" name="add-item" class="add-item" />
 	</form>
 
@@ -32,7 +33,8 @@
 		<span><%= title %></span> 
 		<span><%= description %></span> 
 		<span><%= price %></span> 
-		<span><%= addon %></span> 
+		
+		<span><input type="checkbox" value="addon" name="addon" <%= addon ? 'checked':'' %> /></span> 
 		<button name="delete" data-id="{uid}" >Delete</button>
 		</div>
 
@@ -40,6 +42,7 @@
 		<input value  = "<%= title %>" type="textifield" name="title" id="title" />
 		<input value  = "<%= description %>" type="textifield" name="description" id="title" />
 		<input type="textifield" value  = "<%= price %>" name="price" id="price" />
+		<input type="checkbox" value="addon" name="addon" <%= addon ? 'checked':'' %> />
 		<input type="submit" value="Save" name="edit-item" class="edit-item" />
 		</form>
 		

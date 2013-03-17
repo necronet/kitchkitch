@@ -122,12 +122,15 @@
 			title = $(e.currentTarget).find('input[name=title]').val();
 			description = $(e.currentTarget).find('input[name=description]').val();
 			price = $(e.currentTarget).find('input[name=price]').val();
+			addon = $(e.currentTarget).find('input[name=addon]').is(":checked");
+			console.log(addon);
 
 			if (price && description && price ){
 				menuItem = new Kitch.Models.MenuItem( {
 					title: title,
 					price: price,
-					description: description
+					description: description,
+					addon: addon
 				} );
 				menuItem.parentId = this.options.parentId;
 
@@ -174,10 +177,13 @@
 			title = $(e.currentTarget).find('input[name=title]').val();
 			description = $(e.currentTarget).find('input[name=description]').val();
 			price = $(e.currentTarget).find('input[name=price]').val();
+			addon = $(e.currentTarget).find('input[name=addon]').is(":checked");
+			console.log(addon);
 
 			this.model.set("title", title);
 			this.model.set("description", description);
 			this.model.set("price", price);
+			this.model.set("addon", addon);
 
 			this.model.save();
 
