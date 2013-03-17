@@ -6156,3 +6156,12 @@ a.badge:focus {
 .affix {
   position: fixed;
 }
+
+li #edit-form,
+li.editing .menu-item-detail {
+  display: none;
+}
+
+li.editing #edit-form {
+  display: block;
+}
