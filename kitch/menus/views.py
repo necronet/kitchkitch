@@ -102,7 +102,7 @@ class MenuItemsService(BaseService):
             abort(400, 'Missing menus_uid parameter. Not allowed to create items without a menu to be referenced')
         
         addon = False
-        if json.has_key('addon'):
+        if json.has_key('addon') and bool(json.has_key('addon')):
             addon = bool(json['addon'])
 
         item = Item(uid,json['title'],json['description'],json['price'],  addon = addon)
@@ -118,12 +118,18 @@ class MenuItemsService(BaseService):
 
         item=Item.query.filter_by(active=1, uid=json['uid']).first()
 
-        item.title=json['title']
-        item.description=json['description']
-        item.price=json['price']
+        item.title = json['title']
+        item.description = json['description']
+        item.price = json['price']
+
+        addon = False
+        if json.has_key('addon') and bool(json.has_key('addon')):
+            addon = bool(json['addon'])
+
+        item.addon = addon
         
-        menu_item=MenuItem.query.filter_by(active=1, items_uid=json['uid']).first()
-        menu_item.menus_uid=menus_uid
+        menu_item = MenuItem.query.filter_by(active=1, items_uid=json['uid']).first()
+        menu_item.menus_uid = menus_uid
 
 
     @login_required
