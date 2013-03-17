@@ -41,3 +41,19 @@ En caso de estar en **windows** necesitas seguir los siguientes pasos:
 Y disfruta de pip.!!!
 
 
+###Aparece TypeError Decimal('23.00') 
+
+Si obtienes la siguiente traza (stack):
+
+	TypeError: Decimal('23.00') is not JSON serializable
+	Traceback (most recent call last)
+	File "/Library/Python/2.7/site-packages/flask/app.py", line 1701, in __call__
+	return self.wsgi_app(environ, start_response)
+	File "/Library/Python/2.7/site-packages/flask/app.py", line 1689, in wsgi_app
+	response = self.make_response(self.handle_exception(e))
+
+El problema es que no tienes la ultima version de flask 0.10, por tanto no puede ejecutar el Custom Encoder para el tipo de dato decimal. 
+
+	app.json_encoder = APIEncoder
+
+La solucion es obtener la version >= 0.10 de flask. 

@@ -36,7 +36,7 @@ Es muy probable que si leas esto estes en el repositorio. El proyecto esta estru
 
 ###Dependencias
 
-Dentro del proyecto tambien hay un archivo llamado requirements.txt que define las dependencias de la plataforma
+En [requirements.txt](kitch/requirements.txt) puedes encontrar las dependencias de la plataforma
 
 - [flask](flask.pocoo.org)
 - [Flask-Login](http://packages.python.org/Flask-Login/)
