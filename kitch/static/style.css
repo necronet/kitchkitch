@@ -1,7 +1,0 @@
-li #edit-form, li.editing .detail{
-	display: none;
-}
-
-li.editing #edit-form{
-	display: block;
-}
