@@ -6,14 +6,16 @@
 <script src="{{ url_for('static', filename='js/lib/bootstrap.js') }}"></script>
 
 
-
+{% if current_user.is_authenticated() %}
+    
+  
 <div class="navbar navbar-inverse navbar-static-top">
   <div class="navbar-inner">
     <a class="brand" href="#">Kitch</a>
     <ul class="nav">
       <li class="active"><a href="#">Home</a></li>
       <li><a href="#account">My account</a></li>
-      <li><a href="#logout">Log out</a></li>
+      <li><a href="/logout">Log out</a></li>
     </ul>
 
   </div>
@@ -30,12 +32,14 @@
       </ul>
     </div>
     <div class="span10">
-    
+{% endif %}     
     {% block body %}{% endblock %}  
     
     </div>
   </div>  
   </div>
+
+
     <!--
   {% for message in get_flashed_messages() %}
     <div class=message>{{ message }}</div>
