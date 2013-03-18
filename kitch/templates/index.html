@@ -1,6 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
 
+<div id="container"></div>
+
 
 <script type="text/template" id="menu-add">
 <div>
@@ -46,12 +48,18 @@
 		
 </script>
 
+
 <script src="{{ url_for('static', filename='js/lib/core.js')}}" > </script>
 <script src="{{ url_for('static', filename='js/lib/underscore.js') }}"></script>
 <script src="{{ url_for('static', filename='js/lib/backbone.js') }}"></script>
+
 <script src="{{ url_for('static', filename='js/models/menu.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/views/collection.js') }}"></script>
+<script src="{{ url_for('static', filename='js/views/account.js') }}"></script>
 <script src="{{ url_for('static', filename='js/views/menu.js') }}"></script>
 <script src="{{ url_for('static', filename='js/views/app.js') }}"></script>
+
 <script src="{{ url_for('static', filename='js/routers/router.js') }}"></script>
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
 {% endblock %}
