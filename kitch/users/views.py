@@ -1,5 +1,5 @@
 from flask import request, redirect, url_for, Blueprint, make_response, jsonify, render_template
-from flask.ext.login import login_user,logout_user,login_required
+from flask.ext.login import login_user,logout_user, login_required, current_user
 from utils.entities import BaseService, register_api,encrypt_with_interaction
 from utils.exceptions import abort
 from models import User, GroupResourcePermission, Group, UserGroup, MetaUser, Token, Permission, Resource, db
@@ -192,3 +192,12 @@ def check_user_permission(user):
 app = Blueprint('user',__name__,template_folder='templates')
 register_api(app,LoginService, 'loginService','/login/','uid')
 register_api(app,UserService, 'userService','/user/','uid')
+
+
+#Logout method 
+@app.route('/logout/')
+@login_required
+def logout():
+    LoginService().delete(current_user.uid)
+
+    return redirect(url_for('user.loginService'))
