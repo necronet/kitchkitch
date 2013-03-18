@@ -8,14 +8,11 @@
 			this.collection.on('reset', this.render, this);
 			this.collection.on('add', this.addMenu, this);
 			this.collection.fetch( { data: {expand:'items'} } )
-
 		},
 
 		render: function(){
-			this.$el.empty(); 
-	        
-	        this.$el.html( template('menu-add'));
-
+			console.log('rendering menu list');
+			this.$el.html( template('menu-add'));
 	        this.collection.each(this.addMenu, this);
 
 	        return this;

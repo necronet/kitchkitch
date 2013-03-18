@@ -2,19 +2,23 @@
 (function(){
 	Kitch.Views.App = Backbone.View.extend({
 		el: "#container",
+		
 
 		initialize: function(){
-			this.render();
+			
 		},
-		render: function(){
-			menuListView = new Kitch.Views.MenuList();
-
-			this.$el.append(menuListView.el);
+		render: function(view){
+			this.$el.html(view.el);
+			this.currentView = view;
 
 			return this;
+
 		}
 
 
 	});
+
+	//General application View
+	Kitch.Views.App = new Kitch.Views.App();
 
 })();
