@@ -8,6 +8,8 @@
 - - -
 - Revisa los [Requerimientos](docs/requirements.md) antes de comenzar.<br/>
 - Algunas preguntas frecuentes en la seccion ([FAQ](docs/faq.md)) <br/>
+- [Todo sobre el Backend.](docs/backend.md)
+- [La verdadera cara de la aplicacion (Frontend)](docs/frontend.md)
 
 ##Gráfica de arquitectura
 
