@@ -64,5 +64,5 @@ REST es un conjunto de principios para crear servicios a base de recursos, en ve
 
 Dos recursos importantes para leer con detenimiento. 
 
-[Explicarle REST a mi esposa](http://tomayko.com/writings/rest-to-my-wife)
-[REST para perros](http://vimeo.com/17785736)
+- [Explicarle REST a mi esposa](http://tomayko.com/writings/rest-to-my-wife)
+- [REST para perros](http://vimeo.com/17785736)
