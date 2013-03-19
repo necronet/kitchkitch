@@ -57,3 +57,12 @@ El problema es que no tienes la ultima version de flask 0.10, por tanto no puede
 	app.json_encoder = APIEncoder
 
 La solucion es obtener la version >= 0.10 de flask. 
+
+###¿ Que es REST y porque usarlo ?
+
+REST es un conjunto de principios para crear servicios a base de recursos, en vez de tener multiples servicios como ***getXXX ó setXXX ó createXXX* ** los cuales no son flexibles y tienen un solo objetivo, la arquitecturas REST proponen reutilizar los mismos identificador unico de recurso (URI) y aplicar acciones a ellos usualmente con el protocolo Verbos de HTTP (GET, POST, PUT & DELETE)  (Sin embargo REST no esta sujeto a utilizar http).
+
+Dos recursos importantes para leer con detenimiento. 
+
+[Explicarle REST a mi esposa](http://tomayko.com/writings/rest-to-my-wife)
+[REST para perros](http://vimeo.com/17785736)
