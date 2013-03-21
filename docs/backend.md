@@ -50,9 +50,33 @@ Jinja permite la utilizacion de sentencias python dentro de llaves en este caso 
 	<script src="{{ url_for('static', filename='js/lib/jquery.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/lib/bootstrap.js') }}"></script>
 
-Werkzeug provee las interfaces para WSGI.
+Werkzeug provee las interfaces para WSGI, la mayor parte esta encapsulado en flask, sin embargo el comportamiento de muchos objetos de Flask es directamente dependiente de Werkzeug, en especial con:
+
+- [Request](http://werkzeug.pocoo.org/docs/wrappers/#werkzeug.wrappers.BaseRequest)
+- [Response](http://werkzeug.pocoo.org/docs/wrappers/#werkzeug.wrappers.BaseResponse)
+- [Routing](http://werkzeug.pocoo.org/docs/routing/)
+- [Utils](http://werkzeug.pocoo.org/docs/utils/)
 
 ### - Flask Login
+
+[Flask-login](https://github.com/maxcountryman/flask-login/blob/master/flask_login.py) extension de flask muy util para manejar autenticar sesiones de usuarios aunque es extremadamente dependiente de las sesiones http por defecto es posible extenderlo para soportar autenticacion por token, con un par de ajustes a la forma en como se cargan los usuarios.
+
+####¿Donde lo usamos?
+Para usarlo necesitamos de registrar un LoginManager e inicializarlo:
+
+	login_manager = CustomLoginManager()
+	login_manager.init_app(app)
+	login_manager.login_view = "user.loginService"
+
+La propiedad `login_view` especifica la vista en la que el usuario se redirije en caso de no estar autenticado. (La pantalla de login).
+[CustomLoginManager](../kitch/runserver.py) es la extension para permitir autenticacion por token.
+
+Luego el LoginManager necesita de un metodo para cargara un usuario de acuerdo a un identificador:
+
+	@login_manager.user_loader
+	def load_user(uid):
+	    return get_user(uid)
+
 ### - SQLAlchemy
 ### - Test | Todo seguro
 ### - MakeFile
