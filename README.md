@@ -50,7 +50,7 @@ Con pip puedes instalar todas las dependencias ejecutando:
 
 	pip install -r requirements.txt
 
-Si necesitas saber [¿como instalar pip?](docs/faq.md)
+Si necesitas saber [¿como instalar pip?](docs/faq.md#como-instalar-pip)
 
 ###Base de datos
 
