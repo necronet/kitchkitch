@@ -5,15 +5,15 @@ Es una de las inquietudes que se presentan con frecuencia es ¿por que no Java?,
 
 Pues la historia va algo asi, inicialmente Kitch fue concebido con Java, la combinacion de Jersey + Spring + Gradle + Jetty que es un contenedor que soporta JSF 2.0 nuestra marillosa tecnologia de front-end y backend todo en uno solo. Pero conforme mas pasaba, mas me daba cuenta de X siguientes fallas:
 
-- Altamente dependiente del IDE, si bien gradle mejoro algunas cosas con el plugin de eclipse configurado, podria haberlo hecho para IntelliJ pero no tan bien para Netbeans y muchos usan Netbean. Ademas Eclipse era lento y la compilacion cada vez tardaba mas, en un prototipo que apenas iniciaba!!!.
+- **Altamente dependiente del IDE**, si bien gradle mejoro algunas cosas con el plugin de eclipse configurado, podria haberlo hecho para IntelliJ pero no tan bien para Netbeans y muchos usan Netbean. Ademas Eclipse era lento y la compilacion cada vez tardaba mas, en un prototipo que apenas iniciaba!!!.
 
-- Hibernate es un viejo conocido de nosotros, y no creo ser el primero que detesta el merging de sesiones, el manejo de los lazy collection y mas aun HQL; podriamos discutir todo el dia de las maravillas del API de filter que tiene en el fondo sabemos los problemas que nos ha dado y lo horrible que es trabajar con ellos.
+- **Hibernate es un viejo conocido de nosotros**, y no creo ser el primero que detesta el merging de sesiones, el manejo de los lazy collection y mas aun HQL; podriamos discutir todo el dia de las maravillas del API de filter que tiene en el fondo sabemos los problemas que nos ha dado y lo horrible que es trabajar con ellos.
 
-- DAO's lo menos OO y reusable que conozco en Patrones de diseños. Update, delete, get, insert Si somos intelignetes hacemos el update/insert en ambos pero igual hacemos lo mismo una y otra y otra vez. Podriamos haber visto el EntityManager que es una excelente implementacion que propone desaparecer los DAO's pero ya no tengo energias para seguir eligiendo entre JPA, Hibernate, iBatis etc.
+- **La maldicion de los DAO's** lo menos OO y reusable que conozco en Patrones de diseños. Update, delete, get, insert Si somos intelignetes hacemos el update/insert en ambos pero igual hacemos lo mismo una y otra y otra vez. Podriamos haber visto el EntityManager que es una excelente implementacion que propone desaparecer los DAO's pero ya no tengo energias para seguir eligiendo entre JPA, Hibernate, iBatis etc.
 
-- ActiveJDBC como no queria lidiar con hibernate, este lightweight project era prometedor Active Record como patron de persitencia se escuchaba logico, sin embargo para hacer funcionar ActiveJDBC debes ejecutar un comando que dinamicamente cambia el .class era engorroso hacerlo funcionar en la Web.
+- **ActiveJDBC como no queria lidiar con hibernate**, este lightweight project era prometedor Active Record como patron de persitencia se escuchaba logico, sin embargo para hacer funcionar ActiveJDBC debes ejecutar un comando que dinamicamente cambia el .class era engorroso hacerlo funcionar en la Web.
 
-Conclusion: Java durante estos años me ha forzado a buscar alternativas hoy encontre Flask despues de probar appengine, bottle y Spark, este se escuchaba increiblemente sencillo en todo caso no todo esta escrito en piedra y si necesitamos crear otras aplicaciones y java podra ser una opcion mas popular, lo haria sin dudarlo.
+Conclusion: Java durante estos años me ha forzado a buscar alternativas hoy encontre Flask despues de probar [appengine](https://developers.google.com/appengine/), [bottle](http://bottlepy.org/docs/dev/) y [Spark](http://www.sparkjava.com/), este se escuchaba increiblemente sencillo en todo caso no todo esta escrito en piedra y si necesitamos crear otras aplicaciones y java podra ser una opcion mas popular, lo haria sin dudarlo.
 
 Nota: En cuanto a un uso muy interesante es el uso de JasperReport para los reportes iniciales.
 
@@ -41,7 +41,7 @@ En caso de estar en **windows** necesitas seguir los siguientes pasos:
 Y disfruta de pip.!!!
 
 
-###Aparece TypeError Decimal('23.00') 
+###<a name="#type-error-decimal">Aparece TypeError Decimal('XX.XX')</a> 
 
 Si obtienes la siguiente traza (stack):
 

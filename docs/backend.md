@@ -78,5 +78,36 @@ Luego el LoginManager necesita de un metodo para cargara un usuario de acuerdo a
 	    return get_user(uid)
 
 ### - SQLAlchemy
+
+Es un toolkit que provee capacidad para manipulacion de objetos con patron [Active Record](http://en.wikipedia.org/wiki/Active_record_pattern). Podria pensarse en un ORM lo cual lo es pero con la capacidad de poder acceder directamente a la conexion y sesion para manipular los datos de forma mas directa. En Kitch el modelo de datos [model.py](../kitch/models.py) es destinado a mantener las clases vinculadas a los esquemas.
+
+Un ejemplo de creacion de esquemas completo:
+
+	class Table(db.Model):
+    	__tablename__='tables'
+	    uid = db.Column(db.String(36), primary_key=True)
+    	name = db.Column(db.String(100))
+	    active = db.Column(db.Boolean, default = 1)
+
+    	def as_dict(self):
+        	d = {}
+	        for column in self.__table__.columns:
+    	        if column.name is not 'active':
+        	        d[column.name] = getattr(self, column.name)
+	        return d
+
+    	def __init__(self, uid, name, active = 1):
+        	self.uid = uid
+	        self.name = name
+    	    self.active = active
+
+		#Association from tables and orders (Many To Many)
+		order_tables_assoc = 	db.Table('orders_tables',
+								db.Column('order_uid', db.String(36), 
+								db.ForeignKey('orders.uid')),
+								db.Column('table_uid', db.String(36),
+								db.ForeignKey('tables.uid')))
+
+
 ### - Test | Todo seguro
 ### - MakeFile
