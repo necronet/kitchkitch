@@ -97,6 +97,10 @@ class UserService(BaseService):
 class LoginService(BaseService):
     schema_table = Token
     def get(self,uid):
+
+        if not current_user.is_anonymous():
+            return redirect(url_for("index"))
+
         #TODO: smelli this kind of call should be modularize
         best_match = request.accept_mimetypes.best_match(['application/json','text/html']) 
         if best_match == 'text/html':
