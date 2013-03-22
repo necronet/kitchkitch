@@ -4,17 +4,25 @@
 			'': 'home',
 			'logout':'logout',
 			'account':'account',
-			'menu':'menu'
+			'menu':'menu',
+			'dashboard':'home',
+			'order':'order',
+			'table':'table'
 		},
 		menu: function(){
-			console.log('menu');
 			Kitch.Views.App.render(new Kitch.Views.MenuList());
 		},
 		account: function(){
 			Kitch.Views.App.render(new Kitch.Views.Account());
 		},
-
+		order: function(){
+			Kitch.Views.App.render(new Kitch.Views.Order());
+		},
+		table: function(){
+			Kitch.Views.App.render(new Kitch.Views.Table());
+		},
 		home: function(){
+			//TODO: do a dashboard view
 			Kitch.Views.App.render(new Kitch.Views.MenuList());
 		}
 	});
