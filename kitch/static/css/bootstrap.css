@@ -6157,6 +6157,10 @@ a.badge:focus {
   position: fixed;
 }
 
+.btn {
+  vertical-align: text-bottom;
+}
+
 h3 {
   display: inline;
 }
