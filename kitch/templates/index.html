@@ -5,7 +5,7 @@
 
 
 <script type="text/template" id="menu-add">
-<div>
+<div style="display:none">
 		<form id="add-menu">
 		<input placeholder="Type the item title" type="textifield" name="title" id="title" />
 		<input type="submit" value="Add Menu" name="add-menu" class="add-menu" />
@@ -26,7 +26,8 @@
 </script>
 
 <script type="text/template" id="menu">
-	<h1><%= title %><button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  </h1>
+	<h3> <%= title %></h3><button class="btn btn-small" name="edit" data-id="{uid}" >Edit</button> 
+	<!--<button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  -->
 </script>
 
 <script type="text/template" id="menu-item">

@@ -19,8 +19,12 @@
 		},
 
 		events: {
-			'submit form[id=add-menu ]': 'add'
-			
+			'submit form[id=add-menu ]': 'add',
+			'click button[name=edit]': 'edit'
+		},
+
+		edit: function(e){
+			//TODO: put class for edit menu
 		},
 
 		add: function(e){
