@@ -26,17 +26,18 @@
 </script>
 
 <script type="text/template" id="menu">
-	<h3> <%= title %></h3><button class="btn btn-small" name="edit" data-id="{uid}" >Edit</button> 
+	<div style="text-align:center"><h3> <%= title %></h3><button class="btn btn-small" name="edit" data-id="{uid}" >Edit</button> </div>
 	<!--<button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  -->
 </script>
 
 <script type="text/template" id="menu-item">
 		
 		<div class="menu-item-detail">
-			<h2><%= title %> <span><%= price %></span>
+			<h4><%= title %> </h4>
+			<span><%= description %> <%= addon ? '<span class="label">Addon</span>' : '<span class="label">Dish</span>' %></span>
+			<span><%= price %></span>
 			<button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  
-			</h2>
-			<span><%= description %> <%= addon ? '<span class="label">Addon<span>' : '<span class="label">Dish<span>' %></span> </span> 
+			
 		</div>
 
 		<form id="edit-form" class="edit" >
