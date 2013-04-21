@@ -4,6 +4,7 @@ from utils.exceptions import abort, bad_request_response
 from users.views import app as user, get_user, check_user_permission
 from menus.views import  app as menu
 from orders.views import app as table
+from files_upload.views import app as file_upload
 from flask import request, _request_ctx_stack, redirect
 from flask.ext.login import LoginManager, login_required, login_url
 from models import db
@@ -47,6 +48,7 @@ app.config.from_object('default_settings')
 app.register_blueprint(menu)
 app.register_blueprint(user)
 app.register_blueprint(table)
+app.register_blueprint(file_upload)
 
 
 @app.before_request
@@ -57,10 +59,9 @@ def validate_request():
         be handle by the endpoint. Otherwise it would be a waste of resources
         to proceed to following stages.
     """
-    if request.endpoint == 'user.loginService': 
+    if request.endpoint in ['user.loginService','file_uploads.upload_file']: 
         return None
 
-    
     #Validate mime type to always be json
     if request.mimetype != 'application/json' and request.method not in ['GET','DELETE']:
         abort(415)
