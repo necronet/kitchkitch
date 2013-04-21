@@ -28,6 +28,12 @@ def encrypt_with_interaction(data,random_salt=str(uuid.uuid1()),iterate=50000,t 
 
     return data,iterate,t,random_salt
 
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = ['jpg', 'png']
+    """
+        check wether a filename is acceptable
+    """
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 class BaseService(MethodView):
     """
