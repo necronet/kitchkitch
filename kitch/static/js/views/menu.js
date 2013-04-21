@@ -89,7 +89,8 @@
 	});
 
 	Kitch.Views.MenuItemList = Backbone.View.extend({
-
+		tagName:'ul',
+		className:'menu-item-block inline',
 
 		initialize: function(){			
 			this.collection = new Kitch.Collections.MenuItem(this.collection);

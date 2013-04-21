@@ -33,11 +33,13 @@
 <script type="text/template" id="menu-item">
 		
 		<div class="menu-item-detail">
-			<h4><%= title %> </h4>
-			<span><%= description %> <%= addon ? '<span class="label">Addon</span>' : '<span class="label">Dish</span>' %></span>
+			<h3><%= title %> </h3>
+			<%= addon ? '<span class="label">Addon</span>' : '<span class="label">Dish</span>' %></span>
+			<button class="btn btn-danger btn-small" name="delete" data-id="{uid}" >Remove</button>  
+			<div>
+			<span><%= description %> 
 			<span><%= price %></span>
-			<button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  
-			
+			</div>
 		</div>
 
 		<form id="edit-form" class="edit" >
