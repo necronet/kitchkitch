@@ -11,3 +11,4 @@ DB_USER='kitch'
 DB_PASSWD='kitch'
 AUTO_COMMIT=False
 SQLALCHEMY_DATABASE_URI='mysql://%s:%s@%s/%s' % (DB_USER, DB_PASSWD, DB_HOST, DB_NAME_TEST)
+UPLOAD_FOLDER = os.path.join (os.path.dirname(__file__) ,'uploads')
