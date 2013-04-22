@@ -126,7 +126,8 @@
 			title = $(e.currentTarget).find('input[name=title]').val();
 			description = $(e.currentTarget).find('input[name=description]').val();
 			price = $(e.currentTarget).find('input[name=price]').val();
-			addon = $(e.currentTarget).find('input[name=addon]').is(":checked");
+			console.log($(e.currentTarget).find('select[name=addon]'))
+			addon = $(e.currentTarget).find('select[name=addon]').val();
 			
 			if (price && description && price ){
 				menuItem = new Kitch.Models.MenuItem( {

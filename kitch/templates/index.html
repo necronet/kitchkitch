@@ -14,15 +14,18 @@
 </script>
 
 <script type="text/template" id="item-add">
-
-	<form id="add-form" >
-		<input placeholder="Type the title" type="textifield" name="title" id="title" />
-		<input placeholder="Type the description" type="textifield" name="description" id="title" />
-		<input type="textifield" name="price" placeholder="Type the price" id="price" />
-		<span><input type="checkbox" value="false" name="addon" /></span> 
-		<input type="submit" value="Add item" name="add-item" class="add-item" />
-	</form>
-
+	<div >
+		<form id="add-form" >
+			<div><input placeholder="Type the title" type="textifield" name="title" id="title" /></div>
+			<div><input placeholder="Type the description" type="textifield" name="description" id="title" /></div>
+			<div><input type="textifield" name="price" placeholder="Type the price" id="price" /></div>
+			<select name="addon">
+			  <option value="true">Addon</option>
+			  <option value="false">Dish</option>
+			</select>
+			<div><input type="submit" value="Add item" name="add-item" class="add-item" /></div>
+		</form>
+	</div>
 </script>
 
 <script type="text/template" id="menu">
