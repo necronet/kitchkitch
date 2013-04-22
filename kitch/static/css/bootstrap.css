@@ -6165,13 +6165,17 @@ h3 {
   display: inline;
 }
 
-li #edit-form,
+li #edit-form, div #edit-form,
+div.menu-header.editing h3,
 li.editing .menu-item-detail {
   display: none;
 }
 
-li.editing #edit-form {
+li.editing #edit-form,  
+div.editing #edit-form{
   display: block;
 }
 
-
+#menu-header{
+  text-align: center;
+}

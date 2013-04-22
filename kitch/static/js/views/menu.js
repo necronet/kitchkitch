@@ -2,7 +2,6 @@
 	
 	Kitch.Views.MenuList = Backbone.View.extend({		
 
-
 		initialize: function(){
 			this.collection = new Kitch.Collections.Menu();			
 			this.collection.on('reset', this.render, this);
@@ -11,7 +10,6 @@
 		},
 
 		render: function(){
-			console.log('rendering menu list');
 			this.$el.html( template('menu-add'));
 	        this.collection.each(this.addMenu, this);
 
@@ -20,11 +18,6 @@
 
 		events: {
 			'submit form[id=add-menu ]': 'add',
-			'click button[name=edit]': 'edit'
-		},
-
-		edit: function(e){
-			//TODO: put class for edit menu
 		},
 
 		add: function(e){
@@ -63,7 +56,12 @@
 		},		
 
 		events:{
-			'click button[name=delete]':'deleteItem'
+			'click button[name=delete]':'deleteItem',
+			'dblclick h3': 'edit',
+		},
+
+		edit: function(e){
+			this.$el.find('.menu-header').addClass('editing');
 		},
 
 		render: function(){

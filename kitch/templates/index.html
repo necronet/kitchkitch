@@ -29,7 +29,14 @@
 </script>
 
 <script type="text/template" id="menu">
-	<div style="text-align:center"><h3> <%= title %></h3><button class="btn btn-small" name="edit" data-id="{uid}" >Edit</button> </div>
+	<div class="menu-header">
+		<h3> <%= title %></h3>
+		<div class="edit">
+		<form id="edit-form"  >
+			<input value  = "<%= title %>" type="textifield" name="title" id="title" />
+		</form>
+		</div>
+	</div>
 	<!--<button class="btn btn-danger" name="delete" data-id="{uid}" >Remove</button>  -->
 </script>
 
