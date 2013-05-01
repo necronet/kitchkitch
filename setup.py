@@ -1,11 +1,15 @@
 from setuptools import setup
 
-#TODO: try to create this automatically with requirements.txt or viceversa
-setup(name='Kitch',
-      version='0.1',
-      description='Kitch App',
-      author='Jose Ayerdis',
-      author_email='joseayerdis@possol.com',
+setup(name='YourAppName', version='1.0',
+      description='OpenShift Python-2.7 Community Cartridge based application',
+      author='Your Name', author_email='ramr@example.org',
       url='http://www.python.org/sigs/distutils-sig/',
-      install_requires=['itsdangerous','jinja2','MySQL-Python','werkzeug','flask==0.9','Flask-Login','Flask-SQLAlchemy'],
+
+      #  Uncomment one or more lines below in the install_requires section
+      #  for the specific client drivers/modules your application needs.
+      install_requires=['greenlet', 'gevent',
+                        #  'MySQL-python',
+                        #  'pymongo',
+                        #  'psycopg2',
+      ],
      )
