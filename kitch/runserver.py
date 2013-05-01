@@ -1,6 +1,7 @@
 # all the imports
 from flask import Flask, render_template
 from utils.exceptions import abort, bad_request_response
+from utils.entities import APIEncoder
 from users.views import app as user, get_user, check_user_permission
 from menus.views import  app as menu
 from orders.views import app as table
@@ -8,16 +9,7 @@ from files_upload.views import app as file_upload
 from flask import request, _request_ctx_stack, redirect
 from flask.ext.login import LoginManager, login_required, login_url
 from models import db
-from flask import json
-import decimal
 
-class APIEncoder(json.JSONEncoder):
-    def default(self, obj):
-
-        if isinstance(obj, decimal.Decimal):
-            return str(obj)
-
-        return json.JSONEncoder.default(self, obj)
 
 class CustomLoginManager(LoginManager):
 

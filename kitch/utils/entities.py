@@ -1,12 +1,21 @@
 from flask.views import MethodView
-from flask import request, jsonify, make_response, render_template
+from flask import request,  make_response, render_template, json
 from flask.ext.login import login_required
 from models import db
 from utils.exceptions import abort
 import sqlalchemy
 import hashlib
 import uuid
+import decimal
 import time
+
+class APIEncoder(json.JSONEncoder):
+    def default(self, obj):
+
+        if isinstance(obj, decimal.Decimal):
+            return str(obj)
+
+        return json.JSONEncoder.default(self, obj)
 
 def to_json(datas):
     if type(datas)==list:
@@ -194,4 +203,26 @@ def register_api(app,view, endpoint, url, pk, pk_type='string'):
     app.add_url_rule('%s<%s:%s>' %(url,pk_type,pk), view_func=view_func,
         methods=['GET', 'DELETE','PUT'])
 
+
+from itsdangerous import simplejson as _json
+from flask import current_app
+
+def jsonify(*args, **kwargs):
+    """
+    Rewrite jsonify to force use of API_ENcoder unil 0.10 is release 
+    """
+    return current_app.response_class(dumps(dict(*args, **kwargs),
+        indent=None if request.is_xhr else 2),
+        mimetype='application/json')
+
+def dumps(obj, **kwargs):   
+    _dump_arg_defaults(kwargs)
+    return _json.dumps(obj, **kwargs)
+
+def _dump_arg_defaults(kwargs):
+    """Inject default arguments for dump functions."""
+    if current_app:
+        kwargs.setdefault('cls', current_app.json_encoder)
+        if not current_app.config['JSON_AS_ASCII']:
+            kwargs.setdefault('ensure_ascii', False)
 
