@@ -1,4 +1,4 @@
-.PHONY: clean docs test run print install-db
+.PHONY: clean docs test run print install-db deploy
 
 SUITE = 'all'
 
@@ -13,3 +13,6 @@ clean:
 	find . -name 'kitch/*.pyc' -exec rm -f {} +
 test:
 	python kitch/test/suite_run.py --test $(SUITE)
+
+deploy:
+	git push production
