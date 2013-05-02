@@ -23,4 +23,4 @@ SQLALCHEMY_DATABASE_URI='mysql://%s:%s@%s:%s/%s' % (DB_USER, DB_PASSWD, DB_HOST,
 #Test if unix socket is defined only for openshift
 UNIX_SOCKET = os.getenv('OPENSHIFT_MYSQL_DB_SOCKET')
 if UNIX_SOCKET:
-	SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI + "?unix_socket = " + UNIX_SOCKET
+	SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI + "?unix_socket=" + UNIX_SOCKET
