@@ -6,7 +6,7 @@ from users.views import app as user, get_user, check_user_permission
 from menus.views import  app as menu
 from orders.views import app as table
 from files_upload.views import app as file_upload
-from flask import request, _request_ctx_stack, redirect
+from flask import request, _request_ctx_stack, redirect, current_app
 from flask.ext.login import LoginManager, login_required, login_url
 from models import db
 
@@ -45,7 +45,7 @@ app.register_blueprint(file_upload)
 
 @app.before_request
 def validate_request():
-
+    print current_app.config['SQLALCHEMY_DATABASE_URI']
     """
         Ensure that the request sent has the proper basic information to
         be handle by the endpoint. Otherwise it would be a waste of resources
