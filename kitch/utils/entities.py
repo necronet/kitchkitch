@@ -223,6 +223,6 @@ def _dump_arg_defaults(kwargs):
     """Inject default arguments for dump functions."""
     if current_app:
         kwargs.setdefault('cls', current_app.json_encoder)
-        if not current_app.config['JSON_AS_ASCII']:
+        if current_app.config.has_key('JSON_AS_ASCII') and not current_app.config['JSON_AS_ASCII']:
             kwargs.setdefault('ensure_ascii', False)
 
